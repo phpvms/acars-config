@@ -16,12 +16,9 @@ jobs:
         with:
           cache: 'npm'
 
-      - name: npm install
+      - name: build
         run: |
           npm install
-
-      - name: gulp build
-        run: |
           npm run build
 
         # Create a zip from what's in this repo
@@ -29,9 +26,9 @@ jobs:
         uses: thedoctor0/zip-release@0.7.5
         with:
           type: 'zip'
-          directory: '.'
-          path: './dist'
-          filename: 'stable.zip'
+          directory: './dist'
+          path: '.'
+          filename: '../stable.zip'
           exclusions: ''
 
         # List all the files that have been created

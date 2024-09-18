@@ -29,13 +29,12 @@ jobs:
         uses: thedoctor0/zip-release@0.7.5
         with:
           type: 'zip'
-          directory: 'dist/'
-          path: '../'
-          filename: 'vmsacars_config.zip'
-          exclusions: '*.git* /*node_modules/* .editorconfig dist'
-          command: "mkdir -p dist"
+          directory: '.'
+          path: './dist'
+          filename: 'stable.zip'
+          exclusions: ''
 
-      # List all the files that have been created
+        # List all the files that have been created
       - name: 'List files'
         run: |
           find dist/ -maxdepth 2  -type f
@@ -44,7 +43,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: acars-package
-          path: 'dist/*'
+          path: 'stable.zip'
 
   #
   # Now publish it up
@@ -59,27 +58,12 @@ jobs:
         with:
           name: acars-package
 
-    # You can uncomment the method you want to use to upload
-    # Create the environment variables appropriately to set it up
-
-    # Upload via SFTP. See details here:
-    # https://github.com/marketplace/actions/sftp-uploader
-
-    #- name: SFTP uploader
-    #  uses: wangyucode/sftp-upload-action@v2.0.2
-    #  with:
-    #    host: ${{ secrets.SFTP_HOST }}
-    #    password: ${{ secrets.SFTP_PASSWORD }}
-    #    localDir: 'dist'
-    #    remoteDir: ${{ secrets.SFTP_REMOTE_PATH }}
-
-    # Upload to an S3 bucket
-    # https://github.com/actions-marketplace-validations/shallwefootball_upload-s3-action
-    #- name: Upload S3
-    #  uses: shallwefootball/s3-upload-action@master
-    #  with:
-    #    aws_key_id: ${{ secrets.S3_BUILD_ARTIFACTS_ACCESS_KEY_ID }}
-    #    aws_secret_access_key: ${{ secrets.S3_BUILD_ARTIFACTS_SECRET_ACCESS_KEY}}
-    #    aws_bucket: ${{ secrets.S3_BUCKET_NAME }}
-    #    source_dir: 'dist/'
-    #    destination_dir: ''
+      - uses: BetaHuhn/do-spaces-action@latest
+        with:
+          access_key: ${{ secrets.SPACE_ACCESS_KEY}}
+          secret_key: ${{ secrets.SPACE_SECRET_KEY }}
+          space_name: ${{ secrets.SPACE_NAME }}
+          space_region: ${{ secrets.SPACE_REGION }}
+          cdn_domain: ${{ secrets.SPACE_CDN_DOMAIN }}
+          source: stable.zip
+          out_dir: configs

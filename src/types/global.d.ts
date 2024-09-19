@@ -10,8 +10,6 @@ declare global {
     function IsFeatureEnabled(feature: AircraftFeature): boolean {}
     /** Get something from storage */
     function Get(key: string): string {}
-    /** Save something to storage */
-    function Set(key: string, value?: string): void {}
     /**
      * @param key
      * @param value

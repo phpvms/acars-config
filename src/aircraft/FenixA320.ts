@@ -52,14 +52,11 @@ export default class FenixA320 extends AircraftConfig {
   }
 
   match(title: string, icao: string, config_path: string): boolean {
-    return (
-      ['Fenix', 'A320'].every((w) => title.includes(w)) ||
-      ['FenixA320'].every((w) => title.includes(w)) ||
-      ['Fenix', 'A321'].every((w) => title.includes(w.toLowerCase())) ||
-      ['FenixA319'].every((w) => title.includes(w.toLowerCase())) ||
-      ['FenixA320'].every((w) => title.includes(w.toLowerCase())) ||
-      ['FenixA321'].every((w) => title.includes(w.toLowerCase()))
-    )
+    if (!title.includes('fenix')) {
+      return false
+    }
+
+    return ['a319', 'a320', 'a321'].some((w) => title.includes(w))
   }
 
   beaconLights(value: number): FeatureState {

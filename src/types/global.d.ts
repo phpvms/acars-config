@@ -10,6 +10,8 @@ declare global {
     function IsFeatureEnabled(feature: AircraftFeature): boolean {}
     /** Get something from storage */
     function Get(key: string): string {}
+    /** Save something to storage */
+    function Set(key: string, value?: string): void {}
     /**
      * @param key
      * @param value
@@ -45,12 +47,12 @@ declare global {
      *             where the rule evaluation takes place. This method is evaluated often (many times a second),
      *             and if at any point before the timeout is hit, it will stop and reset.
      *
-     * @param name The name to use to track this internally
+     * @param id The ID of the rule to be tracked. You can add additional info
      * @param timeout Amount of time, in milliseconds
      * @param callback Needs to return an array matching the RuleValue type
      */
     function ViolatedAfterDelay(
-      name: string,
+      id: string,
       timeout: number,
       callback: () => RuleValue,
     ): RuleValue {}

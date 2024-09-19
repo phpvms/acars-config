@@ -29,12 +29,8 @@ export default class StrobesInFlight implements Rule {
       return [false]
     }
 
-    return Acars.ViolatedAfterDelay(
-      this.meta.name,
-      this.meta.delay_time,
-      () => {
-        return !data.strobeLights ? [true] : [false]
-      },
-    )
+    return Acars.ViolatedAfterDelay(this.meta.id, this.meta.delay_time, () => {
+      return !data.strobeLights ? [true] : [false]
+    })
   }
 }

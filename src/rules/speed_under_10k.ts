@@ -24,7 +24,7 @@ export default class SpeedUnder10K implements Rule {
     }
 
     return Acars.ViolatedAfterDelay(
-      this.meta.name,
+      this.meta.id,
       this.meta.delay_time,
       (): RuleValue => {
         // Ignore landing lights being turned on

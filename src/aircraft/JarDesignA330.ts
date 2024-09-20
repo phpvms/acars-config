@@ -29,7 +29,7 @@ export default class JarDesignA330 extends AircraftConfig {
     [AircraftFeature.StrobeLights]: {
       'sim/custom/xap/extlight/strobe_sw': FeatureType.Int,
     },
-    [AircraftFeature.TaxiLight]: {
+    [AircraftFeature.TaxiLights]: {
       'sim/custom/xap/extlight/nose_sw': FeatureType.Int,
     },
   }

@@ -23,14 +23,14 @@ export default class PMDG_777_FSUIPC extends AircraftConfig {
     [AircraftFeature.LandingLights]: {
       '0x6485': FeatureType.Int,
     },
-    [AircraftFeature.LogoLight]: false,
+    [AircraftFeature.LogoLights]: false,
     [AircraftFeature.NavigationLights]: {
       '0x650B': FeatureType.Int,
     },
     [AircraftFeature.StrobeLights]: {
       '0x648F': FeatureType.Int,
     },
-    [AircraftFeature.TaxiLight]: {
+    [AircraftFeature.TaxiLights]: {
       '0x648E': FeatureType.Int,
     },
     [AircraftFeature.WingLights]: false,

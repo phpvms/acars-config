@@ -23,14 +23,14 @@ export default class PMDG_737_FSUIPC extends AircraftConfig {
     [AircraftFeature.LandingLights]: {
       '0x64F6': FeatureType.Int,
     },
-    [AircraftFeature.LogoLight]: false,
+    [AircraftFeature.LogoLights]: false,
     [AircraftFeature.NavigationLights]: {
       '0x6500': FeatureType.Int,
     },
     [AircraftFeature.StrobeLights]: {
       '0x6500': FeatureType.Int,
     },
-    [AircraftFeature.TaxiLight]: {
+    [AircraftFeature.TaxiLights]: {
       '0x64FA': FeatureType.Int,
     },
     [AircraftFeature.WingLights]: false,

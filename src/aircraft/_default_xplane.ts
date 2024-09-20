@@ -26,7 +26,7 @@ export default class DefaultXPlane extends AircraftConfig {
     [AircraftFeature.LandingLights]: {
       'sim/cockpit2/switches/landing_lights_on': FeatureType.Bool,
     },
-    [AircraftFeature.LogoLight]: {
+    [AircraftFeature.LogoLights]: {
       'sim/cockpit2/switches/logo_lights_on': FeatureType.Bool,
     },
     [AircraftFeature.NavigationLights]: {
@@ -35,7 +35,7 @@ export default class DefaultXPlane extends AircraftConfig {
     [AircraftFeature.StrobeLights]: {
       'sim/cockpit2/switches/strobe_lights_on': FeatureType.Bool,
     },
-    [AircraftFeature.TaxiLight]: {
+    [AircraftFeature.TaxiLights]: {
       'sim/cockpit2/switches/taxi_light_on': FeatureType.Bool,
     },
     [AircraftFeature.WingLights]: {

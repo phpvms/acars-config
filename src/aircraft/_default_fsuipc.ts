@@ -32,10 +32,10 @@ export default class DefaultFsuipc extends AircraftConfig {
   features: FeatureAddresses = {
     [AircraftFeature.BeaconLights]: { '0x0D0C': FeatureType.Int },
     [AircraftFeature.LandingLights]: { '0x0D0C': FeatureType.Int },
-    [AircraftFeature.LogoLight]: { '0x0D0C': FeatureType.Int },
+    [AircraftFeature.LogoLights]: { '0x0D0C': FeatureType.Int },
     [AircraftFeature.NavigationLights]: { '0x0D0C': FeatureType.Int },
     [AircraftFeature.StrobeLights]: { '0x0D0C': FeatureType.Int },
-    [AircraftFeature.TaxiLight]: { '0x0D0C': FeatureType.Int },
+    [AircraftFeature.TaxiLights]: { '0x0D0C': FeatureType.Int },
     [AircraftFeature.WingLights]: { '0x0D0C': FeatureType.Int },
   }
 

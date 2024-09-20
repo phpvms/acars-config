@@ -17,10 +17,10 @@ export default class Zibo738 extends AircraftConfig {
   }
 
   features: FeatureAddresses = {
-    [AircraftFeature.LogoLight]: {
+    [AircraftFeature.LogoLights]: {
       'laminar/B738/toggle_switch/logo_light': FeatureType.Int,
     },
-    [AircraftFeature.TaxiLight]: {
+    [AircraftFeature.TaxiLights]: {
       'laminar/B738/toggle_switch/taxi_light_brightness_pos': FeatureType.Int,
     },
   }

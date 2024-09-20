@@ -16,7 +16,7 @@ export default class QualityWings extends AircraftConfig {
     [AircraftFeature.LandingLights]: false,
     [AircraftFeature.NavigationLights]: false,
     [AircraftFeature.StrobeLights]: false,
-    [AircraftFeature.TaxiLight]: false,
+    [AircraftFeature.TaxiLights]: false,
   }
 
   /**

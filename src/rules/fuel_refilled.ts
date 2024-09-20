@@ -7,11 +7,21 @@ import { Pirep, Telemetry } from '../types/types'
 
 export default class FuelRefilled implements Rule {
   meta: Meta = {
-    id: 'EXCESS_TAXI_SPEED',
-    name: 'Taxi speed exceeded limit',
+    id: 'FUEL_REFILLED',
+    name: 'Fuel refilled',
     enabled: true,
-    message: 'Taxi speed exceeded limit',
-    states: [],
+    message: 'Fuel refilled',
+    states: [
+      PirepState.Pushback,
+      PirepState.TaxiOut,
+      PirepState.Takeoff,
+      PirepState.Enroute,
+      PirepState.Approach,
+      PirepState.Final,
+      PirepState.Landed,
+      PirepState.TaxiIn,
+      PirepState.OnBlock,
+    ],
     repeatable: false,
     cooldown: 60,
     max_count: 3,

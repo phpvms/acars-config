@@ -25,7 +25,7 @@ export default class FenixA320 extends AircraftConfig {
       S_OH_EXT_LT_LANDING_L: FeatureType.Int,
       S_OH_EXT_LT_LANDING_R: FeatureType.Int,
     },
-    [AircraftFeature.LogoLight]: {
+    [AircraftFeature.LogoLights]: {
       S_OH_EXT_LT_NAV_LOGO: FeatureType.Int,
     },
     [AircraftFeature.NavigationLights]: {
@@ -34,7 +34,7 @@ export default class FenixA320 extends AircraftConfig {
     [AircraftFeature.StrobeLights]: {
       S_OH_EXT_LT_STROBE: FeatureType.Int,
     },
-    [AircraftFeature.TaxiLight]: {
+    [AircraftFeature.TaxiLights]: {
       S_OH_EXT_LT_NOSE: FeatureType.Int,
     },
     [AircraftFeature.WingLights]: {

@@ -24,7 +24,7 @@ export default class RotateMD11 extends AircraftConfig {
       'Rotate/aircraft/controls/ldg_l_lts': FeatureType.Int,
       'Rotate/aircraft/controls/ldg_r_lts': FeatureType.Int,
     },
-    [AircraftFeature.LogoLight]: {
+    [AircraftFeature.LogoLights]: {
       'Rotate/aircraft/controls/logo_lts': FeatureType.Int,
     },
     [AircraftFeature.NavigationLights]: {
@@ -33,7 +33,7 @@ export default class RotateMD11 extends AircraftConfig {
     [AircraftFeature.StrobeLights]: {
       'Rotate/aircraft/controls/strobe_lts': FeatureType.Int,
     },
-    [AircraftFeature.TaxiLight]: {
+    [AircraftFeature.TaxiLights]: {
       'Rotate/aircraft/controls/nose_lts': FeatureType.Int,
     },
     [AircraftFeature.WingLights]: {

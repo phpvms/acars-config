@@ -24,7 +24,7 @@ export default class RotateMD80 extends AircraftConfig {
       'Rotate/md80/lights/wing_ldg_light_switch_r': FeatureType.Int,
       'Rotate/md80/lights/wing_ldg_light_switch_l': FeatureType.Int,
     },
-    [AircraftFeature.LogoLight]: {
+    [AircraftFeature.LogoLights]: {
       'Rotate/md80/lights/logo_light_switch': FeatureType.Int,
     },
     [AircraftFeature.NavigationLights]: {
@@ -33,7 +33,7 @@ export default class RotateMD80 extends AircraftConfig {
     [AircraftFeature.StrobeLights]: {
       'Rotate/md80/lights/pos_strobe_light_switch': FeatureType.Int,
     },
-    [AircraftFeature.TaxiLight]: {
+    [AircraftFeature.TaxiLights]: {
       'Rotate/md80/lights/nose_light_switch': FeatureType.Int,
     },
     [AircraftFeature.WingLights]: {

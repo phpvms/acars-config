@@ -24,7 +24,7 @@ export default class PMDG_737_MSFS extends AircraftConfig {
       switch_113_73X: FeatureType.Int,
       switch_114_73X: FeatureType.Int,
     },
-    [AircraftFeature.LogoLight]: {
+    [AircraftFeature.LogoLights]: {
       switch_122_73X: FeatureType.Int,
     },
     [AircraftFeature.NavigationLights]: {
@@ -33,7 +33,7 @@ export default class PMDG_737_MSFS extends AircraftConfig {
     [AircraftFeature.StrobeLights]: {
       switch_123_73X: FeatureType.Int,
     },
-    [AircraftFeature.TaxiLight]: {
+    [AircraftFeature.TaxiLights]: {
       switch_117_73X: FeatureType.Int,
     },
     [AircraftFeature.WingLights]: {

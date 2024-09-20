@@ -21,7 +21,7 @@ export default class AerosoftA333Airbus extends AircraftConfig {
     [AircraftFeature.LandingLights]: false,
     [AircraftFeature.NavigationLights]: false,
     [AircraftFeature.StrobeLights]: false,
-    [AircraftFeature.TaxiLight]: false,
+    [AircraftFeature.TaxiLights]: false,
   }
 
   flapNames: FlapNames = {

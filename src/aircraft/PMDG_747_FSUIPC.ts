@@ -23,14 +23,14 @@ export default class PMDG_747_FSUIPC extends AircraftConfig {
     [AircraftFeature.LandingLights]: {
       '0x6506': FeatureType.Int,
     },
-    [AircraftFeature.LogoLight]: false,
+    [AircraftFeature.LogoLights]: false,
     [AircraftFeature.NavigationLights]: {
       '0x650B': FeatureType.Int,
     },
     [AircraftFeature.StrobeLights]: {
       '0x6511': FeatureType.Int,
     },
-    [AircraftFeature.TaxiLight]: {
+    [AircraftFeature.TaxiLights]: {
       '0x6510': FeatureType.Int,
     },
     [AircraftFeature.WingLights]: false,

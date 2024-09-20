@@ -16,7 +16,7 @@ export default class ProSim737 extends AircraftConfig {
     [AircraftFeature.LandingLights]: false,
     [AircraftFeature.NavigationLights]: false,
     [AircraftFeature.StrobeLights]: false,
-    [AircraftFeature.TaxiLight]: false,
+    [AircraftFeature.TaxiLights]: false,
   }
 
   /**

@@ -30,7 +30,7 @@ export default class Toliss extends AircraftConfig {
     [AircraftFeature.StrobeLights]: {
       'AirbusFBW/OHPLightSwitches': FeatureType.IntArray,
     },
-    [AircraftFeature.TaxiLight]: {
+    [AircraftFeature.TaxiLights]: {
       'AirbusFBW/OHPLightSwitches': FeatureType.IntArray,
     },
   }

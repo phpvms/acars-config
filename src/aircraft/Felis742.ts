@@ -24,12 +24,12 @@ export default class Felis742 extends AircraftConfig {
       'B742/ext_light/landing_outbd_L_sw': FeatureType.Int,
       'B742/ext_light/landing_outbd_R_sw': FeatureType.Int,
     },
-    [AircraftFeature.LogoLight]: {
+    [AircraftFeature.LogoLights]: {
       'B742/ext_light/logo_sw': FeatureType.Int,
     },
     [AircraftFeature.NavigationLights]: false,
     [AircraftFeature.StrobeLights]: false,
-    [AircraftFeature.TaxiLight]: {
+    [AircraftFeature.TaxiLights]: {
       'B742/ext_light/runway_turnoff_L_sw': FeatureType.Int,
       'B742/ext_light/runway_turnoff_R_sw': FeatureType.Int,
     },

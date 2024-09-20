@@ -18,10 +18,10 @@ export default class FsLabsAirbus extends AircraftConfig {
   features: FeatureAddresses = {
     [AircraftFeature.BeaconLights]: false,
     [AircraftFeature.LandingLights]: false,
-    [AircraftFeature.LogoLight]: false,
+    [AircraftFeature.LogoLights]: false,
     [AircraftFeature.NavigationLights]: false,
     [AircraftFeature.StrobeLights]: false,
-    [AircraftFeature.TaxiLight]: false,
+    [AircraftFeature.TaxiLights]: false,
     [AircraftFeature.WingLights]: false,
   }
 

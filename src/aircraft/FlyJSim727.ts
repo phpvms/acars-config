@@ -26,7 +26,7 @@ export default class FlyJSim727 extends AircraftConfig {
       'FJS/727/lights/OutboundLLSwitch_L': FeatureType.Int,
       'FJS/727/lights/OutboundLLSwitch_R': FeatureType.Int,
     },
-    [AircraftFeature.LogoLight]: {
+    [AircraftFeature.LogoLights]: {
       'FJS/727/lights/LogoLightSwitch': FeatureType.Int,
     },
     [AircraftFeature.NavigationLights]: {
@@ -35,7 +35,7 @@ export default class FlyJSim727 extends AircraftConfig {
     [AircraftFeature.StrobeLights]: {
       'FJS/727/lights/StrobeLightSwitch': FeatureType.Int,
     },
-    [AircraftFeature.TaxiLight]: {
+    [AircraftFeature.TaxiLights]: {
       'FJS/727/lights/TaxiLightSwitch': FeatureType.Int,
     },
     [AircraftFeature.WingLights]: {

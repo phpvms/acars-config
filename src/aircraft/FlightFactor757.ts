@@ -23,7 +23,7 @@ export default class FlightFactor757 extends AircraftConfig {
     [AircraftFeature.LandingLights]: {
       'sim/cockpit2/switches/landing_lights_switch': FeatureType.NumberArray,
     },
-    [AircraftFeature.LogoLight]: {
+    [AircraftFeature.LogoLights]: {
       'sim/cockpit2/switches/generic_lights_switch': FeatureType.NumberArray,
     },
     [AircraftFeature.NavigationLights]: {
@@ -32,7 +32,7 @@ export default class FlightFactor757 extends AircraftConfig {
     [AircraftFeature.StrobeLights]: {
       'sim/cockpit2/switches/strobe_lights_on': FeatureType.Int,
     },
-    [AircraftFeature.TaxiLight]: {
+    [AircraftFeature.TaxiLights]: {
       'sim/cockpit2/switches/landing_lights_switch': FeatureType.NumberArray,
     },
     [AircraftFeature.WingLights]: {

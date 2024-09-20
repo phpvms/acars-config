@@ -41,11 +41,11 @@ export default class DefaultMsFs extends AircraftConfig {
     [AircraftFeature.StrobeLights]: {
       LIGHTING_STROBE_1: FeatureType.Bool,
     },
-    [AircraftFeature.TaxiLight]: { LIGHTING_TAXI_1: FeatureType.Bool },
+    [AircraftFeature.TaxiLights]: { LIGHTING_TAXI_1: FeatureType.Bool },
     [AircraftFeature.WingLights]: {
       LIGHTING_RECOGNITION_1: FeatureType.Bool,
     },
-    [AircraftFeature.LogoLight]: { LIGHTING_BEACON_1: FeatureType.Bool },
+    [AircraftFeature.LogoLights]: { LIGHTING_BEACON_1: FeatureType.Bool },
   }
 
   /**

@@ -31,7 +31,7 @@ export default class FlightFactorA320 extends AircraftConfig {
     [AircraftFeature.StrobeLights]: {
       'model/controls/light_strobe': FeatureType.Number,
     },
-    [AircraftFeature.TaxiLight]: {
+    [AircraftFeature.TaxiLights]: {
       'model/controls/light_nose': FeatureType.Number,
     },
     [AircraftFeature.WingLights]: {

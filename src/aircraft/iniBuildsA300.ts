@@ -23,14 +23,14 @@ export default class IniBuildsA3N extends AircraftConfig {
     [AircraftFeature.LandingLights]: {
       'A300/switches/animations_current': FeatureType.NumberArray,
     },
-    [AircraftFeature.LogoLight]: false,
+    [AircraftFeature.LogoLights]: false,
     [AircraftFeature.NavigationLights]: {
       'A300/switches/animations_current': FeatureType.NumberArray,
     },
     [AircraftFeature.StrobeLights]: {
       'A300/switches/animations_current': FeatureType.NumberArray,
     },
-    [AircraftFeature.TaxiLight]: {
+    [AircraftFeature.TaxiLights]: {
       'A300/switches/animations_current': FeatureType.NumberArray,
     },
     [AircraftFeature.WingLights]: {

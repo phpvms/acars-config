@@ -25,7 +25,7 @@ export default class PMDG_777_MSFS extends AircraftConfig {
       switch_23_a: FeatureType.Int,
       switch_24_a: FeatureType.Int,
     },
-    [AircraftFeature.LogoLight]: {
+    [AircraftFeature.LogoLights]: {
       switch_116_a: FeatureType.Int,
     },
     [AircraftFeature.NavigationLights]: {
@@ -34,7 +34,7 @@ export default class PMDG_777_MSFS extends AircraftConfig {
     [AircraftFeature.StrobeLights]: {
       switch_122_a: FeatureType.Int,
     },
-    [AircraftFeature.TaxiLight]: {
+    [AircraftFeature.TaxiLights]: {
       switch_121_a: FeatureType.Int,
     },
     [AircraftFeature.WingLights]: {

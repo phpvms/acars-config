@@ -26,7 +26,7 @@ export default class IXEG733 extends AircraftConfig {
       'ixeg/733/lighting/l_outboard_ll_act': FeatureType.Int,
       'ixeg/733/lighting/r_outboard_ll_act': FeatureType.Int,
     },
-    [AircraftFeature.LogoLight]: {
+    [AircraftFeature.LogoLights]: {
       'ixeg/733/lighting/logo_lt_act': FeatureType.Int,
     },
     [AircraftFeature.NavigationLights]: {
@@ -35,7 +35,7 @@ export default class IXEG733 extends AircraftConfig {
     [AircraftFeature.StrobeLights]: {
       'ixeg/733/lighting/strobe_lt_act': FeatureType.Int,
     },
-    [AircraftFeature.TaxiLight]: {
+    [AircraftFeature.TaxiLights]: {
       'ixeg/733/lighting/taxi_lt_act': FeatureType.Int,
     },
     [AircraftFeature.WingLights]: {

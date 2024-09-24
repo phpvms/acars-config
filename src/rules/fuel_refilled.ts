@@ -32,20 +32,23 @@ export default class FuelRefilled implements Rule {
 
   violated(pirep: Pirep, data: Telemetry, previousData?: Telemetry): RuleValue {
     if (data.onGround || previousData == null) {
-      return [false]
+      return
     }
 
     if (data.fuelQuantity.Pounds > previousData.fuelQuantity.Pounds) {
-      return [false]
+      return
     }
 
-    return [
-      Acars.NumberOverPercent(
-        data.fuelQuantity.Pounds,
-        previousData.fuelQuantity.Pounds,
-        10,
-      ),
-      `Fuel Refilled: Current: ${data.fuelQuantity.Pounds}, previous=${previousData.fuelQuantity.Pounds}`,
-    ]
+    const violated = Acars.NumberOverPercent(
+      data.fuelQuantity.Pounds,
+      previousData.fuelQuantity.Pounds,
+      10,
+    )
+
+    if (violated) {
+      return [
+        `Fuel Refilled: Current: ${data.fuelQuantity.Pounds}, previous=${previousData.fuelQuantity.Pounds}`,
+      ]
+    }
   }
 }

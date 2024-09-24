@@ -16,11 +16,19 @@ export default class SpeedUnder10K implements Rule {
     max_count: 3,
     points: -1,
     delay_time: 5000,
+
+    speed: 260,
+    altitude: 10000,
   }
 
   violated(pirep: Pirep, data: Telemetry, previousData?: Telemetry): RuleValue {
     if (data.onGround) {
-      return [false]
+      return
+    }
+
+    // This should come from the web-module, if it's been updated
+    if (this.meta.parameter > 0) {
+      this.meta.speed = this.meta.parameter
     }
 
     return Acars.ViolatedAfterDelay(
@@ -29,10 +37,12 @@ export default class SpeedUnder10K implements Rule {
       (): RuleValue => {
         // Ignore landing lights being turned on
         const violated =
-          data.indicatedAirspeed.Knots > this.meta.parameter! &&
-          data.planeAltitude.Feet < 10000
+          data.indicatedAirspeed.Knots > this.meta.speed &&
+          data.planeAltitude.Feet < this.meta.altitude
 
-        return [violated, this.meta.message + this.meta.parameter!]
+        if (violated) {
+          return [this.meta.message + this.meta.speed]
+        }
       },
     )
   }

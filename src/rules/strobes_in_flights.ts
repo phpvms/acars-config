@@ -26,11 +26,15 @@ export default class StrobesInFlight implements Rule {
 
   violated(pirep: Pirep, data: Telemetry, previousData?: Telemetry): RuleValue {
     if (!Acars.IsFeatureEnabled(AircraftFeature.StrobeLights)) {
-      return [false]
+      return
     }
 
-    return Acars.ViolatedAfterDelay(this.meta.id, this.meta.delay_time, () => {
-      return !data.strobeLights ? [true] : [false]
-    })
+    return Acars.ViolatedAfterDelay(
+      this.meta.id,
+      this.meta.delay_time,
+      (): RuleValue => {
+        return !data.strobeLights
+      },
+    )
   }
 }

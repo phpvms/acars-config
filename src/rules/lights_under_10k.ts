@@ -21,11 +21,11 @@ export default class LightsUnder10K implements Rule {
 
   violated(pirep: Pirep, data: Telemetry, previousData?: Telemetry): RuleValue {
     if (!Acars.IsFeatureEnabled(AircraftFeature.LandingLights)) {
-      return [false]
+      return
     }
 
     if (data.onGround) {
-      return [false]
+      return
     }
 
     return Acars.ViolatedAfterDelay(
@@ -37,7 +37,9 @@ export default class LightsUnder10K implements Rule {
           !data.landingLights &&
           data.planeAltitude.Feet < this.meta.parameter! - 500
 
-        return [violated, this.meta.message + this.meta.parameter!]
+        if (violated) {
+          return [this.meta.message + this.meta.parameter!]
+        }
       },
     )
   }

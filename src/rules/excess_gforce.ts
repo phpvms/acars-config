@@ -27,9 +27,9 @@ export default class ExcessGForce implements Rule {
 
   violated(pirep: Pirep, data: Telemetry, previousData?: Telemetry): RuleValue {
     if (data.onGround) {
-      return [false]
+      return
     }
 
-    return [data.gForce >= this.meta.parameter!]
+    return data.gForce >= this.meta.parameter!
   }
 }

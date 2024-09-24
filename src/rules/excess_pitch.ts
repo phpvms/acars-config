@@ -27,12 +27,12 @@ export default class ExcessPitch implements Rule {
 
   violated(pirep: Pirep, data: Telemetry, previousData?: Telemetry): RuleValue {
     if (data.onGround) {
-      return [false]
+      return
     }
 
-    return [
+    return (
       data.pitch < -1 * this.meta.parameter! ||
-        data.pitch > this.meta.parameter!,
-    ]
+      data.pitch > this.meta.parameter!
+    )
   }
 }

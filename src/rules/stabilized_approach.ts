@@ -22,19 +22,23 @@ export default class StabilizedApproach implements Rule {
 
   violated(pirep: Pirep, data: Telemetry, previousData?: Telemetry): RuleValue {
     if (data.onGround) {
-      return [false]
+      return
     }
 
     // Above the min altitude so ignore it
-    if (data.groundAltitude.Feet > this.meta.parameter!) return [false]
+    if (data.groundAltitude.Feet > this.meta.parameter!) {
+      return
+    }
 
-    if (data.gearUp) return [true]
+    if (data.gearUp) {
+      return true
+    }
 
     // No flaps landing doesn't seem right
     if (pirep.features == null) {
-      return [false]
+      return
     }
 
-    return [pirep.features.flapsCount > 0 && data.flaps === 0]
+    return pirep.features.flapsCount > 0 && data.flaps === 0
   }
 }

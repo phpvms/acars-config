@@ -27,7 +27,7 @@ export default class LightsOffDuringTaxi implements Rule {
 
   violated(pirep: Pirep, data: Telemetry, previousData?: Telemetry): RuleValue {
     if (!Acars.IsFeatureEnabled(AircraftFeature.StrobeLights)) {
-      return [false]
+      return
     }
 
     return Acars.ViolatedAfterDelay(
@@ -36,10 +36,10 @@ export default class LightsOffDuringTaxi implements Rule {
       (): RuleValue => {
         // Ignore landing lights being turned on
         if (data.approachingRunway != null || data.runway != null) {
-          return [false]
+          return
         }
 
-        return [data.strobeLights]
+        return data.strobeLights
       },
     )
   }

@@ -1,7 +1,7 @@
 /**
  * Excess bank angle
  */
-import { AircraftFeature, PirepState } from '../defs'
+import { PirepState } from '../defs'
 import { Meta, Rule, RuleValue } from '../types/rule'
 import { Pirep, Telemetry } from '../types/types'
 
@@ -27,20 +27,19 @@ export default class ExcessBank implements Rule {
 
   violated(pirep: Pirep, data: Telemetry, previousData?: Telemetry): RuleValue {
     if (data.onGround) {
-      return [false]
+      return
     }
 
-    return Acars.ViolatedAfterDelay(this.meta.id, this.meta.delay_time, () => {
-      // +Bank is right, -Bank is left
-      const value =
-        data.bank < -1 * this.meta.parameter! ||
-        data.bank > this.meta.parameter!
-
-      if (value) {
-        return [true]
-      } else {
-        return [false]
-      }
-    })
+    return Acars.ViolatedAfterDelay(
+      this.meta.id,
+      this.meta.delay_time,
+      (): RuleValue => {
+        // +Bank is right, -Bank is left
+        return (
+          data.bank < -1 * this.meta.parameter! ||
+          data.bank > this.meta.parameter!
+        )
+      },
+    )
   }
 }

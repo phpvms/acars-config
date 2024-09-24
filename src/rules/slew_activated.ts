@@ -20,6 +20,6 @@ export default class SlewActivated implements Rule {
   }
 
   violated(pirep: Pirep, data: Telemetry, previousData?: Telemetry): RuleValue {
-    return [data.slewActive]
+    return data.slewActive
   }
 }

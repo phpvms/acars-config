@@ -26,6 +26,6 @@ export default class SimRate implements Rule {
   }
 
   violated(pirep: Pirep, data: Telemetry, previousData?: Telemetry): RuleValue {
-    return [!data.onGround && data.stallWarning]
+    return !data.onGround && data.stallWarning
   }
 }

@@ -21,7 +21,7 @@ export default class BeaconLights implements Rule {
 
   violated(pirep: Pirep, data: Telemetry, previousData?: Telemetry): RuleValue {
     if (!Acars.IsFeatureEnabled(AircraftFeature.BeaconLights)) {
-      return [false]
+      return false
     }
 
     return Acars.ViolatedAfterDelay(
@@ -29,10 +29,10 @@ export default class BeaconLights implements Rule {
       this.meta.delay_time,
       (): RuleValue => {
         if (!pirep.isInActiveState) {
-          return [false]
+          return false
         }
 
-        return data.anyEnginesRunning && !data.beaconLights ? [true] : [false]
+        return data.anyEnginesRunning && !data.beaconLights
       },
     )
   }

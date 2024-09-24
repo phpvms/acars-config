@@ -21,6 +21,6 @@ export default class SimRate implements Rule {
   }
 
   violated(pirep: Pirep, data: Telemetry, previousData?: Telemetry): RuleValue {
-    return [data.simRate > this.meta.parameter!]
+    return data.simRate > this.meta.parameter!
   }
 }

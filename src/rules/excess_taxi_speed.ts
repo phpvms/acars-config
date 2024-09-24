@@ -28,15 +28,15 @@ export default class ExcessTaxiSpeed implements Rule {
       this.meta.delay_time,
       (): RuleValue => {
         if (!data.onGround) {
-          return [false]
+          return
         }
 
         // If they're on a runway, ignore any taxi speed warnings, might be taking off
         if (data.approachingRunway != null || data.runway != null) {
-          return [false]
+          return
         }
 
-        return [data.groundSpeed.Knots > this.meta.parameter!]
+        return data.groundSpeed.Knots > this.meta.parameter!
       },
     )
   }

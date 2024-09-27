@@ -63,4 +63,4 @@ jobs:
           space_region: ${{ secrets.SPACE_REGION }}
           cdn_domain: ${{ secrets.SPACE_CDN_DOMAIN }}
           source: stable.zip
-          out_dir: configs
+          out_dir: scripts

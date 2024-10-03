@@ -5,7 +5,7 @@ import { PirepState } from '../defs'
 import { Meta, Rule, RuleValue } from '../types/rule'
 import { Pirep, Telemetry } from '../types/types'
 
-export default class SimRate implements Rule {
+export default class StallWarning implements Rule {
   meta: Meta = {
     id: 'STALL_WARNING',
     name: 'Stall warning',

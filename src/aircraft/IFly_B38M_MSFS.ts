@@ -8,7 +8,7 @@ import {
 } from '../interface/aircraft'
 import GetDefaultFlaps from './_default_flaps'
 
-export default class AerosoftA333Airbus extends AircraftConfig {
+export default class IFlyB38M_MSFS extends AircraftConfig {
   meta: Meta = {
     id: 'ifly_b38M_msfs',
     name: 'iFLY B737-MAX8',
@@ -44,7 +44,6 @@ export default class AerosoftA333Airbus extends AircraftConfig {
   }
 
   match(title: string, icao: string, config_path: string): boolean {
-    // Should match aerosfot + a333/a3
     this.flapNames = GetDefaultFlaps('', 'b737', '')
     return ['ifly', '737-max8'].every((w) => title.includes(w))
   }
@@ -62,7 +61,7 @@ export default class AerosoftA333Airbus extends AircraftConfig {
   }
 
   strobeLights(value: number): FeatureState {
-    return value === 0 || value === 20
+    return value === 0
   }
 
   taxiLights(value: number): FeatureState {

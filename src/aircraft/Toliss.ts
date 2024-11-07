@@ -33,6 +33,9 @@ export default class Toliss extends AircraftConfig {
     [AircraftFeature.TaxiLights]: {
       'AirbusFBW/OHPLightSwitches': FeatureType.IntArray,
     },
+    [AircraftFeature.APU]: {
+        'AirbusFBW/APUAvail': FeatureType.Int,
+    },
   }
 
   flapNames: FlapNames = {
@@ -70,5 +73,9 @@ export default class Toliss extends AircraftConfig {
 
   taxiLights(value: number[]): FeatureState {
     return value[3] === 1 || value[3] === 2
+  }
+
+  APU(value: number): FeatureState {
+    return value === 1
   }
 }

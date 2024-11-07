@@ -7,7 +7,7 @@ import {
   Meta,
 } from '../interface/aircraft'
 
-export default class Toliss extends AircraftConfig {
+export default class Toliss_A330 extends AircraftConfig {
   meta: Meta = {
     id: 'toliss_a330',
     name: 'ToLiss Airbus A330',

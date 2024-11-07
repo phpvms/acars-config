@@ -7,10 +7,10 @@ import {
   Meta,
 } from '../interface/aircraft'
 
-export default class Toliss extends AircraftConfig {
+export default class Toliss_A330 extends AircraftConfig {
   meta: Meta = {
-    id: 'toliss_airbus',
-    name: 'ToLiss Airbus',
+    id: 'toliss_a330',
+    name: 'ToLiss Airbus A330',
     sim: AircraftConfigSimType.XPlane,
     enabled: true,
     priority: 2,
@@ -47,7 +47,7 @@ export default class Toliss extends AircraftConfig {
   }
 
   match(title: string, icao: string, config_path: string): boolean {
-    return ['high', 'fidelity', 'system'].every((w) => title.includes(w))
+    return ['a330-941'].every((w) => title.includes(w))
   }
 
   beaconLights(value: number[]): FeatureState {
@@ -55,7 +55,7 @@ export default class Toliss extends AircraftConfig {
   }
 
   landingLights(value: number[]): FeatureState {
-    return value[4] === 2 && value[5] === 2
+    return value[4] === 1
   }
 
   navigationLights(value: number[]): FeatureState {

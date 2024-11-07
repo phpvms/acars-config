@@ -40,6 +40,10 @@ export default class FenixA320 extends AircraftConfig {
     [AircraftFeature.WingLights]: {
       S_OH_EXT_LT_WING: FeatureType.Int,
     },
+    [AircraftFeature.APU]: {
+      S_OH_ELEC_APU_MASTER: FeatureType.Int,
+      S_OH_ELEC_APU_START: FeatureType.Int,
+    },
   }
 
   flapNames: FlapNames = {
@@ -89,5 +93,9 @@ export default class FenixA320 extends AircraftConfig {
 
   taxiLights(value: number): FeatureState {
     return value === 1 || value === 2
+  }
+
+  APU(mastersw: number, startsw: number): FeatureState {
+    return mastersw === 1 && startsw === 2
   }
 }

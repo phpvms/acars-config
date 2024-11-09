@@ -40,9 +40,30 @@ export default class FenixA320 extends AircraftConfig {
     [AircraftFeature.WingLights]: {
       S_OH_EXT_LT_WING: FeatureType.Int,
     },
+    [AircraftFeature.EmergencyLights]: {
+      S_OH_INT_LT_EMER: FeatureType.Int,
+    },
+    [AircraftFeature.Seatbelts]: {
+      S_OH_SIGNS: FeatureType.Int,
+    },
+    [AircraftFeature.Battery]: {
+      S_OH_ELEC_BAT1: FeatureType.Int,
+      S_OH_ELEC_BAT2: FeatureType.Int,
+      I_OH_ELEC_EXT_PWR_L: FeatureType.Int,
+    },
     [AircraftFeature.APU]: {
       S_OH_ELEC_APU_MASTER: FeatureType.Int,
       S_OH_ELEC_APU_START: FeatureType.Int,
+    },
+    [AircraftFeature.Packs]: {
+      S_OH_PNEUMATIC_PACK_1: FeatureType.Int,
+      I_OH_PNEUMATIC_PACK_1_U: FeatureType.Int,
+      S_OH_PNEUMATIC_PACK_2: FeatureType.Int,
+      I_OH_PNEUMATIC_PACK_2_U: FeatureType.Int,
+    },
+    [AircraftFeature.Doors]: {
+      Any_Exit_open_L: FeatureType.Int,
+      Any_Exit_open_R: FeatureType.Int,
     },
   }
 
@@ -87,15 +108,35 @@ export default class FenixA320 extends AircraftConfig {
     return value === 2
   }
 
-  wingLights(value: number): FeatureState {
-    return value === 1
-  }
-
   taxiLights(value: number): FeatureState {
     return value === 1 || value === 2
   }
 
+  wingLights(value: number): FeatureState {
+    return value === 1
+  }
+
+  emergencyLights(value: number): FeatureState {
+    return value === 1 || value === 2
+  }
+
+  seatbelts(value: number): FeatureState {
+    return value === 1
+  }
+
+  battery(b1: number, b2: number, extpwr: number): FeatureState {
+    return (b1 === 1 && b2 === 1) || extpwr === 1
+  }
+
   APU(mastersw: number, startsw: number): FeatureState {
     return mastersw === 1 && startsw === 2
+  }
+
+  packs(left_switch: number, left_message: number, right_switch: number, right_message: number): FeatureState {
+    return (left_switch === 1 && left_message === 0) || (right_switch === 1 && right_message === 0)
+  }
+
+  doors(exits_left: number, exits_right: number): FeatureState {
+    return exits_left === 0 && exits_right === 0
   }
 }

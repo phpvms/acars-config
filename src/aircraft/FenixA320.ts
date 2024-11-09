@@ -65,6 +65,11 @@ export default class FenixA320 extends AircraftConfig {
       Any_Exit_open_L: FeatureType.Int,
       Any_Exit_open_R: FeatureType.Int,
     },
+    [AircraftFeature.AntiIce]: {
+      S_OH_PNEUMATIC_WING_ANTI_ICE: FeatureType.Int,
+      S_OH_PNEUMATIC_ENG1_ANTI_ICE: FeatureType.Int,
+      S_OH_PNEUMATIC_ENG2_ANTI_ICE: FeatureType.Int,
+    },
   }
 
   flapNames: FlapNames = {
@@ -138,5 +143,9 @@ export default class FenixA320 extends AircraftConfig {
 
   doors(exits_left: number, exits_right: number): FeatureState {
     return exits_left === 0 && exits_right === 0
+  }
+
+  antiIce(wing: number, eng1: number, eng2: number): FeatureState {
+    return wing === 1 || (eng1 === 1 && eng2 === 1)
   }
 }

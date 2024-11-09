@@ -53,7 +53,7 @@ export default class FenixA320 extends AircraftConfig {
     },
     [AircraftFeature.APU]: {
       S_OH_ELEC_APU_MASTER: FeatureType.Int,
-      S_OH_ELEC_APU_START: FeatureType.Int,
+      I_OH_ELEC_APU_START_U: FeatureType.Int,
     },
     [AircraftFeature.Packs]: {
       S_OH_PNEUMATIC_PACK_1: FeatureType.Int,
@@ -124,12 +124,12 @@ export default class FenixA320 extends AircraftConfig {
     return value === 1
   }
 
-  battery(b1: number, b2: number, extpwr: number): FeatureState {
-    return (b1 === 1 && b2 === 1) || extpwr === 1
+  battery(b1: number, b2: number, ext_pwr: number): FeatureState {
+    return (b1 === 1 && b2 === 1) || ext_pwr === 1
   }
 
-  APU(mastersw: number, startsw: number): FeatureState {
-    return mastersw === 1 && startsw === 2
+  APU(master_switch: number, avail_status: number): FeatureState {
+    return master_switch === 1 && avail_status === 1
   }
 
   packs(left_switch: number, left_message: number, right_switch: number, right_message: number): FeatureState {

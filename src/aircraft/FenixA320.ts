@@ -133,7 +133,7 @@ export default class FenixA320 extends AircraftConfig {
     return (b1 === 1 && b2 === 1) || ext_pwr === 1
   }
 
-  APU(master_switch: number, avail_status: number): FeatureState {
+  apu(master_switch: number, avail_status: number): FeatureState {
     return master_switch === 1 && avail_status === 1
   }
 

@@ -48,7 +48,6 @@ export default class FlyByWireA380X extends AircraftConfig {
             A32NX_OVHD_ELEC_BAT_1_PB_IS_AUTO: FeatureType.Int,
             A32NX_OVHD_ELEC_BAT_2_PB_IS_AUTO: FeatureType.Int,
             A32NX_OVHD_ELEC_BAT_ESS_PB_IS_AUTO: FeatureType.Int,
-            A32NX_OVHD_ELEC_BAT_APU_PB_IS_AUTO: FeatureType.Int,
         },
         [AircraftFeature.Seatbelts]: {
             XMLVAR_SWITCH_OVHD_INTLT_SEATBELT_Position: FeatureType.Int,
@@ -117,8 +116,9 @@ export default class FlyByWireA380X extends AircraftConfig {
         return mastersw === 1 && startsw === 1;
     }
 
-    battery(bat1: number, bat2: number, ess: number, apu: number): FeatureState {
-        return bat1 === 1 || bat2 === 1 || ess === 1 || apu === 1
+    battery(bat1: number, bat2: number, ess: number): FeatureState {
+        // Since each battery is worth one when on, we can simply add them and check the sum. We need at least two batteries to be on.
+        return bat1 + bat2 + ess >= 2;
     }
 
     emergencyLights(value: number): FeatureState {

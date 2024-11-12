@@ -52,8 +52,6 @@ export default class FlyByWireA380X extends AircraftConfig {
         },
         [AircraftFeature.Seatbelts]: {
             XMLVAR_SWITCH_OVHD_INTLT_SEATBELT_Position: FeatureType.Int,
-            A32NX_FLAPS_HANDLE_INDEX: FeatureType.Int,
-            A32NX_GEAR_HANDLE_POSITION: FeatureType.Int,
         },
         [AircraftFeature.EmergencyLights]: {
             XMLVAR_SWITCH_OVHD_INTLT_EMEREXIT_Position: FeatureType.Int,
@@ -115,7 +113,7 @@ export default class FlyByWireA380X extends AircraftConfig {
         return value === 0 || value === 1;
     }
 
-    APU(mastersw: number, startsw: number): FeatureState {
+    apu(mastersw: number, startsw: number): FeatureState {
         return mastersw === 1 && startsw === 1;
     }
 
@@ -127,12 +125,8 @@ export default class FlyByWireA380X extends AircraftConfig {
         return value !== 2;
     }
 
-    seatbelts(value: number, flapsPosition: number, gearPosition: number): FeatureState {
-        if (value === 1) {
-            return flapsPosition !== 0 || gearPosition === 1;
-        }
-        
-        return value === 0;
+    seatbelts(value: number): FeatureState {
+        return value !== 2;
     }
 
     antiIce(eng1: number, eng2: number, eng3: number, eng4: number, wing: number): FeatureState {

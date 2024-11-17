@@ -24,6 +24,9 @@ export default class Toliss extends AircraftConfig {
     [AircraftFeature.LandingLights]: {
       'AirbusFBW/OHPLightSwitches': FeatureType.IntArray,
     },
+    [AircraftFeature.LogoLights]: {
+      'AirbusFBW/OHPLightSwitches': FeatureType.IntArray,
+    },
     [AircraftFeature.NavigationLights]: {
       'AirbusFBW/OHPLightSwitches': FeatureType.IntArray,
     },
@@ -33,8 +36,27 @@ export default class Toliss extends AircraftConfig {
     [AircraftFeature.TaxiLights]: {
       'AirbusFBW/OHPLightSwitches': FeatureType.IntArray,
     },
+    [AircraftFeature.WingLights]: {
+      'AirbusFBW/OHPLightSwitches': FeatureType.IntArray,
+    },
+    [AircraftFeature.EmergencyLights]: {
+      'AirbusFBW/OHPLightSwitches': FeatureType.IntArray,
+    },
+    [AircraftFeature.Seatbelts]: {
+      'AirbusFBW/OHPLightSwitches': FeatureType.IntArray,
+    },
+    [AircraftFeature.Battery]: {
+      'AirbusFBW/BatOHPArray': FeatureType.IntArray,
+    },
     [AircraftFeature.APU]: {
-        'AirbusFBW/APUAvail': FeatureType.Int,
+      'AirbusFBW/APUAvail': FeatureType.Int,
+    },
+    [AircraftFeature.Packs]: {
+      'AirbusFBW/Pack1Flow': FeatureType.Int,
+      'AirbusFBW/Pack2Flow': FeatureType.Int,
+    },
+    [AircraftFeature.Doors]: {
+      'AirbusFBW/PaxDoorArray': FeatureType.IntArray,
     },
   }
 
@@ -58,8 +80,24 @@ export default class Toliss extends AircraftConfig {
     return value[4] === 2 && value[5] === 2
   }
 
+  logoLights(value: number[]): FeatureState {
+    return value[2] === 1 || value[2] === 2
+  }
+
   navigationLights(value: number[]): FeatureState {
     return value[2] === 1 || value[2] === 2
+  }
+
+  wingLights(value: number[]): FeatureState {
+    return value[1] === 1
+  }
+
+  emergencyLights(value: number[]): FeatureState {
+    return value[10] === 1 || value[10] === 2
+  }
+
+  seatbelts(value: number[]): FeatureState {
+    return value[11] === 1
   }
 
   strobeLights(value: number[]): FeatureState {
@@ -75,7 +113,19 @@ export default class Toliss extends AircraftConfig {
     return value[3] === 1 || value[3] === 2
   }
 
+  battery(value: number[]): FeatureState {
+    return value[0] === 1 && value[1] === 1
+  }
+
   APU(value: number): FeatureState {
     return value === 1
+  }
+
+  packs(p1: number, p2: number): FeatureState {
+    return p1 > 0.5 || p2 > 0.5
+  }
+
+  doors(doors: number[]): FeatureState {
+    return !doors.includes(1)
   }
 }

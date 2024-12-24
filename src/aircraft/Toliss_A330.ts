@@ -34,7 +34,7 @@ export default class Toliss_A330 extends AircraftConfig {
       'AirbusFBW/OHPLightSwitches': FeatureType.IntArray,
     },
     [AircraftFeature.APU]: {
-        'AirbusFBW/APUAvail': FeatureType.Int,
+      'AirbusFBW/APUAvail': FeatureType.Int,
     },
   }
 

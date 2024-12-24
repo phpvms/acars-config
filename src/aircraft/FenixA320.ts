@@ -137,8 +137,16 @@ export default class FenixA320 extends AircraftConfig {
     return master_switch === 1 && avail_status === 1
   }
 
-  packs(left_switch: number, left_message: number, right_switch: number, right_message: number): FeatureState {
-    return (left_switch === 1 && left_message === 0) || (right_switch === 1 && right_message === 0)
+  packs(
+    left_switch: number,
+    left_message: number,
+    right_switch: number,
+    right_message: number,
+  ): FeatureState {
+    return (
+      (left_switch === 1 && left_message === 0) ||
+      (right_switch === 1 && right_message === 0)
+    )
   }
 
   doors(exits_left: number, exits_right: number): FeatureState {

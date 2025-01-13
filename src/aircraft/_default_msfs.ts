@@ -61,6 +61,9 @@ export default class DefaultMsFs extends AircraftConfig {
     [AircraftFeature.TaxiLights]: {
       'A:LIGHT TAXI,bool': FeatureType.Bool,
     },
+    [AircraftFeature.Transponder]: {
+      'A:TRANSPONDER CODE:1,enum': FeatureType.Int,
+    },
     [AircraftFeature.WingLights]: {
       'A:LIGHT RECOGNITION,bool': FeatureType.Bool,
     },
@@ -147,6 +150,10 @@ export default class DefaultMsFs extends AircraftConfig {
    */
   taxiLights(value: boolean): FeatureState {
     return value
+  }
+
+  transponder(value: number): FeatureState {
+    return value > 0
   }
 
   /**

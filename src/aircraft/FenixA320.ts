@@ -90,19 +90,19 @@ export default class FenixA320 extends AircraftConfig {
   }
 
   beaconLights(value: number): FeatureState {
-    return value === 1
+    return value == 1
   }
 
   landingLights(left: number, right: number): FeatureState {
-    return left === 2 && right === 2
+    return left == 2 && right == 2
   }
 
   logoLights(value: number): FeatureState {
-    return value === 1 || value === 2
+    return value == 1 || value == 2
   }
 
   navigationLights(value: number): FeatureState {
-    return value === 1 || value === 2
+    return value == 1 || value === 2
   }
 
   strobeLights(value: number): FeatureState {

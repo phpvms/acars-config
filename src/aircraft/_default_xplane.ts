@@ -60,7 +60,7 @@ export default class DefaultXPlane extends AircraftConfig {
    * @return {boolean|null}
    */
   beaconLights(value: number): FeatureState {
-    return value === 1
+    return value == 1
   }
 
   /**
@@ -69,7 +69,7 @@ export default class DefaultXPlane extends AircraftConfig {
    * @return {boolean|null}
    */
   landingLights(value: number): FeatureState {
-    return value === 1
+    return value == 1
   }
 
   /**
@@ -78,7 +78,7 @@ export default class DefaultXPlane extends AircraftConfig {
    * @return {boolean|null}
    */
   navigationLights(value: number): FeatureState {
-    return value === 1
+    return value == 1
   }
 
   /**
@@ -87,7 +87,7 @@ export default class DefaultXPlane extends AircraftConfig {
    * @return {boolean|null}
    */
   strobeLights(value: number): FeatureState {
-    return value === 1
+    return value == 1
   }
 
   /**
@@ -96,6 +96,6 @@ export default class DefaultXPlane extends AircraftConfig {
    * @return {boolean|null}
    */
   taxiLights(value: number): FeatureState {
-    return value === 1
+    return value == 1
   }
 }

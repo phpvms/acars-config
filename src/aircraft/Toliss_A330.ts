@@ -51,31 +51,31 @@ export default class Toliss_A330 extends AircraftConfig {
   }
 
   beaconLights(value: number[]): FeatureState {
-    return value[0] === 1
+    return value[0] == 1
   }
 
   landingLights(value: number[]): FeatureState {
-    return value[4] === 1
+    return value[4] == 1
   }
 
   navigationLights(value: number[]): FeatureState {
-    return value[2] === 1 || value[2] === 2
+    return value[2] == 1 || value[2] == 2
   }
 
   strobeLights(value: number[]): FeatureState {
     // Ignore if the switch is on AUTO position
-    if (value[7] === 1) {
+    if (value[7] == 1) {
       return null
     }
 
-    return value[7] === 2
+    return value[7] == 2
   }
 
   taxiLights(value: number[]): FeatureState {
-    return value[3] === 1 || value[3] === 2
+    return value[3] == 1 || value[3] == 2
   }
 
   APU(value: number): FeatureState {
-    return value === 1
+    return value == 1
   }
 }

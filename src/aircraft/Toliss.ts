@@ -73,15 +73,15 @@ export default class Toliss extends AircraftConfig {
   }
 
   beaconLights(value: number[]): FeatureState {
-    return value[0] === 1
+    return value[0] == 1
   }
 
   landingLights(value: number[]): FeatureState {
-    return value[4] === 2 && value[5] === 2
+    return value[4] == 2 && value[5] == 2
   }
 
   logoLights(value: number[]): FeatureState {
-    return value[2] === 1 || value[2] === 2
+    return value[2] == 1 || value[2] == 2
   }
 
   navigationLights(value: number[]): FeatureState {

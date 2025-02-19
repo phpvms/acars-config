@@ -3,7 +3,6 @@ import {
   AircraftConfig,
   FeatureAddresses,
   FeatureState,
-  FlapNames,
   Meta,
 } from '../interface/aircraft'
 import GetDefaultFlaps from './_default_flaps'
@@ -49,26 +48,26 @@ export default class IFlyB38M_MSFS extends AircraftConfig {
   }
 
   beaconLights(value: number): FeatureState {
-    return value === 10
+    return value == 10
   }
 
   landingLights(v1: number, v2: number): FeatureState {
-    return v1 === 20 && v2 === 20
+    return v1 == 20 && v2 == 20
   }
 
   navigationLights(value: number): FeatureState {
-    return value === 0 || value === 20
+    return value == 0 || value == 20
   }
 
   strobeLights(value: number): FeatureState {
-    return value === 0
+    return value == 0
   }
 
   taxiLights(value: number): FeatureState {
-    return value === 10
+    return value == 10
   }
 
   wingLights(value: number): FeatureState {
-    return value === 10
+    return value == 10
   }
 }

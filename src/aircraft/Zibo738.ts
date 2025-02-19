@@ -39,10 +39,10 @@ export default class Zibo738 extends AircraftConfig {
   }
 
   logoLights(value: number): FeatureState {
-    return value === 1
+    return value == 1
   }
 
   taxiLights(value: number): FeatureState {
-    return value === 2
+    return value == 2
   }
 }

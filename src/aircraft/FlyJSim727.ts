@@ -57,7 +57,7 @@ export default class FlyJSim727 extends AircraftConfig {
   }
 
   beaconLights(value: number): FeatureState {
-    return value === 1
+    return value == 1
   }
 
   landingLights(
@@ -66,7 +66,7 @@ export default class FlyJSim727 extends AircraftConfig {
     outb_l: number,
     outb_r: number,
   ): FeatureState {
-    return inbd_l === 1 && inbd_r === 1 && outb_l === 1 && outb_r === 1
+    return inbd_l == 1 && inbd_r == 1 && outb_l == 1 && outb_r === 1
   }
 
   logoLights(value: number): FeatureState {

@@ -7,18 +7,22 @@ import {
   Meta,
 } from '../interface/aircraft'
 
-export default class FlyByWireA320N extends AircraftConfig {
+export default class TBM930_MSFS24 extends AircraftConfig {
   meta: Meta = {
-    id: 'tbm_930',
-    name: 'TBM 930',
-    sim: AircraftConfigSimType.MsFs,
+    id: 'tbm_930_2024',
+    name: 'TBM 930 2024',
+    sim: AircraftConfigSimType.MsFs24,
     enabled: true,
     priority: 2,
   }
 
   features: FeatureAddresses = {
-    [AircraftFeature.BeaconLights]: {
-      'A:LIGHT LOGO,bool': FeatureType.Int,
+    [AircraftFeature.BeaconLights]: false,
+    [AircraftFeature.TaxiLights]: {
+      'A:LIGHT TAXI,bool': FeatureType.Int,
+    },
+    [AircraftFeature.LandingLights]: {
+      'A:LIGHT LANDING,bool': FeatureType.Int,
     },
     [AircraftFeature.LogoLights]: false,
   }
@@ -34,6 +38,14 @@ export default class FlyByWireA320N extends AircraftConfig {
   }
 
   beaconLights(value: number): FeatureState {
+    return value == 1
+  }
+
+  landingLights(value: number): FeatureState {
+    return value == 1
+  }
+
+  taxiLights(value: number): FeatureState {
     return value == 1
   }
 }

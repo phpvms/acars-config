@@ -65,3 +65,4 @@ TEST-results.xml
 package.g.props
 *v8.log
 /lib/
+packages.lock.json

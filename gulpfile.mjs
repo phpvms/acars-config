@@ -1,35 +1,106 @@
 import dotconfig from '@dotenvx/dotenvx'
-import { deleteAsync } from 'del'
+import { deleteSync as del } from 'del'
 import { dest, series, src, watch } from 'gulp'
 import eslint from 'gulp-eslint-new'
 import ts from 'gulp-typescript'
 import prettier from 'gulp-prettier'
+import zip from 'gulp-zip'
+import tap from 'gulp-tap'
 import minify from 'gulp-minify'
+import fs from 'fs'
 
 dotconfig.config()
 
-// console.log(process.env)
-
 /**
  * Different paths we use...
+ * Don't modify this directly, use the environment variables
  */
 const paths = {
-  src: './src',
-  dist: './dist',
-
   /**
    * ACARS scripts/config directory. This, by default, points to the home directory
    * But you can change this to point to a local directory
    */
   acars: process.env.ACARS_SCRIPTS_PATH,
+
+  src: './src',
+  out: './dist',
+  export: './dist',
 }
 
 /**
+ * Build the project, copy the appropriate files over
+ * @public
+ */
+export const build = series(
+  buildTsTask,
+  copyPackageJsonTask,
+)
+
+/**
+ * Clean the build directories
+ * @public
+ */
+export const clean = cleanTask
+
+/**
+ * Build a distribution zip file, which can be easily uploaded
+ * @public
+ */
+export const dist = series(
+  clean,
+  build,
+  buildZipTask,
+)
+
+/**
+ * Watch the files and distribute them to the
+ * documents/vmsacars/data/<profile>/config directory
+ * @public
+ */
+export const local = localBuildTask
+
+/**
+ * The build steps that run from the csproj
+ * Force the output path to go into our build directory
+ * @internal
+ */
+export const csbuild = series(
+  async () => {
+    paths.acars = '../Content/config/default'
+  },
+  build,
+  copyFilesToAcarsPathTask,
+)
+
+
+/**
+ * The default action
+ * @default
+ * @public
+ */
+export default build
+
+/**
+ *
+ *
+ *
+ */
+
+/**
  * Configure the ts transpilation
+ *
  */
 const tsProject = ts.createProject('tsconfig.json')
 
-function build_ts() {
+/**
+ * Build the Typescript files
+ */
+function buildTsTask() {
+  // ensure the dist directory exists
+  if (!fs.existsSync(paths.out)) {
+    fs.mkdirSync(paths.out)
+  }
+
   let pipeline = tsProject.src()
     .pipe(eslint())
     .pipe(eslint.failAfterError())
@@ -43,129 +114,71 @@ function build_ts() {
     mangle: false,
   }))*/
 
-  pipeline = pipeline.pipe(dest(paths.dist))
+  pipeline = pipeline.pipe(dest(paths.out))
 
   return pipeline
 }
 
 /**
+ * This copies the package.json file to the output directory
  *
- * @returns {*}
  */
-function copy_package() {
+function copyPackageJsonTask() {
   return src([paths.src + '/package.json'])
-    .pipe(dest(paths.dist))
+    .pipe(dest(paths.out))
 }
-
-/**
- * Build the project, copy the appropriate files over
- */
-export const build = series(build_ts, copy_package)
 
 /**
  * Copy the files from dist into ACARS_SCRIPTS_PATH
- *
  */
-export function copy() {
+function copyFilesToAcarsPathTask() {
   console.log(`Copying files to ${paths.acars}`)
 
-  return src(['./**/*', '!node_modules/**/*'], { 'cwd': paths.dist })
+  return src(
+    [
+      './**/*',
+      '!node_modules/**/*',
+    ],
+    { 'cwd': paths.out },
+  )
     .pipe(dest(paths.acars))
 }
 
-/**
- * The build steps that run from the csproj
- * Force the output path to go into our build directory
- */
-export const csbuild = series(
-  async () => {
-    paths.acars = '../Content/config/default'
-  },
-  build,
-  copy,
-)
 
 /**
- * TODO: Build the distribution zip file
+ * Build the zip that should get uploaded
  */
-function build_dist() {
+function buildZipTask() {
+  console.log('Writing zip named ' + process.env.ACARS_DIST_ZIP)
+  if (!fs.existsSync(paths.export)) {
+    fs.mkdirSync(paths.export)
+  }
 
+  return src(paths.out + '/**/*', { base: paths.out })
+    /*.pipe(tap(function (file) {
+      console.log('file: ' + file.path)
+    }))*/
+    .pipe(zip(process.env.ACARS_DIST_ZIP, { buffer: true}))
+    .pipe(dest(paths.export))
 }
 
 /**
- * Build a distribution zip file, which can be easily uploaded
+ * Watch the files and then build and copy them to the documents directory
  */
-export const dist = series(
-  build,
-  build_dist,
-)
-
-/**
- * Watch the src folder for updates, compile them and then copy them
- * to the config directory. ACARS should auto-reload
- */
-export async function testing() {
-  watch('src/', {
-    ignoreInitial: false,
-    delay: 500,
-  }, series(build, copy))
+function localBuildTask() {
+  return watch(
+    paths.src,
+    { ignoreInitial: false },
+    series(build, copyFilesToAcarsPathTask)
+  )
 }
-
-/**
- * Watch the files and distribute them out
- */
-export function watchFiles() {
-  watch('src/', build)
-}
-
-export { watchFiles as watch }
 
 /**
  * Clean up the /dest directory
  */
-export async function clean() {
-  try {
-    await deleteAsync([paths.dist])
-    await Promise.resolve()
-  } catch (e) {
-    console.log(e)
-  }
+async function cleanTask() {
+  return del([
+    paths.out,
+    paths.export + '/' + process.env.ACARS_DIST_ZIP
+  ])
 }
-
-/**
- * The default action
- */
-export default build
-
-/**
- * Get the default profile name
- *
- * @returns {*}
- */
-/*async function getDefaultProfilePath() {
-    if (profileName === null || profileName === '') {
-        const f = await fs.promises.readFile(`${paths.acars}/settings.json`)
-        const settings = JSON.parse(f)
-        profileName = settings.Profile
-        console.log('No profile name set, looked in settings and used ' + profileName)
-    }
-
-    // Read all of the profiles
-    let dirent
-    const dir = await fs.promises.opendir(`${paths.acars}/profiles`)
-    for await (const dirent of dir) {
-        const pf = await fs.promises.readFile(`${dirent.parentPath}/${dirent.name}`)
-        if (pf === null) {
-            continue
-        }
-
-        const profile = JSON.parse(pf)
-        console.log(profile)
-
-        if (profile.Name === profileName) {
-            return `${paths.acars}/data/${profile.Domain}/config/`
-        }
-    }
-
-    return null
-}*/

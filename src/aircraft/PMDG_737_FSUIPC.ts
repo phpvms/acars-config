@@ -18,20 +18,20 @@ export default class PMDG_737_FSUIPC extends AircraftConfig {
 
   features: FeatureAddresses = {
     [AircraftFeature.BeaconLights]: {
-      '0x6501': FeatureType.Int,
+      '0x6501': FeatureType.Byte,
     },
     [AircraftFeature.LandingLights]: {
-      '0x64F6': FeatureType.Int,
+      '0x64F6': FeatureType.Byte,
     },
     [AircraftFeature.LogoLights]: false,
     [AircraftFeature.NavigationLights]: {
-      '0x6500': FeatureType.Int,
+      '0x6500': FeatureType.Byte,
     },
     [AircraftFeature.StrobeLights]: {
-      '0x6500': FeatureType.Int,
+      '0x6500': FeatureType.Byte,
     },
     [AircraftFeature.TaxiLights]: {
-      '0x64FA': FeatureType.Int,
+      '0x64FA': FeatureType.Byte,
     },
     [AircraftFeature.WingLights]: false,
   }

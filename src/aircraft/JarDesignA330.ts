@@ -48,22 +48,22 @@ export default class JarDesignA330 extends AircraftConfig {
   }
 
   beaconLights(value: number): FeatureState {
-    return value === 1
+    return value == 1
   }
 
   landingLights(value: number): FeatureState {
-    return value === 1
+    return value == 1
   }
 
   navigationLights(value: number): FeatureState {
-    return value === 1 || value === 2
+    return value == 1 || value == 2
   }
 
   strobeLights(value: number): FeatureState {
-    return value === 2
+    return value == 2
   }
 
   taxiLights(value: number): FeatureState {
-    return value === 1 || value === 2
+    return value == 1 || value == 2
   }
 }

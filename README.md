@@ -59,27 +59,54 @@ npm run build
 
 This doesn't copy it anywhere, just runs a compile and build
 
-### Create a distribution file
-
-This creates a `dist.zip` (you can rename it in the `.env` file) after running a compile.
-You can modify the `gulpfile.mjs` to include other files in the `dist/` directory - this
-directory is simply zipped and placed into the `dist/` directory. You can then configure
-Github Actions to then upload this zip somewhere for ACARS to download.
-
 #### Automatically build and copy to ACARS
 
-This will setup a watch, and then automatically transpile and then copy the contents of the
-`dist` folder into the `ACARS_PROFILE_PATH` directory that's defined in the `.env` file.
+This will setup a watch, and then automatically transpile and then copy the
+contents of the
+`dist` folder into the `ACARS_PROFILE_PATH` directory that's defined in the
+`.env` file.
 
 ```shell
 npm run dev
 ```
 
-It's recommended to run this *after* you've started ACARS, or, in the ACARS configuration, disable the
-remote-download of configs:
+### Create a distribution file
 
-> TODO: Guide on how to disable remote config downloading
+Running:
 
+```shell
+npm run dist
+```
+
+Creates a `dist.zip` (you can rename it in the `.env` file) after running a
+compile. You can modify the `gulpfile.mjs` to include other files - by default,
+anything in the `dist` directory gets packaged. You can then configure
+Github Actions to then upload this zip somewhere for ACARS to download.
+
+### Disable Downloading Latest Defaults
+
+Sometimes, it's just useful to disable downloading of the latest defaults, and
+just edit the scripts that are included to see how they work. To do that, create
+a file in your `Documents/vmsacars` directory, called `appsettings.local.json`,
+and place the following:
+
+```json filename="appsettings.local.json"
+{
+  "Config": {
+    "App": {
+      "DownloadConfig": false
+    }
+  },
+  "Serilog": {
+    "MinimumLevel": {
+      "Default": "Verbose"
+    }
+  }
+}
+```
+
+You can also adjust the log level to "Information", "Debug" or "Verbose"
+("Debug" is recommended)
 
 ---
 
@@ -89,8 +116,8 @@ There are several core files/interfaces that are included:
 
 ### `src/global.d.ts`
 
-This describes the globally available functions, including the logging methods available through `console` and
-`Acars`.
+This describes the globally available functions, including the logging methods
+available through `console` and `Acars`.
 
 ### `src/types.d.ts`
 
@@ -100,13 +127,15 @@ This contains all of the base types:
 - `Telemetry` - telemetry information that's come out of the simulator
 - `User` - information about the current user
 
-It also includes other detailed type information, for example `Length`, so you can retrieve that type of information.
+It also includes other detailed type information, for example `Length`, so you
+can retrieve that type of information.
 
 ---
 
 ## Aircraft Configuration:
 
-Aircraft rules are required to inherit the `AircraftConfig` abstract class. An example class would look like:
+Aircraft rules are required to inherit the `AircraftConfig` abstract class. An
+example class would look like:
 
 ```typescript
 import { AircraftConfigSimType, AircraftFeature, FeatureType } from '../defs'
@@ -155,10 +184,15 @@ The configuration is a class which has a few different components.
         - `AircraftConfigSimType.XPlane`
         - `AircraftConfigSimType.Fsuipc`
         - `AircraftConfigSimType.MsFs`
+      - `AircraftConfigSimType.MsFs20`
+      - `AircraftConfigSimType.MsFs24`
     - `enabled`
-    - `priority` - from 1 (lowest) to 10 (highest). If there are multiple rules which match this, then which one takes
-      priority. All the built-in rules are at a priority 1, and aircraft specifics rules are priority 2. I recommend
-      using a priority of 3 or higher. More on this below
+      - `priority` - from 1 (lowest) to 10 (highest).
+        - If there are multiple rules that match this, then which one takes
+          priority.
+        - All the built-in rules are at a priority 1
+        - Aircraft specifics rules are priority 2.
+        - I recommend using a priority of 3 or higher. More on this below
 2. `features` - this is the type `FeatureAddresses` - see `defs.ts` for the definitions
     - MSFS - the lookups you enter are LVars
     - X-Plane - the looks ups are via datarefs
@@ -174,8 +208,18 @@ The configuration is a class which has a few different components.
 5. Methods for the different features (see below)
     - The maps - a group of datarefs or offsets which constitute that feature being "on" or "enabled"
 
-In the above example, for the Fenix A320, the landing lights are controlled by two datarefs, both of which the
-values need to be 1 or 2 for the landing lights to be considered "on".
+In the above example, for the Fenix A320, the landing lights are controlled by
+two datarefs, both of which the values need to be 1 or 2 for the landing lights
+to be considered "on".
+
+#### Targeting MSFS
+
+There are 3 possible values for targetting MSFS in the configs:
+
+- `AircraftConfigSimType.MsFs` - This will apply the configuration to both 2020
+  and 2024
+- `AircraftConfigSimType.MsFs20` - This will be for 2020 ONLY
+- `AircraftConfigSimType.MsFs24` - This will be for 2024 ONLY
 
 ### Features
 
@@ -185,7 +229,7 @@ Features are essentially stored in a dictionary of dictionaries, of type `Featur
 features: FeatureAddresses = {
     // Aircraft feature
     [AircraftFeature.BeaconLights]: {
-        'lvar name': FeatureType.Int,
+        'Lookup Address': FeatureType.Int,
     },
 }
 ```
@@ -194,6 +238,7 @@ In the above example:
 
 - `AircraftFeature.BeaconLights` is an enum value of the feature type. It's put in `[]` because it's a variable name
 - It's set to an object, where the keys are the lookup address or lvar.
+- `Lookup Address` is where to find this data:
 - `FeatureType.Int` - is the type of value that's returned.
 
 The different features available are:
@@ -210,6 +255,13 @@ The different features available are:
 The different features contain how to look up the value, and the type. You can have multiple variables to be
 read and looked at for a feature. Each feature then corresponds to a method which is called to return if
 that feature is on or off. That method will have the equivalent number of arguments for each data reference
+
+### Lookup Locations
+
+- For FSUIPC, the lookup location is the offset
+- For X-Plane, it's the DRef
+- For MSFS, it's either the LVar name, or a Simvar:
+    - Simvar has to be prefixed with `A:`, e.g, `A:LIGHT LOGO,bool`, and then the type
 
 Example:
 
@@ -232,6 +284,11 @@ export default class Example extends AircraftConfig {
     }
 }
 ```
+
+### Equality Checking
+
+I recommend using `==` instead of `===` for equality comparisons, since the types coming from the sim
+may not always match up or be casted properly (e.g, `1` being returned instead of `true`)
 
 ### Ignoring Features
 
@@ -358,7 +415,7 @@ export default class BatteryOnDuringPushback implements Rule {
             // First check that the battery is declared as part of the aircraft's feature set
         if (AircraftFeature.Battery in data.features
             // And then check its value to see if it's on or off
-            && data.features[AircraftFeature.Battery] === false) {
+            && data.features[AircraftFeature.Battery] == false) {
             return ['The battery must be on during pushback']
         }
     }

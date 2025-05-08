@@ -52,12 +52,12 @@ export default class FlightFactorA320 extends AircraftConfig {
   }
 
   beaconLights(value: number): FeatureState {
-    return value === 1
+    return value == 1
   }
 
   landingLights(left: number, right: number): FeatureState {
     // Dataref returns 0.5 or 1 when enabled, 0.5 is landing lights extended but off
-    return Math.floor(left * 10) === 10 && Math.floor(right * 10) === 10
+    return Math.floor(left * 10) == 10 && Math.floor(right * 10) == 10
   }
 
   navigationLights(value: number): FeatureState {
@@ -71,7 +71,7 @@ export default class FlightFactorA320 extends AircraftConfig {
       return null
     }
 
-    return value === 1
+    return value == 1
   }
 
   taxiLights(value: number): FeatureState {
@@ -80,6 +80,6 @@ export default class FlightFactorA320 extends AircraftConfig {
   }
 
   wingLights(value: number): FeatureState {
-    return value === 1
+    return value == 1
   }
 }

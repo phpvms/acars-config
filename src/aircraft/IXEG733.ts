@@ -57,7 +57,7 @@ export default class IXEG733 extends AircraftConfig {
   }
 
   beaconLights(value: number): FeatureState {
-    return value === 1
+    return value == 1
   }
 
   landingLights(

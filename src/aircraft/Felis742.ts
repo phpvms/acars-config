@@ -61,11 +61,11 @@ export default class Felis742 extends AircraftConfig {
     outb_l: number,
     outb_r: number,
   ): FeatureState {
-    return inbd_l === 1 && inbd_r === 1 && outb_l === 1 && outb_r === 1
+    return inbd_l == 1 && inbd_r == 1 && outb_l == 1 && outb_r == 1
   }
 
   logoLights(value: number): FeatureState {
-    return value === 1
+    return value == 1
   }
 
   navigationLights(value: number): FeatureState {
@@ -77,7 +77,7 @@ export default class Felis742 extends AircraftConfig {
   }
 
   taxiLights(turnoff_l: number, turnoff_r: number): FeatureState {
-    return turnoff_l === 1 && turnoff_r === 1
+    return turnoff_l == 1 && turnoff_r == 1
   }
 
   wingLights(value: number): FeatureState {

@@ -62,7 +62,7 @@ export default class DefaultFsuipc extends AircraftConfig {
    * @return {boolean|null}
    */
   beaconLights(value: number): FeatureState {
-    return (2 & value) === 2
+    return (2 & value) == 2
   }
 
   /**
@@ -71,7 +71,7 @@ export default class DefaultFsuipc extends AircraftConfig {
    * @return {boolean|null}
    */
   landingLights(value: number): FeatureState {
-    return (4 & value) === 4
+    return (4 & value) == 4
   }
 
   /**
@@ -89,7 +89,7 @@ export default class DefaultFsuipc extends AircraftConfig {
    * @return {boolean|null}
    */
   navigationLights(value: number): FeatureState {
-    return (1 & value) === 1
+    return (1 & value) == 1
   }
 
   /**
@@ -98,7 +98,7 @@ export default class DefaultFsuipc extends AircraftConfig {
    * @return {boolean|null}
    */
   strobeLights(value: number): FeatureState {
-    return (16 & value) === 16
+    return (16 & value) == 16
   }
 
   /**
@@ -107,7 +107,7 @@ export default class DefaultFsuipc extends AircraftConfig {
    * @return {boolean|null}
    */
   taxiLights(value: number): FeatureState {
-    return (8 & value) === 8
+    return (8 & value) == 8
   }
 
   /**

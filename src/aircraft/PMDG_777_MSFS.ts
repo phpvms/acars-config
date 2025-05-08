@@ -56,30 +56,30 @@ export default class PMDG_777_MSFS extends AircraftConfig {
   }
 
   beaconLights(value: number): FeatureState {
-    return value === 100
+    return value == 100
   }
 
   landingLights(s1: number, s2: number, s3: number): FeatureState {
-    return s1 === 100 && s2 === 100 && s3 === 100
+    return s1 == 100 && s2 == 100 && s3 == 100
   }
 
   logoLights(value: number): FeatureState {
-    return value === 100
+    return value == 100
   }
 
   navigationLights(value: number): FeatureState {
-    return value === 100
+    return value == 100
   }
 
   strobeLights(value: number): FeatureState {
-    return value === 100
+    return value == 100
   }
 
   taxiLights(value: number): FeatureState {
-    return value === 100
+    return value == 100
   }
 
   wingLights(value: number): FeatureState {
-    return value === 100
+    return value == 100
   }
 }

@@ -62,11 +62,11 @@ export default class IniBuildsA3N extends AircraftConfig {
   }
 
   beaconLights(value: number[]): FeatureState {
-    return value[4] === 1
+    return value[4] == 1
   }
 
   landingLights(value: number[]): FeatureState {
-    return value[7] === 1 && value[8] === 1
+    return value[7] == 1 && value[8] === 1
   }
 
   navigationLights(value: number[]): FeatureState {

@@ -55,15 +55,15 @@ export default class RotateMD80 extends AircraftConfig {
   }
 
   beaconLights(value: number): FeatureState {
-    return value === 1
+    return value == 1
   }
 
   landingLights(v1: number, v2: number): FeatureState {
-    return v1 === 2 && v2 === 2
+    return v1 == 2 && v2 == 2
   }
 
   logoLights(value: number): FeatureState {
-    return value === 1
+    return value == 1
   }
 
   navigationLights(value: number): FeatureState {

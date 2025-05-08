@@ -56,27 +56,27 @@ export default class RotateMD11 extends AircraftConfig {
   }
 
   beaconLights(value: number): FeatureState {
-    return value === 1
+    return value == 1
   }
 
   landingLights(v1: number, v2: number) {
-    return v1 === 2 && v2 === 2
+    return v1 == 2 && v2 == 2
   }
 
   logoLights(value: number): FeatureState {
-    return value === 1
+    return value == 1
   }
 
   navigationLights(value: number): FeatureState {
-    return value === 1
+    return value == 1
   }
 
   strobeLights(value: number): FeatureState {
-    return value === 1
+    return value == 1
   }
 
   taxiLights(value: number): FeatureState {
-    return value === 1 || value === 2
+    return value == 1 || value == 2
   }
 
   wingLights(v1: number, v2: number) {

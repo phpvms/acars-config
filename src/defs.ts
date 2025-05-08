@@ -1,3 +1,4 @@
+/** The different gate types */
 export enum GateType {
   None = 0,
   Ramp_GA = 1,
@@ -13,32 +14,14 @@ export enum GateType {
   Dock_GA = 11,
   Fuel = 12,
   Vehicles = 13,
+  /** Added for MSFS */
   Ramp_GA_Extra = 14,
+  /** Added for MSFS */
   Gate_Extra = 15,
+  /** Added for MSFS */
   Jetway = 16,
 }
-export enum AircraftType {
-  Airliner = 0,
-  Cargo = 1,
-  GeneralAviation = 2,
-  Helicopter = 3,
-}
-export enum EngineType {
-  Piston = 0,
-  Jet = 1,
-  None = 2,
-  Helo = 3,
-  Rocket = 4,
-  Turboprop = 5,
-}
-export enum SimType {
-  None = 0,
-  Prepar3D = 1,
-  Xplane = 2,
-  FlightSimulator = 3,
-  Fsx = 4,
-  Fs9 = 5,
-}
+/** The runway/taxiway surface */
 export enum Surface {
   Concrete = 0,
   Grass = 1,
@@ -66,6 +49,34 @@ export enum Surface {
   Tarmac = 23,
   Unknown = 99999,
 }
+export enum AircraftType {
+  Airliner = 0,
+  Cargo = 1,
+  GeneralAviation = 2,
+  Helicopter = 3,
+}
+/** The type of engine */
+export enum EngineType {
+  Piston = 0,
+  Jet = 1,
+  None = 2,
+  Helo = 3,
+  Rocket = 4,
+  Turboprop = 5,
+}
+export enum SimType {
+  None = 0,
+  Prepar3D = 1,
+  Xplane = 2,
+  /** You can use this for ALL FlightSimulator (2020, 2024, and beyond) */
+  FlightSimulator = 3,
+  Fsx = 4,
+  Fs9 = 5,
+  /** Specifically only for MSFS 2020 */
+  FlightSimulator2020 = 6,
+  /** Specifically only for MSFS 2024 */
+  FlightSimulator2024 = 7,
+}
 export enum FareType {
   /** Primarily a passenger flight */
   Passenger = 0,
@@ -85,7 +96,11 @@ export enum FlightPlanType {
   /** Flightplan was create using Flight Simulator */
   MsFs = 4,
 }
-/** The PIREP states - these match the phase */
+/**
+ * The PIREP states - these match the phase
+ *             https://skybrary.aero/articles/pilot-report-pirep
+ *             https://www.icao.int/safety/airnavigation/AIG/Documents/ADREP%20Taxonomy/ECCAIRS%20Aviation%201.3.0.12%20(VL%20for%20AttrID%20%20391%20-%20Event%20Phases).pdf
+ */
 export enum PirepState {
   /** Internal only. Rules are not parsed in this state */
   NotRunning = 0,
@@ -95,13 +110,21 @@ export enum PirepState {
   Boarding = 2,
   /** When parking brake is released. Pushback may get skipped over and go directly into taxi out */
   Pushback = 3,
+  /** The aircraft is taxiing out to the runway */
   TaxiOut = 4,
+  /** The aircraft is taking off */
   Takeoff = 5,
+  /** The aircraft is enroute to its destination */
   Enroute = 6,
+  /** The aircraft is on approach to the destination airport */
   Approach = 7,
+  /** The aircraft is on final approach to the runway */
   Final = 8,
+  /** The aircraft has landed */
   Landed = 9,
+  /** The aircraft is taxiing in to the gate */
   TaxiIn = 10,
+  /** The aircraft is on block at the gate */
   Arrived = 11,
   /** Internal only. Rules are not parsed in this state */
   Cancelled = 12,
@@ -109,8 +132,23 @@ export enum PirepState {
   Filed = 13,
   /** Internal only. Rules are not parsed in this state */
   Paused = 14,
+  /** The aircraft is on block at the gate */
   OnBlock = 15,
+  /** The aircraft is climbing to its cruise altitude */
+  InitialClimb = 16,
 }
+/** The simtype for the rule file */
+export enum AircraftConfigSimType {
+  /** This configuration can be for either MSFS 2020 or 2024 */
+  MsFs = 0,
+  XPlane = 1,
+  Fsuipc = 2,
+  /** Configuration for MSFS 2020 *only* */
+  MsFs20 = 3,
+  /** Configuration for MSFS 2024 *only* */
+  MsFs24 = 4,
+}
+/** Features of an aircraft. They are binary on or off */
 export enum AircraftFeature {
   BeaconLights = 0,
   LandingLights = 1,
@@ -127,12 +165,12 @@ export enum AircraftFeature {
   AntiIce = 12,
   Battery = 13,
   Packs = 14,
-}
-/** The simtype for the rule file */
-export enum AircraftConfigSimType {
-  MsFs = 0,
-  XPlane = 1,
-  Fsuipc = 2,
+  ParkingBrakes = 15,
+  Engines = 16,
+  Transponder = 17,
+  LandingGear = 18,
+  Autopilot = 19,
+  ExternalPower = 20,
 }
 /** The type of the dataref */
 export enum FeatureType {
@@ -144,4 +182,6 @@ export enum FeatureType {
   IntArray = 3,
   /** An array of numbers */
   NumberArray = 4,
+  /** A byte */
+  Byte = 5,
 }

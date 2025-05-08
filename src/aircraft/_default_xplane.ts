@@ -21,25 +21,19 @@ export default class DefaultXPlane extends AircraftConfig {
 
   features: FeatureAddresses = {
     [AircraftFeature.BeaconLights]: {
-      'sim/cockpit2/switches/beacon_on': FeatureType.Bool,
+      'sim/cockpit2/switches/beacon_on': FeatureType.Int,
     },
     [AircraftFeature.LandingLights]: {
-      'sim/cockpit2/switches/landing_lights_on': FeatureType.Bool,
-    },
-    [AircraftFeature.LogoLights]: {
-      'sim/cockpit2/switches/logo_lights_on': FeatureType.Bool,
+      'sim/cockpit2/switches/landing_lights_on': FeatureType.Int,
     },
     [AircraftFeature.NavigationLights]: {
-      'sim/cockpit2/switches/navigation_lights_on': FeatureType.Bool,
+      'sim/cockpit2/switches/navigation_lights_on': FeatureType.Int,
     },
     [AircraftFeature.StrobeLights]: {
-      'sim/cockpit2/switches/strobe_lights_on': FeatureType.Bool,
+      'sim/cockpit2/switches/strobe_lights_on': FeatureType.Int,
     },
     [AircraftFeature.TaxiLights]: {
-      'sim/cockpit2/switches/taxi_light_on': FeatureType.Bool,
-    },
-    [AircraftFeature.WingLights]: {
-      'sim/cockpit2/switches/wing_lights_on': FeatureType.Bool,
+      'sim/cockpit2/switches/taxi_light_on': FeatureType.Int,
     },
   }
 
@@ -66,7 +60,7 @@ export default class DefaultXPlane extends AircraftConfig {
    * @return {boolean|null}
    */
   beaconLights(value: number): FeatureState {
-    return value === 1
+    return value == 1
   }
 
   /**
@@ -75,7 +69,7 @@ export default class DefaultXPlane extends AircraftConfig {
    * @return {boolean|null}
    */
   landingLights(value: number): FeatureState {
-    return value === 1
+    return value == 1
   }
 
   /**
@@ -84,7 +78,7 @@ export default class DefaultXPlane extends AircraftConfig {
    * @return {boolean|null}
    */
   navigationLights(value: number): FeatureState {
-    return value === 1
+    return value == 1
   }
 
   /**
@@ -93,7 +87,7 @@ export default class DefaultXPlane extends AircraftConfig {
    * @return {boolean|null}
    */
   strobeLights(value: number): FeatureState {
-    return value === 1
+    return value == 1
   }
 
   /**
@@ -102,24 +96,6 @@ export default class DefaultXPlane extends AircraftConfig {
    * @return {boolean|null}
    */
   taxiLights(value: number): FeatureState {
-    return value === 1
-  }
-
-  /**
-   * Parse the value that's returned by the sim
-   * @param value
-   * @return {boolean|null}
-   */
-  wingLights(value: number): FeatureState {
-    return value === 1
-  }
-
-  /*s*
-   * Parse the value that's returned by the sim
-   * @param value
-   * @return {boolean|null}
-   */
-  logoLights(value: number): FeatureState {
-    return value === 1
+    return value == 1
   }
 }

@@ -54,30 +54,30 @@ export default class FlightFactor757 extends AircraftConfig {
   }
 
   beaconLights(value: number): FeatureState {
-    return value === 1
+    return value == 1
   }
 
   landingLights(value: number[]): FeatureState {
-    return value[0] === 1 && value[1] === 1
+    return value[0] == 1 && value[1] == 1
   }
 
   logoLights(value: number[]): FeatureState {
-    return value[3] === 1
+    return value[3] == 1
   }
 
   navigationLights(value: number): FeatureState {
-    return value === 1
+    return value == 1
   }
 
   strobeLights(value: number): FeatureState {
-    return value === 1
+    return value == 1
   }
 
   taxiLights(value: number[]): FeatureState {
-    return value[2] === 1
+    return value[2] == 1
   }
 
   wingLights(value: number[]): FeatureState {
-    return value[0] === 1
+    return value[0] == 1
   }
 }

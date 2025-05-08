@@ -50,22 +50,22 @@ export default class PMDG_747_FSUIPC extends AircraftConfig {
   }
 
   beaconLights(value: number): FeatureState {
-    return value === 0 || value === 2
+    return value == 0 || value == 2
   }
 
   landingLights(value: number): FeatureState {
-    return value === 1
+    return value == 1
   }
 
   navigationLights(value: number): FeatureState {
-    return value === 0 || value === 2
+    return value == 0 || value == 2
   }
 
   strobeLights(value: number): FeatureState {
-    return value === 1
+    return value == 1
   }
 
   taxiLights(value: number): FeatureState {
-    return value === 1
+    return value == 1
   }
 }

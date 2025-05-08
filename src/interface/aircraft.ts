@@ -95,13 +95,18 @@ export abstract class AircraftConfig {
   abstract match(title: string, icao: string, config_path: string): boolean
 
   /**
-   * Get the right text for the flaps. Default implementation
    *
-   * @param {int} value
-   * @returns {string}
+   * @param args
    */
-  flaps(value: number): string | number {
-    return this.flapNames[value] || value
+  apu(...args: any): FeatureState {
+    return null
+  }
+
+  /**
+   *
+   */
+  autopilot(...args: any): FeatureState {
+    return null
   }
 
   /**
@@ -112,15 +117,104 @@ export abstract class AircraftConfig {
     return null
   }
 
+  /**
+   *
+   * @param args
+   */
+  antiIce(...args: any): FeatureState {
+    return null
+  }
+
+  /**
+   *
+   * @param args
+   */
+  battery(...args: any): FeatureState {
+    return null
+  }
+
+  /**
+   *
+   * @param args
+   */
+  doors(...args: any): FeatureState {
+    return null
+  }
+
+  emergencyLights(...args: any): FeatureState {
+    return null
+  }
+
+  /**
+   * Not Implemented
+   */
+  engines(...args: any): FeatureState {
+    return null
+  }
+
+  /**
+   *
+   */
+  externalPower(...args: any): FeatureState {
+    return null
+  }
+
+  /**
+   * Get the right text for the flaps. Default implementation
+   *
+   * @param {int} value
+   * @returns {string}
+   */
+  flaps(value: number): string | number {
+    return this.flapNames[value] || value
+  }
+
+  /**
+   * Not Implemented
+   */
+  landingGear(...args: any): FeatureState {
+    return null
+  }
+
+  /**
+   *
+   * @param args
+   */
   landingLights(...args: any): FeatureState {
     return null
   }
 
+  /**
+   *
+   * @param args
+   */
   logoLights(...args: any): FeatureState {
     return null
   }
 
+  /**
+   *
+   * @param args
+   */
   navigationLights(...args: any): FeatureState {
+    return null
+  }
+
+  /**
+   *
+   */
+  packs(...args: any): FeatureState {
+    return null
+  }
+
+  /**
+   * Not Implemented
+   */
+  parkingBrakes(...args: any): FeatureState {
+    return null
+  }
+
+  seatbelts(...args: any): FeatureState {
     return null
   }
 
@@ -132,35 +226,20 @@ export abstract class AircraftConfig {
     return null
   }
 
+  /**
+   * Not Implemented
+   *
+   * @param args Variable arguments according to the
+   */
+  transponder(...args: any): FeatureState {
+    return null
+  }
+
+  /**
+   *
+   * @param args Variable arguments according to the
+   */
   wingLights(...args: any): FeatureState {
-    return null
-  }
-
-  apu(...args: any): FeatureState {
-    return null
-  }
-
-  doors(...args: any): FeatureState {
-    return null
-  }
-
-  seatbelts(...args: any): FeatureState {
-    return null
-  }
-
-  emergencyLights(...args: any): FeatureState {
-    return null
-  }
-
-  antiIce(...args: any): FeatureState {
-    return null
-  }
-
-  battery(...args: any): FeatureState {
-    return null
-  }
-
-  packs(...args: any): FeatureState {
     return null
   }
 }

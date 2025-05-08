@@ -29,23 +29,44 @@ export default class DefaultMsFs extends AircraftConfig {
    * Set to null to ignore the feature
    */
   features: FeatureAddresses = {
+    [AircraftFeature.Autopilot]: {
+      'A:AUTOPILOT MASTER,bool': FeatureType.Bool,
+      'A:AUTOPILOT DISENGAGED,bool': FeatureType.Bool,
+    },
+    [AircraftFeature.APU]: {
+      'A:APU SWITCH,bool': FeatureType.Bool,
+    },
+    [AircraftFeature.Battery]: {
+      'A:ELECTRICAL MASTER BATTERY:0,bool': FeatureType.Bool,
+      'A:BATTERY CONNECTION ON:0,bool': FeatureType.Bool,
+    },
     [AircraftFeature.BeaconLights]: {
-      LIGHTING_BEACON_1: FeatureType.Bool,
+      'A:LIGHT BEACON,bool': FeatureType.Bool,
+    },
+    [AircraftFeature.ExternalPower]: {
+      'A:EXTERNAL POWER ON,bool': FeatureType.Bool,
     },
     [AircraftFeature.LandingLights]: {
-      LIGHTING_LANDING_1: FeatureType.Bool,
+      'A:LIGHT LANDING,bool': FeatureType.Bool,
+    },
+    [AircraftFeature.LogoLights]: {
+      'A:LIGHT LOGO,bool': FeatureType.Bool,
     },
     [AircraftFeature.NavigationLights]: {
-      LIGHTING_NAV_1: FeatureType.Bool,
+      'A:LIGHT NAV,bool': FeatureType.Bool,
     },
     [AircraftFeature.StrobeLights]: {
-      LIGHTING_STROBE_1: FeatureType.Bool,
+      'A:LIGHT STROBE,bool': FeatureType.Bool,
     },
-    [AircraftFeature.TaxiLights]: { LIGHTING_TAXI_1: FeatureType.Bool },
+    [AircraftFeature.TaxiLights]: {
+      'A:LIGHT TAXI,bool': FeatureType.Bool,
+    },
+    [AircraftFeature.Transponder]: {
+      'A:TRANSPONDER CODE:1,enum': FeatureType.Int,
+    },
     [AircraftFeature.WingLights]: {
-      LIGHTING_RECOGNITION_1: FeatureType.Bool,
+      'A:LIGHT RECOGNITION,bool': FeatureType.Bool,
     },
-    [AircraftFeature.LogoLights]: { LIGHTING_BEACON_1: FeatureType.Bool },
   }
 
   /**
@@ -65,15 +86,80 @@ export default class DefaultMsFs extends AircraftConfig {
     return true
   }
 
-  beaconLights = (value: boolean): FeatureState => value
+  /**
+   * @param value
+   */
+  apu(value: boolean): FeatureState {
+    return value
+  }
 
-  landingLights = (value: boolean): FeatureState => value
+  /**
+   * @param master
+   * @param disengaged "AUTOPILOT DISENGAGED"
+   */
+  autopilot(master: boolean, disengaged: boolean): FeatureState {
+    return master && !disengaged
+  }
 
-  navigationLights = (value: boolean): FeatureState => value
+  /**
+   * @param master "ELECTRICAL MASTER BATTERY"
+   * @param connection "BATTERY CONNECTION ON"
+   */
+  battery(master: boolean, connection: boolean): FeatureState {
+    return master && connection
+  }
 
-  strobeLights = (value: boolean): FeatureState => value
+  /**
+   * Is the external power connected?
+   * @param externalOn EXTERNAL POWER ON
+   */
+  externalPower(externalOn: boolean): FeatureState {
+    return externalOn
+  }
 
-  taxiLights = (value: boolean): FeatureState => value
+  /**
+   * @param value
+   */
+  beaconLights(value: boolean): FeatureState {
+    return value
+  }
 
-  wingLights = (value: boolean): FeatureState => value
+  /**
+   * @param value
+   */
+  landingLights(value: boolean): FeatureState {
+    return value
+  }
+
+  /**
+   * @param value
+   */
+  navigationLights(value: boolean): FeatureState {
+    return value
+  }
+
+  /**
+   * @param value
+   */
+  strobeLights(value: boolean): FeatureState {
+    return value
+  }
+
+  /**
+   * @param value
+   */
+  taxiLights(value: boolean): FeatureState {
+    return value
+  }
+
+  transponder(value: number): FeatureState {
+    return value > 0
+  }
+
+  /**
+   * @param value
+   */
+  wingLights(value: boolean): FeatureState {
+    return value
+  }
 }

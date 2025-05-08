@@ -7,10 +7,10 @@ import {
 } from '../interface/aircraft'
 import GetDefaultFlaps from './_default_flaps'
 
-export default class FlyJSim732 extends AircraftConfig {
+export default class FlightFactor767 extends AircraftConfig {
   meta: Meta = {
-    id: 'flyjsim_732',
-    name: 'FlyJSim 732',
+    id: 'flightfactor-767',
+    name: 'FlightFactor 767',
     sim: AircraftConfigSimType.XPlane,
     enabled: true,
     priority: 2,
@@ -18,28 +18,25 @@ export default class FlyJSim732 extends AircraftConfig {
 
   features: FeatureAddresses = {
     [AircraftFeature.BeaconLights]: {
-      'FJS/732/lights/AntiColLightSwitch': FeatureType.Int,
+      'sim/cockpit2/switches/beacon_on': FeatureType.Int,
     },
     [AircraftFeature.LandingLights]: {
-      'FJS/732/lights/InBoundLLightSwitch1': FeatureType.Int,
-      'FJS/732/lights/InBoundLLightSwitch2': FeatureType.Int,
-      'FJS/732/lights/OutBoundLLightSwitch1': FeatureType.Int,
-      'FJS/732/lights/OutBoundLLightSwitch2': FeatureType.Int,
+      'sim/cockpit2/switches/landing_lights_switch': FeatureType.NumberArray,
     },
     [AircraftFeature.LogoLights]: {
-      'FJS/732/lights/LogoLightSwitch': FeatureType.Int,
+      'sim/cockpit2/switches/generic_lights_switch': FeatureType.NumberArray,
     },
     [AircraftFeature.NavigationLights]: {
-      'FJS/732/lights/PositionLightSwitch': FeatureType.Int,
+      'sim/cockpit2/switches/navigation_lights_on': FeatureType.Int,
     },
     [AircraftFeature.StrobeLights]: {
-      'FJS/732/lights/StrobeLightSwitch': FeatureType.Int,
+      'sim/cockpit2/switches/strobe_lights_on': FeatureType.Int,
     },
     [AircraftFeature.TaxiLights]: {
-      'FJS/732/lights/TaxiLightSwitch': FeatureType.Int,
+      'sim/cockpit2/switches/landing_lights_switch': FeatureType.NumberArray,
     },
     [AircraftFeature.WingLights]: {
-      'FJS/732/lights/WingLightSwitch': FeatureType.Int,
+      'sim/cockpit2/switches/generic_lights_switch': FeatureType.NumberArray,
     },
   }
 
@@ -52,40 +49,35 @@ export default class FlyJSim732 extends AircraftConfig {
    * @return {boolean}
    */
   match(title: string, icao: string, config_path: string): boolean {
-    this.flapNames = GetDefaultFlaps('', 'B732', '')
-    return ['fjs', '722'].every((w) => title.includes(w))
+    this.flapNames = GetDefaultFlaps('', 'B767', '')
+    return ['boeing', '767'].every((w) => title.includes(w))
   }
 
   beaconLights(value: number): FeatureState {
     return value == 1
   }
 
-  landingLights(
-    inbd_l: number,
-    inbd_r: number,
-    outb_l: number,
-    outb_r: number,
-  ): FeatureState {
-    return inbd_l == 1 && inbd_r == 1 && outb_l == 2 && outb_r == 2
+  landingLights(value: number[]): FeatureState {
+    return value[0] == 1 && value[1] == 1
   }
 
-  logoLights(value: number): FeatureState {
-    return value == 1
+  logoLights(value: number[]): FeatureState {
+    return value[3] == 1
   }
 
   navigationLights(value: number): FeatureState {
-    return value === 1
+    return value == 1
   }
 
   strobeLights(value: number): FeatureState {
-    return value === 1
+    return value == 1
   }
 
-  taxiLights(value: number): FeatureState {
-    return value === 1
+  taxiLights(value: number[]): FeatureState {
+    return value[2] == 1
   }
 
-  wingLights(value: number): FeatureState {
-    return value === 1
+  wingLights(value: number[]): FeatureState {
+    return value[0] == 1
   }
 }

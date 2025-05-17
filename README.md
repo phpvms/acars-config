@@ -3,12 +3,10 @@
 ## Overview
 
 The plugins and scripts for vmsACARS are written in Typescript, and then
-transpiled to JS.
-Typescript ensures that the interfaces required are following, and that the
-proper things
-are returned so ACARS can run them. While Typescript isn't required, it's best
-to use it to
-ensure proper values are passed - especially around enums.
+transpiled to JS. Typescript ensures that the interfaces required are following,
+and that the proper things are returned so ACARS can run them. While Typescript
+isn't required, it's best to use it to ensure proper values are passed - especially
+around enums.
 
 This PDK includes build scripts to:
 
@@ -19,11 +17,30 @@ This PDK includes build scripts to:
 
 ---
 
+# The General Steps
+
+First, fork this repository. Follow the setup below. Then start editing the
+scripts in the `/src` directory, depending on what you want to do. Then, you
+can distribute it to your pilots.
+
+- Complete the setup, including the `.env` file
+- Disable downloading the latest updates
+- Run `npm run dev` to then test in ACARS
+- Run `npm run dist` to create the ZIP
+- Upload this zip somewhere
+- Update the phpVMS ACARS Admin to point to the above URL
+- ???
+- Profit!
+
+### Structure
+
+All of the scripts are contained in the `/src` folder.
+
 # Setup
 
 ## Required:
 
-- nodejs/npm
+- nodejs/npm or pnpm
 - Typescript
 - Gulp
 
@@ -681,3 +698,9 @@ export default class MyScript implements CallbackHook {
   }
 }
 ```
+
+### Sounds
+
+Place your sounds (`mp3` or `wav`) format in the `src/sounds` directory (create
+it if it doesn't exist). When you call `Acars.PlayAudio`, it will look in this
+directory for them.

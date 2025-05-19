@@ -35,7 +35,7 @@ export default class FuelRefilled implements Rule {
       return
     }
 
-    if (data.fuelQuantity.Pounds > previousData.fuelQuantity.Pounds) {
+    if (data.fuelQuantity.Pounds < previousData.fuelQuantity.Pounds) {
       return
     }
 

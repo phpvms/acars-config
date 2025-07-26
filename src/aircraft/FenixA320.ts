@@ -86,7 +86,13 @@ export default class FenixA320 extends AircraftConfig {
       return false
     }
 
-    return ['a319', 'a320', 'a321'].some((w) => title.includes(w))
+    if (config_path.includes('FNX_320_CFM_SL')) {
+      return true
+    }
+
+    return ['a319', 'a320', 'a321'].some(
+      (w) => title.includes(w) || config_path.includes(w),
+    )
   }
 
   beaconLights(value: number): FeatureState {

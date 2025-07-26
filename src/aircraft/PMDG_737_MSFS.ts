@@ -51,7 +51,9 @@ export default class PMDG_737_MSFS extends AircraftConfig {
    */
   match(title: string, icao: string, config_path: string): boolean {
     this.flapNames = GetDefaultFlaps('', 'b737', '')
-    return ['pmdg', '737'].every((w) => title.includes(w))
+    return ['pmdg', '737'].every(
+      (w) => title.includes(w) || config_path.includes(w),
+    )
   }
 
   beaconLights(value: number): FeatureState {

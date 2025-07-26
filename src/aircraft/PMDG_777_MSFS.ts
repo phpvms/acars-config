@@ -52,7 +52,9 @@ export default class PMDG_777_MSFS extends AircraftConfig {
    */
   match(title: string, icao: string, config_path: string): boolean {
     this.flapNames = GetDefaultFlaps('', 'b777', '')
-    return ['pmdg', '777'].every((w) => title.includes(w))
+    return ['pmdg', '777'].every(
+      (w) => title.includes(w) || config_path.includes(w),
+    )
   }
 
   beaconLights(value: number): FeatureState {

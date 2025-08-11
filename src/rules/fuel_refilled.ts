@@ -45,10 +45,11 @@ export default class FuelRefilled implements Rule {
       10,
     )
 
+    const current = Math.round(data.fuelQuantity.Pounds)
+    const prev = Math.round(previousData.fuelQuantity.Pounds)
+
     if (violated) {
-      return [
-        `Fuel Refilled: Current: ${data.fuelQuantity.Pounds}, previous=${previousData.fuelQuantity.Pounds}`,
-      ]
+      return [`Fuel Refilled: Current: ${current}, previous=${prev}`]
     }
   }
 }

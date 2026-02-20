@@ -1,6 +1,37 @@
 {
   "Mappings": {
     "LTDX": "LTDB",
-    "LTDD": "LTDB"
+    "LTDD": "LTDB",
+    "UTSB": "UZSB",
+    "UTSS": "UZSS",
+    "UTTT": "UZTT",
+    "UTST": "UZST",
+    "UTNU": "UZNU",
+    "UTSA": "UZSA",
+    "UTNN": "UZNN",
+    "UTFA": "UZFA",
+    "UTFF": "UZFF",
+    "UTKF": "UZFF",
+    "UTSK": "UZSK",
+    "UTFN": "UZFN",
+    "UTTP": "UZTP",
+    "UTTC": "UZTC",
+    "UTSL": "UZSL",
+    "UTNM": "UZNM",
+    "UTSH": "UZSH",
+    "UTSN": "UZSN",
+    "UTSR": "UZSR",
+    "UTSU": "UZSU",
+    "UTKK": "UZKK",
+    "UTNT": "UZNT",
+    "UTSM": "UZSM",
+    "UTTZ": "UZTZ",
+    "UT1M": "UZ1M",
+    "UT1N": "UZ1N",
+    "UT1O": "UZ1O",
+    "UT1P": "UZ1P",
+    "UT1Q": "UZ1Q",
+    "UT73": "UZ73",
+    "UT77": "UZ77"
   }
 }

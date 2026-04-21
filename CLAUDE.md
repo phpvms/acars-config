@@ -17,7 +17,7 @@
 ### Directory Structure
 ```
 /src/
-├── aircraft/          # 29 aircraft configurations
+├── aircraft/          # 30 aircraft configurations
 ├── rules/             # Flight validation rules
 ├── scripts/           # Callback hooks for real-time monitoring
 ├── types/             # TypeScript type definitions
@@ -238,6 +238,32 @@ export default class RuleName implements Rule {
 
 ---
 
+## Aircraft Configurations (30 Total)
+
+### Supported Aircraft
+
+**X-Plane 12:**
+- LevelUp 737NG V2 (Boeing 737-600NG, 737-700NG, 737-800NG, 737-900NG)
+  - Priority: 6
+  - Features: 13 (lights, flaps, engines, autopilot, transponder, etc.)
+  - Match: Title contains "737-[6789]00NG", ICAO B73[6789]
+  - Status: ✅ Tested
+
+**MSFS 2020/2024:**
+- Fenix A320, PMDG 737/747/777, FlyByWire, Toliss, and others
+  - Total: 29 configurations across major add-on aircraft
+
+### Adding New Aircraft
+
+1. Create file: `src/aircraft/ManufacturerModel.ts`
+2. Extend `AircraftConfig` class
+3. Define `meta`: id, name, sim type, priority
+4. Map `features`: aircraft-specific datarefs/LVars
+5. Implement methods: `beaconLights()`, `landingLights()`, etc.
+6. Implement `match()`: returns true if configuration applies to detected aircraft
+
+---
+
 ## Testing
 
 ### Run Comprehensive Tests
@@ -357,8 +383,10 @@ For issues or questions about:
 
 **Last Updated**: April 2026
 **Rules Count**: 13
+**Aircraft Configurations**: 30
 **Test Coverage**: 100% (19/19 tests passing)
 **Status**: Production Ready
+**Latest Addition**: LevelUp 737NG V2 (X-Plane 12)
 
 ## Rule Summary by Flight Phase
 

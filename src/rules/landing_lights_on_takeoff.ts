@@ -13,10 +13,17 @@ export default class LandingLightsOnTakeoff implements Rule {
     cooldown: 60,
     max_count: 1,
     points: -5,
+    delay_time: 5000,
   }
 
   violated(pirep: Pirep, data: Telemetry, previousData?: Telemetry): RuleValue {
-    // Violation: landing lights are off during takeoff
-    return !data.landingLights
+    return Acars.ViolatedAfterDelay(
+      this.meta.id,
+      this.meta.delay_time!,
+      (): RuleValue => {
+        // Violation: landing lights are off during takeoff
+        return !data.landingLights
+      },
+    )
   }
 }

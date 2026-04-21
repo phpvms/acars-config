@@ -20,7 +20,7 @@ export default class StrobesOnFlight implements Rule {
     cooldown: 60,
     max_count: 1,
     points: -5,
-    delay_time: 30000,
+    delay_time: 5000,
   }
 
   violated(pirep: Pirep, data: Telemetry, previousData?: Telemetry): RuleValue {

@@ -1,5 +1,10 @@
 import { AircraftConfigSimType, AircraftFeature, FeatureType } from '../defs'
-import { AircraftConfig } from '../interface/aircraft'
+import {
+  AircraftConfig,
+  FeatureAddresses,
+  FeatureState,
+  Meta,
+} from '../interface/aircraft'
 import GetDefaultFlaps from './_default_flaps'
 
 /**
@@ -8,7 +13,7 @@ import GetDefaultFlaps from './_default_flaps'
  * Matches: Boeing 737-600NG, 737-700NG, 737-800NG, 737-900NG
  */
 export default class LevelUp737NG extends AircraftConfig {
-  meta = {
+  meta: Meta = {
     id: 'levelup_737ng_v2',
     name: 'LevelUp 737NG V2',
     sim: AircraftConfigSimType.XPlane,
@@ -16,7 +21,7 @@ export default class LevelUp737NG extends AircraftConfig {
     priority: 6,
     author: 'Coljet',
   }
-  features = {
+  features: FeatureAddresses = {
     [AircraftFeature.BeaconLights]: {
       'sim/cockpit/electrical/beacon_lights_on': FeatureType.Int,
     },
@@ -64,7 +69,7 @@ export default class LevelUp737NG extends AircraftConfig {
     },
   }
 
-  match(title, icao, config_path) {
+  match(title: string, icao: string, config_path: string): boolean {
     this.flapNames = GetDefaultFlaps(title, 'b737', config_path)
     // Title comes in lowercased. Match any LevelUp 737NG variant:
     // "boeing 737-600ng", "boeing 737-700ng", "boeing 737-800ng", "boeing 737-900ng"
@@ -73,65 +78,65 @@ export default class LevelUp737NG extends AircraftConfig {
     return titleMatch || icaoMatch
   }
 
-  beaconLights(value) {
+  beaconLights(value: number): FeatureState {
     return value === 1
   }
 
-  landingLights(value) {
+  landingLights(value: number): FeatureState {
     return value === 1
   }
 
-  navigationLights(value) {
+  navigationLights(value: number): FeatureState {
     return value === 1
   }
 
-  strobeLights(value) {
+  strobeLights(value: number): FeatureState {
     return value === 1
   }
 
-  taxiLights(value) {
+  taxiLights(value: number): FeatureState {
     // 0=off, 1=taxi, 2=taxi+rwy turnoff
     return value > 0
   }
 
-  wingLights(value) {
+  wingLights(value: number): FeatureState {
     return value === 1
   }
 
-  logoLights(value) {
+  logoLights(value: number): FeatureState {
     return value === 1
   }
 
-  flaps(value) {
+  flaps(value: number): string | number {
     return value
   }
 
-  parkingBrakes(value) {
+  parkingBrakes(value: number): FeatureState {
     return value > 0
   }
 
-  engines(value) {
+  engines(value: number | number[]): FeatureState {
     // Array value, return if any engine running (first is checked)
     return Array.isArray(value) ? value.includes(1) : value === 1
   }
 
-  autopilot(value) {
+  autopilot(value: number): FeatureState {
     return value === 1
   }
 
-  apu(value) {
+  apu(value: number): FeatureState {
     return value === 1
   }
 
-  seatbelts(value) {
+  seatbelts(value: number): FeatureState {
     return value > 0
   }
 
-  antiIce(value) {
+  antiIce(value: number): FeatureState {
     return value > 0
   }
 
-  transponder(value) {
+  transponder(value: number): FeatureState {
     // 0=off, 1=stby, 2=xpndr, 3=TA, 4=TA/RA
     return value > 1
   }

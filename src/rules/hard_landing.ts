@@ -26,9 +26,9 @@ export default class HardLanding implements Rule {
     }
 
     if (absRate >= 1000) {
-      // Extreme hard landing - flight lost
+      // Extreme hard landing - possible crash
       return [
-        `Flight lost - excessive landing rate: ${landingRateFpm.toFixed(0)} fpm`,
+        `Extreme hard landing, possible crash or structural damage: ${landingRateFpm.toFixed(0)} fpm`,
         -100,
       ]
     }

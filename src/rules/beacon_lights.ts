@@ -9,10 +9,10 @@ export default class BeaconLights implements Rule {
     enabled: true,
     message: 'Beacon lights must be on when moving or engines running',
     states: [
-      PirepState.Boarding,
       PirepState.Pushback,
       PirepState.TaxiOut,
       PirepState.Takeoff,
+      PirepState.InitialClimb,
       PirepState.Enroute,
       PirepState.Approach,
       PirepState.Final,

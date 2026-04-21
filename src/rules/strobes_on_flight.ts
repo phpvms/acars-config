@@ -9,9 +9,12 @@ export default class StrobesOnFlight implements Rule {
     enabled: true,
     message: 'Strobes must be on during flight',
     states: [
+      PirepState.Takeoff,
+      PirepState.InitialClimb,
       PirepState.Enroute,
       PirepState.Approach,
       PirepState.Final,
+      PirepState.Landed,
     ],
     repeatable: false,
     cooldown: 60,

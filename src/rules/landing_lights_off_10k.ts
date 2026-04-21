@@ -8,7 +8,7 @@ export default class LandingLightsOff10k implements Rule {
     name: 'Landing lights must be off above 10,000 feet AGL',
     enabled: true,
     message: 'Landing lights must be off above 10,000 feet AGL',
-    states: [PirepState.Takeoff, PirepState.Enroute, PirepState.Approach],
+    states: [PirepState.InitialClimb, PirepState.Enroute],
     repeatable: false,
     cooldown: 60,
     max_count: 1,

@@ -27,18 +27,21 @@ export default class BeaconLights implements Rule {
   violated(pirep: Pirep, data: Telemetry, previousData?: Telemetry): RuleValue {
     const isMoving = data.groundSpeed.Knots > 2
     const enginesRunning = data.anyEnginesRunning
+    const isOnGround = data.onGround
 
-    // No violation if on the ground and not moving, and engines are off
-    if (!isMoving && !enginesRunning) {
+    // Only check while on ground. Beacons should be on when:
+    // - Any engine is running
+    // - Aircraft is moving (>2 knots)
+    if (!isOnGround || (!enginesRunning && !isMoving)) {
       return
     }
 
-    // Violation: engines running or moving, but beacon lights are off
+    // Violation: on ground with engines running or moving, but beacon lights are off
     return Acars.ViolatedAfterDelay(
       this.meta.id,
       this.meta.delay_time!,
       (): RuleValue => {
-        return (isMoving || enginesRunning) && !data.beaconLights
+        return !data.beaconLights
       },
     )
   }

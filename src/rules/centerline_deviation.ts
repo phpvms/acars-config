@@ -60,12 +60,12 @@ export default class CenterlineDeviation implements Rule {
   }
 
   violated(pirep: Pirep, data: Telemetry, previousData?: Telemetry): RuleValue {
-    // Only check during landed state
-    if (!pirep.arrivalRunway) {
+    // Only check during landed state with runway data
+    if (!data.runway) {
       return
     }
 
-    const runway = pirep.arrivalRunway
+    const runway = data.runway
     const aircraftLocation = data.location
     const runwayCenter = runway.runwayCenter
     const runwayWidth = runway.width.Meters

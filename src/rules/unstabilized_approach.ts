@@ -12,7 +12,7 @@ export default class UnstabilizedApproach implements Rule {
     repeatable: false,
     cooldown: 60,
     max_count: 1,
-    points: -15,
+    points: -10,
     delay_time: 5000,
   }
 
@@ -36,7 +36,7 @@ export default class UnstabilizedApproach implements Rule {
         if (gearUp) {
           return [
             `Unstabilized approach - gear not extended at ${altitudeAGL.toFixed(0)} ft AGL`,
-            -25,
+            -10,
           ]
         }
 
@@ -44,7 +44,7 @@ export default class UnstabilizedApproach implements Rule {
         if (verticalSpeedFpm < -2000) {
           return [
             `Unstabilized approach - excessive descent rate: ${verticalSpeedFpm.toFixed(0)} fpm (limit: -2000 fpm)`,
-            -20,
+            -10,
           ]
         }
 
@@ -52,7 +52,7 @@ export default class UnstabilizedApproach implements Rule {
         if (indicatedAirspeed > 200) {
           return [
             `Unstabilized approach - overspeed: ${indicatedAirspeed.toFixed(0)} knots (limit: 200 knots)`,
-            -15,
+            -10,
           ]
         }
 

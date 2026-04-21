@@ -91,7 +91,7 @@
 ### 6. Landing Lights Off 10k
 - **File**: `src/rules/landing_lights_off_10k.ts`
 - **Trigger**: Altitude > 10,000 feet AGL with landing lights ON
-- **States**: Takeoff (climb phase)
+- **States**: Takeoff, Enroute, Approach
 - **Penalty**: -5 points
 - **Delay**: 30 seconds
 - **Repeatable**: No

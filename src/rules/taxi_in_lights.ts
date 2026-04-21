@@ -23,8 +23,8 @@ export default class TaxiInLights implements Rule {
     }
 
     // Only flag if actually moving and not parked
-    const isMoving = data.groundSpeed.Knots > 1
-    const isParked = data.parkBrake && data.groundSpeed.Knots < 1
+    const isMoving = data.groundSpeed.Knots >= 10
+    const isParked = data.parkBrake && data.groundSpeed.Knots < 10
     const gearDown = !data.gearUp
 
     if (!isMoving || isParked || !gearDown) {

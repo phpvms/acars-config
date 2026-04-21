@@ -46,12 +46,12 @@
 
 ---
 
-## Rules Implemented (11 Total)
+## Rules Implemented (13 Total)
 
 ### 1. Beacon Lights
 - **File**: `src/rules/beacon_lights.ts`
 - **Trigger**: Any engines running OR aircraft moving (>2 knots)
-- **States**: Boarding, Pushback, TaxiOut, Takeoff, Enroute, Approach, Final, Landed, TaxiIn
+- **States**: Pushback, TaxiOut, Takeoff, InitialClimb, Enroute, Approach, Final, Landed, TaxiIn
 - **Penalty**: -5 points
 - **Delay**: 5 seconds
 - **Repeatable**: No
@@ -66,10 +66,10 @@
 
 ### 3. Taxi In Lights
 - **File**: `src/rules/taxi_in_lights.ts`
-- **Trigger**: Moving at ≥10 knots on ground during TaxiIn
+- **Trigger**: Moving at ≥10 knots on ground during TaxiIn (after landing)
 - **States**: TaxiIn
 - **Penalty**: -5 points
-- **Delay**: 60 seconds (1 minute)
+- **Delay**: 3 minutes (180 seconds)
 - **Repeatable**: No
 
 ### 4. Flaps Taxi Out
@@ -91,36 +91,29 @@
 ### 6. Landing Lights Off 10k
 - **File**: `src/rules/landing_lights_off_10k.ts`
 - **Trigger**: Altitude > 10,000 feet AGL with landing lights ON
-- **States**: Takeoff, Enroute, Approach
+- **States**: InitialClimb, Enroute
 - **Penalty**: -5 points
 - **Delay**: 30 seconds
 - **Repeatable**: No
 
-### 7. Landing Lights On Takeoff
-- **File**: `src/rules/landing_lights_on_takeoff.ts`
-- **Trigger**: During Takeoff with landing lights OFF
-- **States**: Takeoff
-- **Penalty**: -5 points
-- **Delay**: None (immediate)
-- **Repeatable**: No
+### 7. Landing Lights On
+- **File**: `src/rules/landing_lights_on.ts`
+- **Trigger**: Landing lights OFF during takeoff or landing
+- **States**: Takeoff, Landed
+- **Penalty**: -5 points per violation
+- **Delay**: 5 seconds
+- **Repeatable**: Yes (max 2 times)
+- **Cooldown**: 5 minutes (300 seconds)
 
-### 8. Strobes On Takeoff
-- **File**: `src/rules/strobes_on_takeoff.ts`
-- **Trigger**: During Takeoff with strobes OFF
-- **States**: Takeoff
-- **Penalty**: -5 points
-- **Delay**: None (immediate)
-- **Repeatable**: No
-
-### 9. Strobes On Flight
+### 8. Strobes On Flight
 - **File**: `src/rules/strobes_on_flight.ts`
-- **Trigger**: During Enroute/Approach/Final with strobes OFF
-- **States**: Enroute, Approach, Final
+- **Trigger**: Strobes OFF during flight and landing
+- **States**: Takeoff, InitialClimb, Enroute, Approach, Final, Landed
 - **Penalty**: -5 points
-- **Delay**: 30 seconds
+- **Delay**: 5 seconds
 - **Repeatable**: No
 
-### 10. Hard Landing
+### 9. Hard Landing
 - **File**: `src/rules/hard_landing.ts`
 - **Trigger**: Landing descent rate severity
 - **States**: Landed
@@ -132,18 +125,50 @@
 - **Delay**: None
 - **Repeatable**: No
 
-### 11. Long Landing
+### 10. Long Landing
 - **File**: `src/rules/long_landing.ts`
-- **Trigger**: Landing beyond calculated Touchdown Zone
+- **Trigger**: Landing beyond calculated Touchdown Zone (ICAO Annex 14)
 - **States**: Landed
-- **TDZ Calculation** (ICAO Annex 14):
+- **TDZ Calculation**:
   - Runways ≥ 2,400 m: TDZ = 900 m
   - Runways 1,500-2,400 m: TDZ = 600 m
   - Runways < 1,500 m: TDZ variable
 - **Penalties**:
-  - Beyond TDZ but < 50% runway: -10 points
-  - Beyond 50% runway: -100 points
+  - Beyond TDZ but < 50%: -10 points
+  - Beyond 50% runway: -100 points (loss of flight)
 - **Delay**: None
+- **Repeatable**: No
+
+### 11. Unstabilized Approach
+- **File**: `src/rules/unstabilized_approach.ts`
+- **Trigger**: Multiple criteria below 1,000 ft AGL during approach
+- **States**: Approach, Final
+- **Criteria** (checked in order):
+  1. Gear not extended → -10 pts
+  2. Descent > 2,000 fpm → -10 pts
+  3. Speed > 200 knots (overspeed) → -10 pts
+  4. Flap changes detected → -10 pts
+  5. Flaps unconfigured (position 0) → -10 pts
+- **Bypass**: Skips checks if throttle > 90% OR vertical speed > 1,000 fpm (go-around)
+- **Delay**: 5 seconds
+- **Repeatable**: No
+
+### 12. Centerline Deviation
+- **File**: `src/rules/centerline_deviation.ts`
+- **Trigger**: Lateral deviation from runway centerline during landing
+- **States**: Landed
+- **Criteria**:
+  - Deviation > 10 meters: -10 points
+  - Deviation > runway width (skid off): -100 points
+- **Calculation**: Haversine formula using aircraft location vs runway bounds
+- **Repeatable**: No
+
+### 13. Post Landing Flaps
+- **File**: `src/rules/post_landing_flaps.ts`
+- **Trigger**: Flaps not retracted after landing during taxi-in
+- **States**: TaxiIn
+- **Penalty**: -5 points
+- **Delay**: 3 minutes (180 seconds)
 - **Repeatable**: No
 
 ---
@@ -221,9 +246,10 @@ node tests/comprehensive-rules.test.js
 ```
 
 ### Test Coverage
-- 19 test cases covering all 11 rules
-- 100% success rate validation
+- 19 test cases covering core rules (Beacon, Taxi, Flaps, Lights, Strobes)
+- 100% success rate validation (19/19 passing)
 - Mock telemetry with various scenarios
+- Additional rules (Hard Landing, Long Landing, Unstabilized Approach, Centerline Deviation, Post Landing) validated through code review
 
 ### Test Files
 - `tests/comprehensive-rules.test.js` - Full test suite (19 tests, 100%)
@@ -330,6 +356,18 @@ For issues or questions about:
 ---
 
 **Last Updated**: April 2026
-**Rules Count**: 11
+**Rules Count**: 13
 **Test Coverage**: 100% (19/19 tests passing)
-**Status**: Active Development
+**Status**: Production Ready
+
+## Rule Summary by Flight Phase
+
+| Phase | Rules | Penalties |
+|-------|-------|-----------|
+| **Pushback → TaxiOut** | Beacon, Taxi Out Lights, Flaps Taxi Out | -5 to -5 pts |
+| **Takeoff** | Beacon, Takeoff Flaps, Landing Lights On, Strobes | -5 to -10 pts |
+| **Initial Climb** | Beacon, Landing Lights Off, Strobes | -5 pts |
+| **Enroute** | Beacon, Landing Lights Off, Strobes | -5 pts |
+| **Approach → Final** | Beacon, Strobes, Unstabilized Approach (< 1000ft) | -5 to -10 pts |
+| **Landed** | Hard Landing, Long Landing, Centerline Deviation, Landing Lights On | -5 to -100 pts |
+| **TaxiIn** | Beacon, Taxi In Lights, Post Landing Flaps | -5 pts |

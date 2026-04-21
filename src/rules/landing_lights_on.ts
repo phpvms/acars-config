@@ -2,9 +2,9 @@ import { PirepState } from '../defs'
 import { Meta, Rule, RuleValue } from '../types/rule'
 import { Pirep, Telemetry } from '../types/types'
 
-export default class LandingLightsOnTakeoff implements Rule {
+export default class LandingLightsOn implements Rule {
   meta: Meta = {
-    id: 'LANDING_LIGHTS_ON_TAKEOFF',
+    id: 'LANDING_LIGHTS_ON',
     name: 'Landing lights must be on during takeoff and landing',
     enabled: true,
     message: 'Landing lights must be on during takeoff and landing',
@@ -21,7 +21,7 @@ export default class LandingLightsOnTakeoff implements Rule {
       this.meta.id,
       this.meta.delay_time!,
       (): RuleValue => {
-        // Violation: landing lights are off during takeoff
+        // Violation: landing lights are off during takeoff or landing
         return !data.landingLights
       },
     )

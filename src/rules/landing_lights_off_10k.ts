@@ -5,14 +5,10 @@ import { Pirep, Telemetry } from '../types/types'
 export default class LandingLightsOff10k implements Rule {
   meta: Meta = {
     id: 'LANDING_LIGHTS_OFF_10K',
-    name: 'Landing lights must be off above 10,000 feet AGL',
+    name: 'Landing lights must be off above 10,000 feet during climb',
     enabled: true,
-    message: 'Landing lights must be off above 10,000 feet AGL',
-    states: [
-      PirepState.Takeoff,
-      PirepState.Enroute,
-      PirepState.Approach,
-    ],
+    message: 'Landing lights must be off above 10,000 feet during climb',
+    states: [PirepState.Takeoff],
     repeatable: false,
     cooldown: 60,
     max_count: 1,

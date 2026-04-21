@@ -56,6 +56,14 @@ export default class UnstabilizedApproach implements Rule {
           ]
         }
 
+        // Check for flap changes during approach
+        if (previousData && previousData.flaps !== data.flaps) {
+          return [
+            `Unstabilized approach - flap change detected at ${altitudeAGL.toFixed(0)} ft AGL`,
+            -10,
+          ]
+        }
+
         // Check flap configuration
         if (flapsPosition === 0) {
           return [

@@ -23,8 +23,8 @@ export default class UnstabilizedApproach implements Rule {
     const flapsPosition = data.flaps
     const gearUp = data.gearUp
 
-    // Only check stabilization criteria above 1,000 feet AGL
-    if (altitudeAGL < 1000) {
+    // Only check stabilization criteria below 1,000 feet AGL during descent
+    if (altitudeAGL > 1000) {
       return
     }
 

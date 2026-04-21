@@ -17,10 +17,11 @@ export default class BeaconLights implements Rule {
       PirepState.Final,
       PirepState.TaxiIn,
     ],
-    repeatable: true,
-    cooldown: 10,
-    max_count: 10,
-    points: -1,
+    repeatable: false,
+    cooldown: 60,
+    max_count: 1,
+    points: -5,
+    delay_time: 5000,
   }
 
   violated(pirep: Pirep, data: Telemetry, previousData?: Telemetry): RuleValue {
@@ -33,8 +34,12 @@ export default class BeaconLights implements Rule {
     }
 
     // Violation: engines running or moving, but beacon lights are off
-    if ((isMoving || enginesRunning) && !data.beaconLights) {
-      return true
-    }
+    return Acars.ViolatedAfterDelay(
+      this.meta.id,
+      this.meta.delay_time!,
+      (): RuleValue => {
+        return (isMoving || enginesRunning) && !data.beaconLights
+      },
+    )
   }
 }

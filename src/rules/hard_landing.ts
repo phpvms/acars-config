@@ -27,20 +27,26 @@ export default class HardLanding implements Rule {
 
     if (absRate >= 1000) {
       // Extreme hard landing - flight lost
-      return ['Flight lost - excessive landing rate', -100]
+      return [
+        `Flight lost - excessive landing rate: ${landingRateFpm.toFixed(0)} fpm`,
+        -100,
+      ]
     }
 
     if (absRate >= 800) {
       // Very hard landing: -800 to -1000 fpm
-      return ['Hard landing - excessive descent rate', -15]
+      return [
+        `Hard landing - excessive descent rate: ${landingRateFpm.toFixed(0)} fpm`,
+        -15,
+      ]
     }
 
     if (absRate >= 650) {
       // Hard landing: -650 to -800 fpm
-      return ['Hard landing detected', -10]
+      return [`Hard landing detected: ${landingRateFpm.toFixed(0)} fpm`, -10]
     }
 
     // Firm landing: -500 to -650 fpm
-    return ['Firm landing', -5]
+    return [`Firm landing: ${landingRateFpm.toFixed(0)} fpm`, -5]
   }
 }

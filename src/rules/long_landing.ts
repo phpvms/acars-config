@@ -64,11 +64,11 @@ export default class LongLanding implements Rule {
       return
     }
 
-    // Violation: landed beyond TDZ
+    // Violation: landed beyond 50% of runway - critical, loss of flight
     if (touchdownDistanceMeters > midpointDistance) {
       return [
         `Long landing - beyond 50% of runway: ${touchdownDistanceMeters.toFixed(0)}m (runway: ${runwayLengthMeters.toFixed(0)}m)`,
-        -10,
+        -100,
       ]
     }
 

@@ -13,7 +13,7 @@ export default class TaxiInLights implements Rule {
     cooldown: 60,
     max_count: 1,
     points: -5,
-    delay_time: 60000,
+    delay_time: 180000,
   }
 
   violated(pirep: Pirep, data: Telemetry, previousData?: Telemetry): RuleValue {

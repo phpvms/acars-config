@@ -2,9 +2,9 @@ import { PirepState } from '../defs'
 import { Meta, Rule, RuleValue } from '../types/rule'
 import { Pirep, Telemetry } from '../types/types'
 
-export default class TaxiLights implements Rule {
+export default class TaxiOut implements Rule {
   meta: Meta = {
-    id: 'TAXI_LIGHTS',
+    id: 'TAXI_OUT_LIGHTS',
     name: 'Taxi lights must be on during taxi out',
     enabled: true,
     message: 'Taxi lights must be on during taxi out',

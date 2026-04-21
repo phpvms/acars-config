@@ -22,9 +22,15 @@ export default class UnstabilizedApproach implements Rule {
     const verticalSpeedFpm = data.verticalSpeed.FeetPerMinute
     const flapsPosition = data.flaps
     const gearUp = data.gearUp
+    const throttlePct = data.throttlePct
 
     // Only check stabilization criteria below 1,000 feet AGL during descent
     if (altitudeAGL > 1000) {
+      return
+    }
+
+    // Skip check if go-around detected (high throttle > 90% OR climbing > 1000 fpm)
+    if (throttlePct > 90 || verticalSpeedFpm > 1000) {
       return
     }
 

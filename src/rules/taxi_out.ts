@@ -5,9 +5,9 @@ import { Pirep, Telemetry } from '../types/types'
 export default class TaxiOut implements Rule {
   meta: Meta = {
     id: 'TAXI_OUT_LIGHTS',
-    name: 'Taxi lights must be on during taxi out',
+    name: 'Taxi out lights',
     enabled: true,
-    message: 'Taxi lights must be on during taxi out',
+    message: 'Taxi out lights must be on',
     states: [PirepState.TaxiOut],
     repeatable: false,
     cooldown: 60,

@@ -79,6 +79,23 @@ jobs:
           source: stable.zip
           out_dir: scripts
 
+      - name: install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+      - name: purge CDN cache
+        continue-on-error: true
+        run: |
+          CDN_ID=$(doctl compute cdn list --format ID,Origin --no-header \
+            | grep -F "${{ secrets.SPACE_NAME }}.${{ secrets.SPACE_REGION }}.digitaloceanspaces.com" \
+            | awk '{print $1}')
+          if [ -z "$CDN_ID" ]; then
+            echo "No CDN endpoint found for this space, skipping purge"
+            exit 0
+          fi
+          doctl compute cdn flush "$CDN_ID" --files "scripts/stable.zip"
+
   #
   # Manually triggered: bump the version, tag it, and publish a GitHub release
   #
@@ -137,6 +154,23 @@ jobs:
           cdn_domain: ${{ secrets.SPACE_CDN_DOMAIN }}
           source: stable.zip
           out_dir: scripts
+
+      - name: install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+      - name: purge CDN cache
+        continue-on-error: true
+        run: |
+          CDN_ID=$(doctl compute cdn list --format ID,Origin --no-header \
+            | grep -F "${{ secrets.SPACE_NAME }}.${{ secrets.SPACE_REGION }}.digitaloceanspaces.com" \
+            | awk '{print $1}')
+          if [ -z "$CDN_ID" ]; then
+            echo "No CDN endpoint found for this space, skipping purge"
+            exit 0
+          fi
+          doctl compute cdn flush "$CDN_ID" --files "scripts/stable.zip"
 
       - name: Create GitHub release
         uses: softprops/action-gh-release@v2

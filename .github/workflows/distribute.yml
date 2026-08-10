@@ -69,32 +69,16 @@ jobs:
         with:
           name: acars-package
 
-      - uses: BetaHuhn/do-spaces-action@latest
-        with:
-          access_key: ${{ secrets.SPACE_ACCESS_KEY}}
-          secret_key: ${{ secrets.SPACE_SECRET_KEY }}
-          space_name: ${{ secrets.SPACE_NAME }}
-          space_region: ${{ secrets.SPACE_REGION }}
-          cdn_domain: ${{ secrets.SPACE_CDN_DOMAIN }}
-          source: stable.zip
-          out_dir: scripts
-
-      - name: install doctl
-        uses: digitalocean/action-doctl@v2
-        with:
-          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-
-      - name: purge CDN cache
-        continue-on-error: true
+      - name: upload to Bunny storage
+        env:
+          AWS_ACCESS_KEY_ID: acars
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.BUNNY_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: us-east-1
+          # AWS CLI v2.23+ sends checksum headers many S3-compatible stores reject
+          AWS_REQUEST_CHECKSUM_CALCULATION: when_required
         run: |
-          CDN_ID=$(doctl compute cdn list --format ID,Origin --no-header \
-            | grep -F "${{ secrets.SPACE_NAME }}.${{ secrets.SPACE_REGION }}.digitaloceanspaces.com" \
-            | awk '{print $1}')
-          if [ -z "$CDN_ID" ]; then
-            echo "No CDN endpoint found for this space, skipping purge"
-            exit 0
-          fi
-          doctl compute cdn flush "$CDN_ID" --files "scripts/stable.zip"
+          aws s3 cp stable.zip s3://acars/scripts/stable.zip \
+            --endpoint-url https://ny-s3.storage.bunnycdn.com
 
   #
   # Manually triggered: bump the version, tag it, and publish a GitHub release
@@ -145,32 +129,16 @@ jobs:
           filename: '../stable.zip'
           exclusions: ''
 
-      - uses: BetaHuhn/do-spaces-action@latest
-        with:
-          access_key: ${{ secrets.SPACE_ACCESS_KEY}}
-          secret_key: ${{ secrets.SPACE_SECRET_KEY }}
-          space_name: ${{ secrets.SPACE_NAME }}
-          space_region: ${{ secrets.SPACE_REGION }}
-          cdn_domain: ${{ secrets.SPACE_CDN_DOMAIN }}
-          source: stable.zip
-          out_dir: scripts
-
-      - name: install doctl
-        uses: digitalocean/action-doctl@v2
-        with:
-          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-
-      - name: purge CDN cache
-        continue-on-error: true
+      - name: upload to Bunny storage
+        env:
+          AWS_ACCESS_KEY_ID: acars
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.BUNNY_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: us-east-1
+          # AWS CLI v2.23+ sends checksum headers many S3-compatible stores reject
+          AWS_REQUEST_CHECKSUM_CALCULATION: when_required
         run: |
-          CDN_ID=$(doctl compute cdn list --format ID,Origin --no-header \
-            | grep -F "${{ secrets.SPACE_NAME }}.${{ secrets.SPACE_REGION }}.digitaloceanspaces.com" \
-            | awk '{print $1}')
-          if [ -z "$CDN_ID" ]; then
-            echo "No CDN endpoint found for this space, skipping purge"
-            exit 0
-          fi
-          doctl compute cdn flush "$CDN_ID" --files "scripts/stable.zip"
+          aws s3 cp stable.zip s3://acars/scripts/stable.zip \
+            --endpoint-url https://ny-s3.storage.bunnycdn.com
 
       - name: Create GitHub release
         uses: softprops/action-gh-release@v2

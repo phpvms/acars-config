@@ -95,6 +95,9 @@ export interface Telemetry {
   slewActive: boolean
   /** If the stall warning is on in the sim */
   stallWarning: boolean
+  /** The flight phase/state at this tick. Carried on every telemetry snapshot so
+   * state changes are observable as a prev->curr transition (curr.state != prev.state). */
+  state: PirepState
   /** Boolean for lights */
   strobeLights: boolean
   /** Boolean for lights */

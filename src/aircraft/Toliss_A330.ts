@@ -75,7 +75,7 @@ export default class Toliss_A330 extends AircraftConfig {
     return value[3] == 1 || value[3] == 2
   }
 
-  APU(value: number): FeatureState {
+  apu(value: number): FeatureState {
     return value == 1
   }
 }

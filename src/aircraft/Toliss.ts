@@ -117,7 +117,7 @@ export default class Toliss extends AircraftConfig {
     return value[0] === 1 && value[1] === 1
   }
 
-  APU(value: number): FeatureState {
+  apu(value: number): FeatureState {
     return value === 1
   }
 

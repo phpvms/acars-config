@@ -77,7 +77,7 @@ jobs:
           # AWS CLI v2.23+ sends checksum headers many S3-compatible stores reject
           AWS_REQUEST_CHECKSUM_CALCULATION: when_required
         run: |
-          aws s3 cp stable.zip s3://acars/scripts/stable.zip \
+          aws s3 cp stable.zip s3://acars/scripts/v8/stable.zip \
             --endpoint-url https://ny-s3.storage.bunnycdn.com
 
   #
@@ -137,7 +137,7 @@ jobs:
           # AWS CLI v2.23+ sends checksum headers many S3-compatible stores reject
           AWS_REQUEST_CHECKSUM_CALCULATION: when_required
         run: |
-          aws s3 cp stable.zip s3://acars/scripts/stable.zip \
+          aws s3 cp stable.zip s3://acars/scripts/v8/stable.zip \
             --endpoint-url https://ny-s3.storage.bunnycdn.com
 
       - name: Create GitHub release

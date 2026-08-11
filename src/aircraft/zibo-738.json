@@ -1,0 +1,31 @@
+{
+  "meta": {
+    "id": "zibo_738",
+    "name": "Zibo 738",
+    "sim": "xplane",
+    "priority": 2,
+    "author": "acars"
+  },
+  "match": [
+    [
+      { "scope": "title", "op": "contains", "keyword": "boeing" },
+      { "scope": "title", "op": "contains", "keyword": "737-800x" }
+    ]
+  ],
+  "features": {
+    "LogoLights": [
+      {
+        "if": { "all": [{ "kind": "dataref", "address": "laminar/B738/toggle_switch/logo_light", "valueType": "int", "operator": "equal", "value": 1 }] },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ],
+    "TaxiLights": [
+      {
+        "if": { "all": [{ "kind": "dataref", "address": "laminar/B738/toggle_switch/taxi_light_brightness_pos", "valueType": "int", "operator": "equal", "value": 2 }] },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ]
+  }
+}

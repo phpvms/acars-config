@@ -1,0 +1,46 @@
+{
+  "meta": { "id": "pmdg_777_msfs", "name": "PMDG 777", "sim": "msfs", "priority": 2, "author": "acars" },
+  "match": [
+    [
+      { "scope": "either", "op": "contains", "keyword": "pmdg" },
+      { "scope": "either", "op": "contains", "keyword": "777" }
+    ]
+  ],
+  "features": {
+    "BeaconLights": [
+      { "if": { "all": [{ "kind": "lvar", "address": "switch_114_a", "valueType": "int", "operator": "equal", "value": 100 }] }, "action": { "value": true } },
+      { "action": { "value": false } }
+    ],
+    "LandingLights": [
+      {
+        "if": { "all": [
+          { "kind": "lvar", "address": "switch_22_a", "valueType": "int", "operator": "equal", "value": 100 },
+          { "kind": "lvar", "address": "switch_23_a", "valueType": "int", "operator": "equal", "value": 100 },
+          { "kind": "lvar", "address": "switch_24_a", "valueType": "int", "operator": "equal", "value": 100 }
+        ] },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ],
+    "LogoLights": [
+      { "if": { "all": [{ "kind": "lvar", "address": "switch_116_a", "valueType": "int", "operator": "equal", "value": 100 }] }, "action": { "value": true } },
+      { "action": { "value": false } }
+    ],
+    "NavigationLights": [
+      { "if": { "all": [{ "kind": "lvar", "address": "switch_115_a", "valueType": "int", "operator": "equal", "value": 100 }] }, "action": { "value": true } },
+      { "action": { "value": false } }
+    ],
+    "StrobeLights": [
+      { "if": { "all": [{ "kind": "lvar", "address": "switch_122_a", "valueType": "int", "operator": "equal", "value": 100 }] }, "action": { "value": true } },
+      { "action": { "value": false } }
+    ],
+    "TaxiLights": [
+      { "if": { "all": [{ "kind": "lvar", "address": "switch_121_a", "valueType": "int", "operator": "equal", "value": 100 }] }, "action": { "value": true } },
+      { "action": { "value": false } }
+    ],
+    "WingLights": [
+      { "if": { "all": [{ "kind": "lvar", "address": "switch_117_a", "valueType": "int", "operator": "equal", "value": 100 }] }, "action": { "value": true } },
+      { "action": { "value": false } }
+    ]
+  }
+}

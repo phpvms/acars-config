@@ -1,0 +1,81 @@
+{
+  "meta": {
+    "id": "rotate_md11",
+    "name": "Rotate MD-11",
+    "sim": "xplane",
+    "priority": 2,
+    "author": "acars"
+  },
+  "match": [
+    [
+      { "scope": "title", "op": "contains", "keyword": "rotate" },
+      { "scope": "title", "op": "contains", "keyword": "md-11" }
+    ]
+  ],
+  "features": {
+    "BeaconLights": [
+      {
+        "if": { "all": [{ "kind": "dataref", "address": "Rotate/aircraft/controls/beacon_lts", "valueType": "int", "operator": "equal", "value": 1 }] },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ],
+    "LandingLights": [
+      {
+        "if": {
+          "all": [
+            { "kind": "dataref", "address": "Rotate/aircraft/controls/ldg_l_lts", "valueType": "int", "operator": "equal", "value": 2 },
+            { "kind": "dataref", "address": "Rotate/aircraft/controls/ldg_r_lts", "valueType": "int", "operator": "equal", "value": 2 }
+          ]
+        },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ],
+    "LogoLights": [
+      {
+        "if": { "all": [{ "kind": "dataref", "address": "Rotate/aircraft/controls/logo_lts", "valueType": "int", "operator": "equal", "value": 1 }] },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ],
+    "NavigationLights": [
+      {
+        "if": { "all": [{ "kind": "dataref", "address": "Rotate/aircraft/controls/nav_lts", "valueType": "int", "operator": "equal", "value": 1 }] },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ],
+    "StrobeLights": [
+      {
+        "if": { "all": [{ "kind": "dataref", "address": "Rotate/aircraft/controls/strobe_lts", "valueType": "int", "operator": "equal", "value": 1 }] },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ],
+    "TaxiLights": [
+      {
+        "if": {
+          "any": [
+            { "kind": "dataref", "address": "Rotate/aircraft/controls/nose_lts", "valueType": "int", "operator": "equal", "value": 1 },
+            { "kind": "dataref", "address": "Rotate/aircraft/controls/nose_lts", "valueType": "int", "operator": "equal", "value": 2 }
+          ]
+        },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ],
+    "WingLights": [
+      {
+        "if": {
+          "all": [
+            { "kind": "dataref", "address": "Rotate/aircraft/controls/wing_l_lts", "valueType": "int", "operator": "equal", "value": 2 },
+            { "kind": "dataref", "address": "Rotate/aircraft/controls/wing_r_lts", "valueType": "int", "operator": "equal", "value": 2 }
+          ]
+        },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ]
+  }
+}

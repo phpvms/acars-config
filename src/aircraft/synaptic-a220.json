@@ -1,0 +1,92 @@
+{
+  "meta": { "id": "synaptic_a220", "name": "Synaptic Simulations A220", "sim": "msfs", "priority": 2, "author": "acars" },
+  "match": [
+    [{ "scope": "either", "op": "contains", "keyword": "a220" }],
+    [{ "scope": "either", "op": "contains", "keyword": "a22x" }],
+    [{ "scope": "either", "op": "contains", "keyword": "synaptic" }]
+  ],
+  "mappings": {
+    "flapNames": [
+      { "value": 0, "label": "UP" },
+      { "value": 1, "label": "CONF 1" },
+      { "value": 2, "label": "CONF 2" },
+      { "value": 3, "label": "CONF 3" },
+      { "value": 4, "label": "FULL" }
+    ]
+  },
+  "features": {
+    "BeaconLights": [
+      { "if": { "all": [{ "kind": "lvar", "address": "A22X Beacon Lights", "valueType": "bool", "operator": "equal", "value": 1 }] }, "action": { "value": true } },
+      { "action": { "value": false } }
+    ],
+    "NavigationLights": [
+      { "if": { "all": [{ "kind": "lvar", "address": "A22X Nav Lights", "valueType": "bool", "operator": "equal", "value": 1 }] }, "action": { "value": true } },
+      { "action": { "value": false } }
+    ],
+    "StrobeLights": [
+      { "if": { "all": [{ "kind": "lvar", "address": "A22X Strobe Lights", "valueType": "bool", "operator": "equal", "value": 1 }] }, "action": { "value": true } },
+      { "action": { "value": false } }
+    ],
+    "TaxiLights": [
+      { "if": { "all": [{ "kind": "lvar", "address": "A22X Taxi Lights", "valueType": "int", "operator": "greaterThan", "value": 0 }] }, "action": { "value": true } },
+      { "action": { "value": false } }
+    ],
+    "LandingLights": [
+      {
+        "if": { "all": [
+          { "kind": "lvar", "address": "A22X L Landing Lights", "valueType": "bool", "operator": "equal", "value": 1 },
+          { "kind": "lvar", "address": "A22X R Landing Lights", "valueType": "bool", "operator": "equal", "value": 1 }
+        ] },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ],
+    "LogoLights": [
+      { "if": { "all": [{ "kind": "lvar", "address": "A22X Logo Lights", "valueType": "bool", "operator": "equal", "value": 1 }] }, "action": { "value": true } },
+      { "action": { "value": false } }
+    ],
+    "WingLights": [
+      { "if": { "all": [{ "kind": "lvar", "address": "A22X Wing Insp Lights", "valueType": "bool", "operator": "equal", "value": 1 }] }, "action": { "value": true } },
+      { "action": { "value": false } }
+    ],
+    "Seatbelts": [
+      { "if": { "all": [{ "kind": "lvar", "address": "A22X Seat Belt Lights", "valueType": "int", "operator": "greaterThan", "value": 0 }] }, "action": { "value": true } },
+      { "action": { "value": false } }
+    ],
+    "ParkingBrakes": [
+      { "if": { "all": [{ "kind": "lvar", "address": "A22X Parking Brake", "valueType": "bool", "operator": "equal", "value": 1 }] }, "action": { "value": true } },
+      { "action": { "value": false } }
+    ],
+    "Packs": [
+      {
+        "if": { "any": [
+          { "kind": "lvar", "address": "A22X L Pack Off", "valueType": "bool", "operator": "equal", "value": 0 },
+          { "kind": "lvar", "address": "A22X R Pack Off", "valueType": "bool", "operator": "equal", "value": 0 }
+        ] },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ],
+    "AntiIce": [
+      {
+        "if": { "any": [
+          { "kind": "lvar", "address": "A22X Wing Anti Ice", "valueType": "int", "operator": "greaterThan", "value": 0 },
+          { "all": [
+            { "kind": "lvar", "address": "A22X L Cowl Anti Ice", "valueType": "int", "operator": "greaterThan", "value": 0 },
+            { "kind": "lvar", "address": "A22X R Cowl Anti Ice", "valueType": "int", "operator": "greaterThan", "value": 0 }
+          ] }
+        ] },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ],
+    "APU": [
+      { "if": { "all": [{ "kind": "lvar", "address": "A22X APU Switch", "valueType": "int", "operator": "greaterThanInclusive", "value": 1 }] }, "action": { "value": true } },
+      { "action": { "value": false } }
+    ],
+    "ExternalPower": [
+      { "if": { "all": [{ "kind": "lvar", "address": "INI_GPU_AVAIL", "valueType": "bool", "operator": "equal", "value": 1 }] }, "action": { "value": true } },
+      { "action": { "value": false } }
+    ]
+  }
+}

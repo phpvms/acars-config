@@ -1,0 +1,162 @@
+{
+  "meta": { "id": "fenix_a320", "name": "Fenix Airbus A319/A320/A321", "sim": "msfs", "priority": 2, "author": "B.Fatih KOZ <https://github.com/FatihKoz>" },
+  "match": [
+    [
+      { "scope": "title", "op": "contains", "keyword": "fenix" },
+      { "scope": "config_path", "op": "contains", "keyword": "FNX_320_CFM_SL" }
+    ],
+    [
+      { "scope": "title", "op": "contains", "keyword": "fenix" },
+      { "scope": "either", "op": "contains", "keyword": "a319" }
+    ],
+    [
+      { "scope": "title", "op": "contains", "keyword": "fenix" },
+      { "scope": "either", "op": "contains", "keyword": "a320" }
+    ],
+    [
+      { "scope": "title", "op": "contains", "keyword": "fenix" },
+      { "scope": "either", "op": "contains", "keyword": "a321" }
+    ]
+  ],
+  "mappings": {
+    "flapNames": [
+      { "value": 0, "label": "UP" },
+      { "value": 1, "label": "CONF 1" },
+      { "value": 2, "label": "CONF 1+F" },
+      { "value": 3, "label": "CONF 2" },
+      { "value": 4, "label": "CONF 3" },
+      { "value": 5, "label": "FULL" }
+    ]
+  },
+  "features": {
+    "BeaconLights": [
+      { "if": { "all": [{ "kind": "lvar", "address": "S_OH_EXT_LT_BEACON", "valueType": "int", "operator": "equal", "value": 1 }] }, "action": { "value": true } },
+      { "action": { "value": false } }
+    ],
+    "LandingLights": [
+      {
+        "if": { "all": [
+          { "kind": "lvar", "address": "S_OH_EXT_LT_LANDING_L", "valueType": "int", "operator": "equal", "value": 2 },
+          { "kind": "lvar", "address": "S_OH_EXT_LT_LANDING_R", "valueType": "int", "operator": "equal", "value": 2 }
+        ] },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ],
+    "LogoLights": [
+      {
+        "if": { "any": [
+          { "kind": "lvar", "address": "S_OH_EXT_LT_NAV_LOGO", "valueType": "int", "operator": "equal", "value": 1 },
+          { "kind": "lvar", "address": "S_OH_EXT_LT_NAV_LOGO", "valueType": "int", "operator": "equal", "value": 2 }
+        ] },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ],
+    "NavigationLights": [
+      {
+        "if": { "any": [
+          { "kind": "lvar", "address": "S_OH_EXT_LT_NAV_LOGO", "valueType": "int", "operator": "equal", "value": 1 },
+          { "kind": "lvar", "address": "S_OH_EXT_LT_NAV_LOGO", "valueType": "int", "operator": "equal", "value": 2 }
+        ] },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ],
+    "StrobeLights": [
+      { "if": { "all": [{ "kind": "lvar", "address": "S_OH_EXT_LT_STROBE", "valueType": "int", "operator": "equal", "value": 1 }] }, "action": { "value": "ignore" } },
+      { "if": { "all": [{ "kind": "lvar", "address": "S_OH_EXT_LT_STROBE", "valueType": "int", "operator": "equal", "value": 2 }] }, "action": { "value": true } },
+      { "action": { "value": false } }
+    ],
+    "TaxiLights": [
+      {
+        "if": { "any": [
+          { "kind": "lvar", "address": "S_OH_EXT_LT_NOSE", "valueType": "int", "operator": "equal", "value": 1 },
+          { "kind": "lvar", "address": "S_OH_EXT_LT_NOSE", "valueType": "int", "operator": "equal", "value": 2 }
+        ] },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ],
+    "WingLights": [
+      { "if": { "all": [{ "kind": "lvar", "address": "S_OH_EXT_LT_WING", "valueType": "int", "operator": "equal", "value": 1 }] }, "action": { "value": true } },
+      { "action": { "value": false } }
+    ],
+    "EmergencyLights": [
+      {
+        "if": { "any": [
+          { "kind": "lvar", "address": "S_OH_INT_LT_EMER", "valueType": "int", "operator": "equal", "value": 1 },
+          { "kind": "lvar", "address": "S_OH_INT_LT_EMER", "valueType": "int", "operator": "equal", "value": 2 }
+        ] },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ],
+    "Seatbelts": [
+      { "if": { "all": [{ "kind": "lvar", "address": "S_OH_SIGNS", "valueType": "int", "operator": "equal", "value": 1 }] }, "action": { "value": true } },
+      { "action": { "value": false } }
+    ],
+    "Battery": [
+      {
+        "if": { "any": [
+          { "all": [
+            { "kind": "lvar", "address": "S_OH_ELEC_BAT1", "valueType": "int", "operator": "equal", "value": 1 },
+            { "kind": "lvar", "address": "S_OH_ELEC_BAT2", "valueType": "int", "operator": "equal", "value": 1 }
+          ] },
+          { "kind": "lvar", "address": "I_OH_ELEC_EXT_PWR_L", "valueType": "int", "operator": "equal", "value": 1 }
+        ] },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ],
+    "APU": [
+      {
+        "if": { "all": [
+          { "kind": "lvar", "address": "S_OH_ELEC_APU_MASTER", "valueType": "int", "operator": "equal", "value": 1 },
+          { "kind": "lvar", "address": "I_OH_ELEC_APU_START_U", "valueType": "int", "operator": "equal", "value": 1 }
+        ] },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ],
+    "Packs": [
+      {
+        "if": { "any": [
+          { "all": [
+            { "kind": "lvar", "address": "S_OH_PNEUMATIC_PACK_1", "valueType": "int", "operator": "equal", "value": 1 },
+            { "kind": "lvar", "address": "I_OH_PNEUMATIC_PACK_1_U", "valueType": "int", "operator": "equal", "value": 0 }
+          ] },
+          { "all": [
+            { "kind": "lvar", "address": "S_OH_PNEUMATIC_PACK_2", "valueType": "int", "operator": "equal", "value": 1 },
+            { "kind": "lvar", "address": "I_OH_PNEUMATIC_PACK_2_U", "valueType": "int", "operator": "equal", "value": 0 }
+          ] }
+        ] },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ],
+    "Doors": [
+      {
+        "if": { "all": [
+          { "kind": "lvar", "address": "Any_Exit_open_L", "valueType": "int", "operator": "equal", "value": 0 },
+          { "kind": "lvar", "address": "Any_Exit_open_R", "valueType": "int", "operator": "equal", "value": 0 }
+        ] },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ],
+    "AntiIce": [
+      {
+        "if": { "any": [
+          { "kind": "lvar", "address": "S_OH_PNEUMATIC_WING_ANTI_ICE", "valueType": "int", "operator": "equal", "value": 1 },
+          { "all": [
+            { "kind": "lvar", "address": "S_OH_PNEUMATIC_ENG1_ANTI_ICE", "valueType": "int", "operator": "equal", "value": 1 },
+            { "kind": "lvar", "address": "S_OH_PNEUMATIC_ENG2_ANTI_ICE", "valueType": "int", "operator": "equal", "value": 1 }
+          ] }
+        ] },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ]
+  }
+}

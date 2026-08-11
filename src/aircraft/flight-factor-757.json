@@ -1,0 +1,71 @@
+{
+  "meta": {
+    "id": "flightfactor-757",
+    "name": "FlightFactor 757",
+    "sim": "xplane",
+    "priority": 2,
+    "author": "acars"
+  },
+  "match": [
+    [
+      { "scope": "title", "op": "contains", "keyword": "boeing" },
+      { "scope": "title", "op": "contains", "keyword": "757" }
+    ]
+  ],
+  "features": {
+    "BeaconLights": [
+      {
+        "if": { "all": [{ "kind": "dataref", "address": "sim/cockpit2/switches/beacon_on", "valueType": "int", "operator": "equal", "value": 1 }] },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ],
+    "LandingLights": [
+      {
+        "if": {
+          "all": [
+            { "kind": "dataref", "address": "sim/cockpit2/switches/landing_lights_switch", "valueType": "numberArray", "index": 0, "operator": "equal", "value": 1 },
+            { "kind": "dataref", "address": "sim/cockpit2/switches/landing_lights_switch", "valueType": "numberArray", "index": 1, "operator": "equal", "value": 1 }
+          ]
+        },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ],
+    "LogoLights": [
+      {
+        "if": { "all": [{ "kind": "dataref", "address": "sim/cockpit2/switches/generic_lights_switch", "valueType": "numberArray", "index": 3, "operator": "equal", "value": 1 }] },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ],
+    "NavigationLights": [
+      {
+        "if": { "all": [{ "kind": "dataref", "address": "sim/cockpit2/switches/navigation_lights_on", "valueType": "int", "operator": "equal", "value": 1 }] },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ],
+    "StrobeLights": [
+      {
+        "if": { "all": [{ "kind": "dataref", "address": "sim/cockpit2/switches/strobe_lights_on", "valueType": "int", "operator": "equal", "value": 1 }] },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ],
+    "TaxiLights": [
+      {
+        "if": { "all": [{ "kind": "dataref", "address": "sim/cockpit2/switches/landing_lights_switch", "valueType": "numberArray", "index": 2, "operator": "equal", "value": 1 }] },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ],
+    "WingLights": [
+      {
+        "if": { "all": [{ "kind": "dataref", "address": "sim/cockpit2/switches/generic_lights_switch", "valueType": "numberArray", "index": 0, "operator": "equal", "value": 1 }] },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ]
+  }
+}

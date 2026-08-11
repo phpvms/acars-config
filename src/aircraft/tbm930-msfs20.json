@@ -1,0 +1,24 @@
+{
+  "meta": { "id": "tbm_930_2020", "name": "TBM 930 2020", "sim": "msfs20", "priority": 2, "author": "acars" },
+  "match": [
+    [
+      { "scope": "title", "op": "contains", "keyword": "tbm" },
+      { "scope": "title", "op": "contains", "keyword": "930" }
+    ]
+  ],
+  "disabled": { "LogoLights": true },
+  "mappings": {
+    "flapNames": [
+      { "value": 0, "label": "UP" },
+      { "value": 1, "label": "TO" },
+      { "value": 2, "label": "LDG" }
+    ]
+  },
+  "features": {
+    "BeaconLights": [
+      { "if": { "all": [{ "kind": "simvar", "address": "A:LIGHT LOGO,bool", "valueType": "int", "operator": "equal", "value": 1 }] }, "action": { "value": true } },
+      { "action": { "value": false } }
+    ],
+    "LogoLights": [{ "action": { "value": false } }]
+  }
+}

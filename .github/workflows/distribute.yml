@@ -53,7 +53,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: acars-package
-          path: 'stable.zip'
+          path: |
+            stable.zip
+            artifacts/aircraft.json
           overwrite: true
 
   #
@@ -78,6 +80,24 @@ jobs:
           AWS_REQUEST_CHECKSUM_CALCULATION: when_required
         run: |
           aws s3 cp stable.zip s3://acars/scripts/v8/stable.zip \
+            --endpoint-url https://ny-s3.storage.bunnycdn.com
+
+          # Aircraft configs publish on their own rather than inside the zip: the
+          # client fetches them from acars.aircraft_config_url. Versioned so a URL
+          # can be pinned to an exact build, plus a -latest alias to point at
+          # without editing Replane every release. A tag publishes under its
+          # version (v1.1.0 -> aircraft-1.1.0.json), anything else under the last
+          # five of the commit sha.
+          if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
+            VERSION="${GITHUB_REF#refs/tags/v}"
+          else
+            VERSION="${GITHUB_SHA: -5}"
+          fi
+
+          aws s3 cp artifacts/aircraft.json "s3://acars/configs/aircraft-${VERSION}.json" \
+            --endpoint-url https://ny-s3.storage.bunnycdn.com
+
+          aws s3 cp artifacts/aircraft.json s3://acars/configs/aircraft-latest.json \
             --endpoint-url https://ny-s3.storage.bunnycdn.com
 
   #
@@ -138,6 +158,14 @@ jobs:
           AWS_REQUEST_CHECKSUM_CALCULATION: when_required
         run: |
           aws s3 cp stable.zip s3://acars/scripts/v8/stable.zip \
+            --endpoint-url https://ny-s3.storage.bunnycdn.com
+
+          # Same split as the publish job, but the version is already known here.
+          aws s3 cp artifacts/aircraft.json \
+            "s3://acars/configs/aircraft-${{ steps.bump.outputs.version }}.json" \
+            --endpoint-url https://ny-s3.storage.bunnycdn.com
+
+          aws s3 cp artifacts/aircraft.json s3://acars/configs/aircraft-latest.json \
             --endpoint-url https://ny-s3.storage.bunnycdn.com
 
       - name: Create GitHub release

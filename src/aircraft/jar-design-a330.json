@@ -1,0 +1,62 @@
+{
+  "meta": {
+    "id": "jardesign_a330",
+    "name": "JARDesign A330",
+    "sim": "xplane",
+    "priority": 2,
+    "author": "acars"
+  },
+  "match": [
+    [
+      { "scope": "title", "op": "contains", "keyword": "jardesign" },
+      { "scope": "title", "op": "contains", "keyword": "a330" }
+    ]
+  ],
+  "features": {
+    "BeaconLights": [
+      {
+        "if": { "all": [{ "kind": "dataref", "address": "sim/custom/xap/extlight/beacon_sw", "valueType": "int", "operator": "equal", "value": 1 }] },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ],
+    "LandingLights": [
+      {
+        "if": { "all": [{ "kind": "dataref", "address": "sim/custom/xap/extlight/land_sw", "valueType": "int", "operator": "equal", "value": 1 }] },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ],
+    "NavigationLights": [
+      {
+        "if": {
+          "any": [
+            { "kind": "dataref", "address": "sim/custom/xap/extlight/navlogo_sw", "valueType": "int", "operator": "equal", "value": 1 },
+            { "kind": "dataref", "address": "sim/custom/xap/extlight/navlogo_sw", "valueType": "int", "operator": "equal", "value": 2 }
+          ]
+        },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ],
+    "StrobeLights": [
+      {
+        "if": { "all": [{ "kind": "dataref", "address": "sim/custom/xap/extlight/strobe_sw", "valueType": "int", "operator": "equal", "value": 2 }] },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ],
+    "TaxiLights": [
+      {
+        "if": {
+          "any": [
+            { "kind": "dataref", "address": "sim/custom/xap/extlight/nose_sw", "valueType": "int", "operator": "equal", "value": 1 },
+            { "kind": "dataref", "address": "sim/custom/xap/extlight/nose_sw", "valueType": "int", "operator": "equal", "value": 2 }
+          ]
+        },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ]
+  }
+}

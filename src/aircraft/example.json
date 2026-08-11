@@ -1,0 +1,21 @@
+{
+  "meta": { "id": "example", "name": "example", "sim": "msfs", "priority": 2, "author": "acars" },
+  "match": [
+    [
+      { "scope": "title", "op": "contains", "keyword": "example" },
+      { "scope": "title", "op": "contains", "keyword": "aircraft" }
+    ]
+  ],
+  "mappings": {
+    "flapNames": [
+      { "value": 0, "label": "UP" },
+      { "value": 1, "label": "CONF 1" }
+    ]
+  },
+  "disabled": { "BeaconLights": true },
+  "features": {
+    "BeaconLights": [
+      { "action": { "value": false } }
+    ]
+  }
+}

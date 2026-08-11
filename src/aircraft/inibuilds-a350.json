@@ -1,0 +1,113 @@
+{
+  "meta": { "id": "inibuilds_a350", "name": "IniBuilds Airbus A359/A35K", "sim": "msfs", "priority": 2, "author": "Arthur Parienté <https://github.com/arthurpar06>" },
+  "match": [
+    [{ "scope": "title", "op": "equals", "keyword": "a350-900" }],
+    [{ "scope": "title", "op": "equals", "keyword": "a350-1000" }]
+  ],
+  "mappings": {
+    "flapNames": [
+      { "value": 0, "label": "UP" },
+      { "value": 1, "label": "CONF 1" },
+      { "value": 2, "label": "CONF 1+F" },
+      { "value": 3, "label": "CONF 2" },
+      { "value": 4, "label": "CONF 3" },
+      { "value": 5, "label": "FULL" }
+    ]
+  },
+  "features": {
+    "BeaconLights": [
+      { "if": { "all": [{ "kind": "lvar", "address": "INI_LIGHTS_BEACON", "valueType": "int", "operator": "equal", "value": 1 }] }, "action": { "value": true } },
+      { "action": { "value": false } }
+    ],
+    "LandingLights": [
+      { "if": { "all": [{ "kind": "lvar", "address": "INI_LIGHTS_LANDING", "valueType": "int", "operator": "equal", "value": 1 }] }, "action": { "value": true } },
+      { "action": { "value": false } }
+    ],
+    "LogoLights": [
+      { "if": { "all": [{ "kind": "lvar", "address": "INI_LIGHTS_LOGO", "valueType": "int", "operator": "greaterThanInclusive", "value": 1 }] }, "action": { "value": true } },
+      { "action": { "value": false } }
+    ],
+    "NavigationLights": [
+      { "if": { "all": [{ "kind": "lvar", "address": "INI_LIGHTS_NAV", "valueType": "int", "operator": "greaterThanInclusive", "value": 1 }] }, "action": { "value": true } },
+      { "action": { "value": false } }
+    ],
+    "StrobeLights": [
+      { "if": { "all": [{ "kind": "lvar", "address": "INI_LIGHTS_STROBE", "valueType": "int", "operator": "equal", "value": 1 }] }, "action": { "value": "ignore" } },
+      { "if": { "all": [{ "kind": "lvar", "address": "INI_LIGHTS_STROBE", "valueType": "int", "operator": "equal", "value": 2 }] }, "action": { "value": true } },
+      { "action": { "value": false } }
+    ],
+    "TaxiLights": [
+      { "if": { "all": [{ "kind": "lvar", "address": "INI_LIGHTS_NOSE", "valueType": "int", "operator": "greaterThanInclusive", "value": 1 }] }, "action": { "value": true } },
+      { "action": { "value": false } }
+    ],
+    "WingLights": [
+      { "if": { "all": [{ "kind": "lvar", "address": "INI_LIGHTS_WING", "valueType": "int", "operator": "equal", "value": 1 }] }, "action": { "value": true } },
+      { "action": { "value": false } }
+    ],
+    "EmergencyLights": [
+      {
+        "if": { "any": [
+          { "kind": "lvar", "address": "INI_EMER_EXIT_SWITCH", "valueType": "int", "operator": "equal", "value": 1 },
+          { "kind": "lvar", "address": "INI_EMER_EXIT_SWITCH", "valueType": "int", "operator": "equal", "value": 2 }
+        ] },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ],
+    "Seatbelts": [
+      { "if": { "all": [{ "kind": "lvar", "address": "INI_SEATBELTS_SWITCH", "valueType": "int", "operator": "greaterThanInclusive", "value": 1 }] }, "action": { "value": true } },
+      { "action": { "value": false } }
+    ],
+    "APU": [
+      {
+        "if": { "all": [
+          { "kind": "lvar", "address": "INI_APU_MASTER_SWITCH", "valueType": "int", "operator": "equal", "value": 1 },
+          { "kind": "lvar", "address": "INI_APU_START_BUTTON", "valueType": "int", "operator": "equal", "value": 2 }
+        ] },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ],
+    "Battery": [
+      {
+        "if": { "any": [
+          { "all": [
+            { "kind": "lvar", "address": "INI_BATTERY_1_SWITCH", "valueType": "int", "operator": "equal", "value": 1 },
+            { "kind": "lvar", "address": "INI_BATTERY_2_SWITCH", "valueType": "int", "operator": "equal", "value": 1 },
+            { "kind": "lvar", "address": "INI_BATTERY_EMER1_SWITCH", "valueType": "int", "operator": "equal", "value": 1 },
+            { "kind": "lvar", "address": "INI_BATTERY_EMER2_SWITCH", "valueType": "int", "operator": "equal", "value": 1 }
+          ] },
+          { "all": [
+            { "kind": "lvar", "address": "INI_GEN_EXT1_SWITCH", "valueType": "int", "operator": "equal", "value": 1 },
+            { "kind": "lvar", "address": "INI_GEN_EXT2_SWITCH", "valueType": "int", "operator": "equal", "value": 1 }
+          ] }
+        ] },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ],
+    "Packs": [
+      {
+        "if": { "any": [
+          { "kind": "lvar", "address": "INI_AIR_PACK1_BUTTON", "valueType": "int", "operator": "equal", "value": 1 },
+          { "kind": "lvar", "address": "INI_AIR_PACK2_BUTTON", "valueType": "int", "operator": "equal", "value": 2 }
+        ] },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ],
+    "AntiIce": [
+      {
+        "if": { "any": [
+          { "kind": "lvar", "address": "INI_WING_ANTI_ICE1_STATE", "valueType": "int", "operator": "equal", "value": 1 },
+          { "all": [
+            { "kind": "lvar", "address": "INI_ENG_ANTI_ICE1_STATE", "valueType": "int", "operator": "equal", "value": 1 },
+            { "kind": "lvar", "address": "INI_ENG_ANTI_ICE2_STATE", "valueType": "int", "operator": "equal", "value": 1 }
+          ] }
+        ] },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ]
+  }
+}

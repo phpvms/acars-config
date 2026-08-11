@@ -1,0 +1,73 @@
+{
+  "meta": {
+    "id": "flyjsim_732",
+    "name": "FlyJSim 732",
+    "sim": "xplane",
+    "priority": 2,
+    "author": "acars"
+  },
+  "match": [
+    [
+      { "scope": "title", "op": "contains", "keyword": "fjs" },
+      { "scope": "title", "op": "contains", "keyword": "722" }
+    ]
+  ],
+  "features": {
+    "BeaconLights": [
+      {
+        "if": { "all": [{ "kind": "dataref", "address": "FJS/732/lights/AntiColLightSwitch", "valueType": "int", "operator": "equal", "value": 1 }] },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ],
+    "LandingLights": [
+      {
+        "if": {
+          "all": [
+            { "kind": "dataref", "address": "FJS/732/lights/InBoundLLightSwitch1", "valueType": "int", "operator": "equal", "value": 1 },
+            { "kind": "dataref", "address": "FJS/732/lights/InBoundLLightSwitch2", "valueType": "int", "operator": "equal", "value": 1 },
+            { "kind": "dataref", "address": "FJS/732/lights/OutBoundLLightSwitch1", "valueType": "int", "operator": "equal", "value": 2 },
+            { "kind": "dataref", "address": "FJS/732/lights/OutBoundLLightSwitch2", "valueType": "int", "operator": "equal", "value": 2 }
+          ]
+        },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ],
+    "LogoLights": [
+      {
+        "if": { "all": [{ "kind": "dataref", "address": "FJS/732/lights/LogoLightSwitch", "valueType": "int", "operator": "equal", "value": 1 }] },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ],
+    "NavigationLights": [
+      {
+        "if": { "all": [{ "kind": "dataref", "address": "FJS/732/lights/PositionLightSwitch", "valueType": "int", "operator": "equal", "value": 1 }] },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ],
+    "StrobeLights": [
+      {
+        "if": { "all": [{ "kind": "dataref", "address": "FJS/732/lights/StrobeLightSwitch", "valueType": "int", "operator": "equal", "value": 1 }] },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ],
+    "TaxiLights": [
+      {
+        "if": { "all": [{ "kind": "dataref", "address": "FJS/732/lights/TaxiLightSwitch", "valueType": "int", "operator": "equal", "value": 1 }] },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ],
+    "WingLights": [
+      {
+        "if": { "all": [{ "kind": "dataref", "address": "FJS/732/lights/WingLightSwitch", "valueType": "int", "operator": "equal", "value": 1 }] },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ]
+  }
+}

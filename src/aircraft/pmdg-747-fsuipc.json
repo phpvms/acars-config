@@ -1,0 +1,50 @@
+{
+  "meta": { "id": "pmdg_747_fsuipc", "name": "PMDG 747", "sim": "fsuipc", "priority": 2, "author": "acars" },
+  "match": [
+    [
+      { "scope": "title", "op": "contains", "keyword": "pmdg" },
+      { "scope": "title", "op": "contains", "keyword": "747" }
+    ]
+  ],
+  "disabled": { "LogoLights": true, "WingLights": true },
+  "features": {
+    "BeaconLights": [
+      {
+        "if": { "any": [
+          { "kind": "offset", "address": "0x650A", "valueType": "int", "operator": "equal", "value": 0 },
+          { "kind": "offset", "address": "0x650A", "valueType": "int", "operator": "equal", "value": 2 }
+        ] },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ],
+    "LandingLights": [
+      { "if": { "all": [{ "kind": "offset", "address": "0x6506", "valueType": "int", "operator": "equal", "value": 1 }] }, "action": { "value": true } },
+      { "action": { "value": false } }
+    ],
+    "LogoLights": [
+      { "action": { "value": false } }
+    ],
+    "NavigationLights": [
+      {
+        "if": { "any": [
+          { "kind": "offset", "address": "0x650B", "valueType": "int", "operator": "equal", "value": 0 },
+          { "kind": "offset", "address": "0x650B", "valueType": "int", "operator": "equal", "value": 2 }
+        ] },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ],
+    "StrobeLights": [
+      { "if": { "all": [{ "kind": "offset", "address": "0x6511", "valueType": "int", "operator": "equal", "value": 1 }] }, "action": { "value": true } },
+      { "action": { "value": false } }
+    ],
+    "TaxiLights": [
+      { "if": { "all": [{ "kind": "offset", "address": "0x6510", "valueType": "int", "operator": "equal", "value": 1 }] }, "action": { "value": true } },
+      { "action": { "value": false } }
+    ],
+    "WingLights": [
+      { "action": { "value": false } }
+    ]
+  }
+}

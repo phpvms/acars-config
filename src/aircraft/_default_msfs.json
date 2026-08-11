@@ -1,0 +1,66 @@
+{
+  "meta": { "id": "msfs default", "name": "msfs default", "sim": "msfs", "priority": 1, "author": "acars" },
+  "match": [[]],
+  "disabled": { "LogoLights": true },
+  "features": {
+    "APU": [
+      { "if": { "all": [{ "kind": "simvar", "address": "A:APU SWITCH,bool", "valueType": "bool", "operator": "equal", "value": true }] }, "action": { "value": true } },
+      { "action": { "value": false } }
+    ],
+    "Autopilot": [
+      {
+        "if": { "all": [
+          { "kind": "simvar", "address": "A:AUTOPILOT MASTER,bool", "valueType": "bool", "operator": "equal", "value": true },
+          { "kind": "simvar", "address": "A:AUTOPILOT DISENGAGED,bool", "valueType": "bool", "operator": "equal", "value": false }
+        ] },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ],
+    "Battery": [
+      {
+        "if": { "all": [
+          { "kind": "simvar", "address": "A:ELECTRICAL MASTER BATTERY:0,bool", "valueType": "bool", "operator": "equal", "value": true },
+          { "kind": "simvar", "address": "A:BATTERY CONNECTION ON:0,bool", "valueType": "bool", "operator": "equal", "value": true }
+        ] },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ],
+    "BeaconLights": [
+      { "if": { "all": [{ "kind": "simvar", "address": "A:LIGHT BEACON,bool", "valueType": "bool", "operator": "equal", "value": true }] }, "action": { "value": true } },
+      { "action": { "value": false } }
+    ],
+    "ExternalPower": [
+      { "if": { "all": [{ "kind": "simvar", "address": "A:EXTERNAL POWER ON,bool", "valueType": "bool", "operator": "equal", "value": true }] }, "action": { "value": true } },
+      { "action": { "value": false } }
+    ],
+    "LandingLights": [
+      { "if": { "all": [{ "kind": "simvar", "address": "A:LIGHT LANDING,bool", "valueType": "bool", "operator": "equal", "value": true }] }, "action": { "value": true } },
+      { "action": { "value": false } }
+    ],
+    "LogoLights": [
+      { "action": { "value": false } }
+    ],
+    "NavigationLights": [
+      { "if": { "all": [{ "kind": "simvar", "address": "A:LIGHT NAV,bool", "valueType": "bool", "operator": "equal", "value": true }] }, "action": { "value": true } },
+      { "action": { "value": false } }
+    ],
+    "StrobeLights": [
+      { "if": { "all": [{ "kind": "simvar", "address": "A:LIGHT STROBE,bool", "valueType": "bool", "operator": "equal", "value": true }] }, "action": { "value": true } },
+      { "action": { "value": false } }
+    ],
+    "TaxiLights": [
+      { "if": { "all": [{ "kind": "simvar", "address": "A:LIGHT TAXI,bool", "valueType": "bool", "operator": "equal", "value": true }] }, "action": { "value": true } },
+      { "action": { "value": false } }
+    ],
+    "Transponder": [
+      { "if": { "all": [{ "kind": "simvar", "address": "A:TRANSPONDER CODE:1,enum", "valueType": "int", "operator": "greaterThan", "value": 0 }] }, "action": { "value": true } },
+      { "action": { "value": false } }
+    ],
+    "WingLights": [
+      { "if": { "all": [{ "kind": "simvar", "address": "A:LIGHT RECOGNITION,bool", "valueType": "bool", "operator": "equal", "value": true }] }, "action": { "value": true } },
+      { "action": { "value": false } }
+    ]
+  }
+}

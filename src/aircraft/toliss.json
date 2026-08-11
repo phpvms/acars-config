@@ -1,0 +1,157 @@
+{
+  "meta": {
+    "id": "toliss_airbus",
+    "name": "ToLiss Airbus",
+    "sim": "xplane",
+    "priority": 2,
+    "author": "B.Fatih KOZ <https://github.com/FatihKoz>"
+  },
+  "match": [
+    [
+      { "scope": "title", "op": "contains", "keyword": "high" },
+      { "scope": "title", "op": "contains", "keyword": "fidelity" },
+      { "scope": "title", "op": "contains", "keyword": "system" }
+    ]
+  ],
+  "mappings": {
+    "flapNames": [
+      { "value": 0, "label": "UP" },
+      { "value": 1, "label": "CONF 1" },
+      { "value": 2, "label": "CONF 2" },
+      { "value": 3, "label": "CONF 3" },
+      { "value": 4, "label": "FULL" }
+    ]
+  },
+  "features": {
+    "BeaconLights": [
+      {
+        "if": { "all": [{ "kind": "dataref", "address": "AirbusFBW/OHPLightSwitches", "valueType": "intArray", "index": 0, "operator": "equal", "value": 1 }] },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ],
+    "LandingLights": [
+      {
+        "if": {
+          "all": [
+            { "kind": "dataref", "address": "AirbusFBW/OHPLightSwitches", "valueType": "intArray", "index": 4, "operator": "equal", "value": 2 },
+            { "kind": "dataref", "address": "AirbusFBW/OHPLightSwitches", "valueType": "intArray", "index": 5, "operator": "equal", "value": 2 }
+          ]
+        },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ],
+    "LogoLights": [
+      {
+        "if": {
+          "any": [
+            { "kind": "dataref", "address": "AirbusFBW/OHPLightSwitches", "valueType": "intArray", "index": 2, "operator": "equal", "value": 1 },
+            { "kind": "dataref", "address": "AirbusFBW/OHPLightSwitches", "valueType": "intArray", "index": 2, "operator": "equal", "value": 2 }
+          ]
+        },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ],
+    "NavigationLights": [
+      {
+        "if": {
+          "any": [
+            { "kind": "dataref", "address": "AirbusFBW/OHPLightSwitches", "valueType": "intArray", "index": 2, "operator": "equal", "value": 1 },
+            { "kind": "dataref", "address": "AirbusFBW/OHPLightSwitches", "valueType": "intArray", "index": 2, "operator": "equal", "value": 2 }
+          ]
+        },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ],
+    "WingLights": [
+      {
+        "if": { "all": [{ "kind": "dataref", "address": "AirbusFBW/OHPLightSwitches", "valueType": "intArray", "index": 1, "operator": "equal", "value": 1 }] },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ],
+    "EmergencyLights": [
+      {
+        "if": {
+          "any": [
+            { "kind": "dataref", "address": "AirbusFBW/OHPLightSwitches", "valueType": "intArray", "index": 10, "operator": "equal", "value": 1 },
+            { "kind": "dataref", "address": "AirbusFBW/OHPLightSwitches", "valueType": "intArray", "index": 10, "operator": "equal", "value": 2 }
+          ]
+        },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ],
+    "Seatbelts": [
+      {
+        "if": { "all": [{ "kind": "dataref", "address": "AirbusFBW/OHPLightSwitches", "valueType": "intArray", "index": 11, "operator": "equal", "value": 1 }] },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ],
+    "StrobeLights": [
+      {
+        "if": { "all": [{ "kind": "dataref", "address": "AirbusFBW/OHPLightSwitches", "valueType": "intArray", "index": 7, "operator": "equal", "value": 1 }] },
+        "action": { "value": "ignore" }
+      },
+      {
+        "if": { "all": [{ "kind": "dataref", "address": "AirbusFBW/OHPLightSwitches", "valueType": "intArray", "index": 7, "operator": "equal", "value": 2 }] },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ],
+    "TaxiLights": [
+      {
+        "if": {
+          "any": [
+            { "kind": "dataref", "address": "AirbusFBW/OHPLightSwitches", "valueType": "intArray", "index": 3, "operator": "equal", "value": 1 },
+            { "kind": "dataref", "address": "AirbusFBW/OHPLightSwitches", "valueType": "intArray", "index": 3, "operator": "equal", "value": 2 }
+          ]
+        },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ],
+    "Battery": [
+      {
+        "if": {
+          "all": [
+            { "kind": "dataref", "address": "AirbusFBW/BatOHPArray", "valueType": "intArray", "index": 0, "operator": "equal", "value": 1 },
+            { "kind": "dataref", "address": "AirbusFBW/BatOHPArray", "valueType": "intArray", "index": 1, "operator": "equal", "value": 1 }
+          ]
+        },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ],
+    "APU": [
+      {
+        "if": { "all": [{ "kind": "dataref", "address": "AirbusFBW/APUAvail", "valueType": "int", "operator": "equal", "value": 1 }] },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ],
+    "Packs": [
+      {
+        "if": {
+          "any": [
+            { "kind": "dataref", "address": "AirbusFBW/Pack1Flow", "valueType": "int", "operator": "greaterThan", "value": 0.5 },
+            { "kind": "dataref", "address": "AirbusFBW/Pack2Flow", "valueType": "int", "operator": "greaterThan", "value": 0.5 }
+          ]
+        },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ],
+    "Doors": [
+      {
+        "if": { "all": [{ "kind": "dataref", "address": "AirbusFBW/PaxDoorArray", "valueType": "intArray", "operator": "noneEqual", "value": 1 }] },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ]
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "meta": { "id": "fslabs_airbus", "name": "FsLabs Airbus", "sim": "fsuipc", "priority": 2, "author": "acars" },
+  "match": [
+    [
+      { "scope": "title", "op": "contains", "keyword": "fslabs" }
+    ]
+  ],
+  "mappings": {
+    "flapNames": [
+      { "value": 0, "label": "UP" },
+      { "value": 1, "label": "CONF 1" },
+      { "value": 2, "label": "CONF CHG" },
+      { "value": 3, "label": "CONF CHG" },
+      { "value": 4, "label": "CONF CHG" },
+      { "value": 5, "label": "CONF CHG" },
+      { "value": 6, "label": "CONF 1+F" },
+      { "value": 7, "label": "CONF 2" },
+      { "value": 8, "label": "CONF 3" },
+      { "value": 9, "label": "FULL" }
+    ]
+  },
+  "disabled": {
+    "BeaconLights": true,
+    "LandingLights": true,
+    "LogoLights": true,
+    "NavigationLights": true,
+    "StrobeLights": true,
+    "TaxiLights": true,
+    "WingLights": true
+  },
+  "features": {
+    "BeaconLights": [{ "action": { "value": false } }],
+    "LandingLights": [{ "action": { "value": false } }],
+    "LogoLights": [{ "action": { "value": false } }],
+    "NavigationLights": [{ "action": { "value": false } }],
+    "StrobeLights": [{ "action": { "value": false } }],
+    "TaxiLights": [{ "action": { "value": false } }],
+    "WingLights": [{ "action": { "value": false } }]
+  }
+}

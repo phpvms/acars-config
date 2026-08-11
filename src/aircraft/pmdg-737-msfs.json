@@ -1,0 +1,51 @@
+{
+  "meta": { "id": "pmdg_737_msfs", "name": "PMDG 737", "sim": "msfs", "priority": 2, "author": "acars" },
+  "match": [
+    [
+      { "scope": "either", "op": "contains", "keyword": "pmdg" },
+      { "scope": "either", "op": "contains", "keyword": "737" }
+    ]
+  ],
+  "features": {
+    "BeaconLights": [
+      { "if": { "all": [{ "kind": "lvar", "address": "switch_124_73X", "valueType": "int", "operator": "equal", "value": 100 }] }, "action": { "value": true } },
+      { "action": { "value": false } }
+    ],
+    "LandingLights": [
+      {
+        "if": { "all": [
+          { "kind": "lvar", "address": "switch_113_73X", "valueType": "int", "operator": "equal", "value": 100 },
+          { "kind": "lvar", "address": "switch_114_73X", "valueType": "int", "operator": "equal", "value": 100 }
+        ] },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ],
+    "LogoLights": [
+      { "if": { "all": [{ "kind": "lvar", "address": "switch_122_73X", "valueType": "int", "operator": "equal", "value": 100 }] }, "action": { "value": true } },
+      { "action": { "value": false } }
+    ],
+    "NavigationLights": [
+      {
+        "if": { "any": [
+          { "kind": "lvar", "address": "switch_123_73X", "valueType": "int", "operator": "equal", "value": 0 },
+          { "kind": "lvar", "address": "switch_123_73X", "valueType": "int", "operator": "equal", "value": 100 }
+        ] },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ],
+    "StrobeLights": [
+      { "if": { "all": [{ "kind": "lvar", "address": "switch_123_73X", "valueType": "int", "operator": "equal", "value": 0 }] }, "action": { "value": true } },
+      { "action": { "value": false } }
+    ],
+    "TaxiLights": [
+      { "if": { "all": [{ "kind": "lvar", "address": "switch_117_73X", "valueType": "int", "operator": "equal", "value": 100 }] }, "action": { "value": true } },
+      { "action": { "value": false } }
+    ],
+    "WingLights": [
+      { "if": { "all": [{ "kind": "lvar", "address": "switch_125_73X", "valueType": "int", "operator": "equal", "value": 100 }] }, "action": { "value": true } },
+      { "action": { "value": false } }
+    ]
+  }
+}

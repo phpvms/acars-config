@@ -23,6 +23,12 @@ const paths = {
   src: './src',
   out: './dist',
   export: './dist',
+
+  /**
+   * Build output that is published on its own rather than inside the scripts
+   * zip. Kept outside dist/ precisely so buildZipTask does not sweep it in.
+   */
+  artifacts: './artifacts',
 }
 
 /**
@@ -33,6 +39,7 @@ export const build = series(
   buildTsTask,
   copySoundsTask,
   copyMappingsTask,
+  buildAircraftConfigsTask,
   copyPackageJsonTask,
 )
 
@@ -66,6 +73,7 @@ export const csbuild = series(
   },
   build,
   copyFilesToAcarsPathTask,
+  copyAircraftConfigsToAcarsPathTask,
 )
 
 /**
@@ -134,6 +142,60 @@ function copyMappingsTask() {
 }
 
 /**
+ * Bundles every aircraft feature-config document into one JSON artifact.
+ *
+ * The client downloads this file directly rather than pulling the configs out
+ * of the scripts zip, so it is written to artifacts/ and deliberately NOT into
+ * dist/ — anything under dist/ ends up in the zip, and the whole point is that
+ * the aircraft configs travel on their own.
+ *
+ * Shape is deliberately dumb: a map of source filename (without .json) to that
+ * file's parsed contents, i.e. the directory serialized. The client writes each
+ * entry straight back out as <key>.json, so the on-disk layout it ends up with
+ * is identical to src/aircraft/ and nothing has to agree on a richer schema.
+ * That also keeps _default_flaps working — it is a bare array rather than a
+ * config document, and a filename-keyed map carries it without a special case.
+ */
+function buildAircraftConfigsTask(done) {
+  const dir = paths.src + '/aircraft'
+  const bundle = {}
+
+  for (const file of fs.readdirSync(dir).sort()) {
+    if (!file.endsWith('.json')) {
+      continue
+    }
+
+    const key = file.slice(0, -'.json'.length)
+    try {
+      bundle[key] = JSON.parse(fs.readFileSync(`${dir}/${file}`, 'utf8'))
+    } catch (err) {
+      // Naming the file matters: a bare SyntaxError across 36 documents says nothing about
+      // which one is broken.
+      done(new Error(`${dir}/${file}: ${err.message}`))
+
+      return
+    }
+  }
+
+  const count = Object.keys(bundle).length
+  if (count === 0) {
+    done(new Error(`No aircraft config documents found in ${dir}`))
+
+    return
+  }
+
+  fs.mkdirSync(paths.artifacts, { recursive: true })
+  fs.writeFileSync(
+    paths.artifacts + '/aircraft.json',
+    JSON.stringify(bundle),
+    'utf8',
+  )
+
+  console.log(`aircraft.json: bundled ${count} documents`)
+  done()
+}
+
+/**
  * This copies the package.json file to the output directory
  *
  */
@@ -149,6 +211,20 @@ function copyFilesToAcarsPathTask() {
 
   return src(['./**/*', '!node_modules/**/*'], { cwd: paths.out }).pipe(
     dest(paths.acars),
+  )
+}
+
+/**
+ * Deliver the aircraft configs for local use, straight from src/.
+ *
+ * They are deliberately absent from dist/, because they ship as their own bundle rather than
+ * inside the zip, so copying dist/ alone would leave a locally-built client with no aircraft
+ * configs at all. The client reads them from the aircraft directory, which is the same place the
+ * downloaded bundle gets exploded to, so this puts a developer in the same state a download would.
+ */
+function copyAircraftConfigsToAcarsPathTask() {
+  return src([paths.src + '/aircraft/**/*.json']).pipe(
+    dest(paths.acars + '/aircraft'),
   )
 }
 
@@ -178,7 +254,7 @@ function localBuildTask() {
   return watch(
     paths.src,
     { ignoreInitial: false },
-    series(build, copyFilesToAcarsPathTask),
+    series(build, copyFilesToAcarsPathTask, copyAircraftConfigsToAcarsPathTask),
   )
 }
 
@@ -186,7 +262,11 @@ function localBuildTask() {
  * Clean up the /dest directory
  */
 async function cleanTask() {
-  return del([paths.out, paths.export + '/' + process.env.ACARS_DIST_ZIP])
+  return del([
+    paths.out,
+    paths.artifacts,
+    paths.export + '/' + process.env.ACARS_DIST_ZIP,
+  ])
 }
 
 /**

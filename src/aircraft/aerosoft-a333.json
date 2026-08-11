@@ -1,0 +1,33 @@
+{
+  "meta": { "id": "aerosoft_a333", "name": "aerosoft a333", "sim": "fsuipc", "priority": 2, "author": "acars" },
+  "match": [
+    [
+      { "scope": "title", "op": "contains", "keyword": "aerosoft" },
+      { "scope": "title", "op": "contains", "keyword": "a3" }
+    ]
+  ],
+  "mappings": {
+    "flapNames": [
+      { "value": 0, "label": "UP" },
+      { "value": 1, "label": "CONF 1" },
+      { "value": 2, "label": "CONF 1+F" },
+      { "value": 3, "label": "CONF 2" },
+      { "value": 4, "label": "CONF 3" },
+      { "value": 5, "label": "FULL" }
+    ]
+  },
+  "disabled": {
+    "BeaconLights": true,
+    "LandingLights": true,
+    "NavigationLights": true,
+    "StrobeLights": true,
+    "TaxiLights": true
+  },
+  "features": {
+    "BeaconLights": [{ "action": { "value": false } }],
+    "LandingLights": [{ "action": { "value": false } }],
+    "NavigationLights": [{ "action": { "value": false } }],
+    "StrobeLights": [{ "action": { "value": false } }],
+    "TaxiLights": [{ "action": { "value": false } }]
+  }
+}

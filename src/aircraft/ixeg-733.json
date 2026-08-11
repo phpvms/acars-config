@@ -1,0 +1,70 @@
+{
+  "meta": {
+    "id": "ixeg_733",
+    "name": "IXEG 733",
+    "sim": "xplane",
+    "priority": 2,
+    "author": "acars"
+  },
+  "match": [
+    [
+      { "scope": "title", "op": "contains", "keyword": "boeing" },
+      { "scope": "title", "op": "contains", "keyword": "737-300" },
+      { "scope": "title", "op": "contains", "keyword": "x-aviation" }
+    ]
+  ],
+  "disabled": {
+    "LogoLights": true
+  },
+  "features": {
+    "BeaconLights": [
+      {
+        "if": { "all": [{ "kind": "dataref", "address": "ixeg/733/lighting/anti_col_lt_act", "valueType": "int", "operator": "equal", "value": 1 }] },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ],
+    "LandingLights": [
+      {
+        "if": {
+          "all": [
+            { "kind": "dataref", "address": "ixeg/733/lighting/l_inboard_ll_act", "valueType": "int", "operator": "equal", "value": 1 },
+            { "kind": "dataref", "address": "ixeg/733/lighting/r_inboard_ll_act", "valueType": "int", "operator": "equal", "value": 1 },
+            { "kind": "dataref", "address": "ixeg/733/lighting/l_outboard_ll_act", "valueType": "int", "operator": "equal", "value": 2 },
+            { "kind": "dataref", "address": "ixeg/733/lighting/r_outboard_ll_act", "valueType": "int", "operator": "equal", "value": 3 }
+          ]
+        },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ],
+    "NavigationLights": [
+      {
+        "if": { "all": [{ "kind": "dataref", "address": "ixeg/733/lighting/position_lt_act", "valueType": "int", "operator": "equal", "value": 1 }] },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ],
+    "StrobeLights": [
+      {
+        "if": { "all": [{ "kind": "dataref", "address": "ixeg/733/lighting/strobe_lt_act", "valueType": "int", "operator": "equal", "value": 1 }] },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ],
+    "TaxiLights": [
+      {
+        "if": { "all": [{ "kind": "dataref", "address": "ixeg/733/lighting/taxi_lt_act", "valueType": "int", "operator": "equal", "value": 1 }] },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ],
+    "WingLights": [
+      {
+        "if": { "all": [{ "kind": "dataref", "address": "ixeg/733/lighting/wing_lt_act", "valueType": "int", "operator": "equal", "value": 1 }] },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ]
+  }
+}

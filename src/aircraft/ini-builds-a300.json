@@ -1,0 +1,90 @@
+{
+  "meta": {
+    "id": "inibuilds_a300",
+    "name": "IniBuilds A300",
+    "sim": "xplane",
+    "priority": 2,
+    "author": "acars"
+  },
+  "match": [
+    [
+      { "scope": "title", "op": "contains", "keyword": "airbus" },
+      { "scope": "title", "op": "contains", "keyword": "a300" }
+    ],
+    [
+      { "scope": "title", "op": "contains", "keyword": "airbus" },
+      { "scope": "title", "op": "contains", "keyword": "a310" }
+    ]
+  ],
+  "disabled": {
+    "LogoLights": true
+  },
+  "mappings": {
+    "flapNames": [
+      { "value": 0, "label": "UP" },
+      { "value": 1, "label": "15/0" },
+      { "value": 2, "label": "15/15" },
+      { "value": 3, "label": "15/20" },
+      { "value": 4, "label": "30/40" }
+    ]
+  },
+  "features": {
+    "BeaconLights": [
+      {
+        "if": { "all": [{ "kind": "dataref", "address": "A300/switches/animations_current", "valueType": "numberArray", "index": 4, "operator": "equal", "value": 1 }] },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ],
+    "LandingLights": [
+      {
+        "if": {
+          "all": [
+            { "kind": "dataref", "address": "A300/switches/animations_current", "valueType": "numberArray", "index": 7, "operator": "equal", "value": 1 },
+            { "kind": "dataref", "address": "A300/switches/animations_current", "valueType": "numberArray", "index": 8, "operator": "equal", "value": 1 }
+          ]
+        },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ],
+    "NavigationLights": [
+      {
+        "if": {
+          "any": [
+            { "kind": "dataref", "address": "A300/switches/animations_current", "valueType": "numberArray", "index": 1, "operator": "equal", "value": 1 },
+            { "kind": "dataref", "address": "A300/switches/animations_current", "valueType": "numberArray", "index": 1, "operator": "equal", "value": 2 }
+          ]
+        },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ],
+    "StrobeLights": [
+      {
+        "if": { "all": [{ "kind": "dataref", "address": "A300/switches/animations_current", "valueType": "numberArray", "index": 3, "operator": "equal", "value": 1 }] },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ],
+    "TaxiLights": [
+      {
+        "if": {
+          "any": [
+            { "kind": "dataref", "address": "A300/switches/animations_current", "valueType": "numberArray", "index": 0, "operator": "equal", "value": 1 },
+            { "kind": "dataref", "address": "A300/switches/animations_current", "valueType": "numberArray", "index": 0, "operator": "equal", "value": 2 }
+          ]
+        },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ],
+    "WingLights": [
+      {
+        "if": { "all": [{ "kind": "dataref", "address": "A300/switches/animations_current", "valueType": "numberArray", "index": 2, "operator": "equal", "value": 1 }] },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ]
+  }
+}

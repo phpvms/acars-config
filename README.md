@@ -156,239 +156,221 @@ can retrieve that type of information.
 
 ---
 
-## Aircraft Configuration:
+## Aircraft Configuration
 
-Aircraft rules are required to inherit the `AircraftConfig` abstract class. An
-example class would look like:
+An aircraft config tells the client how to read one aircraft's state out of the
+simulator. It says which variable holds the beacon light state, what the flap
+detents are called, and which aircraft the document applies to in the first
+place.
 
-```typescript
-import { AircraftConfigSimType, AircraftFeature, FeatureType } from '../defs'
-// Additional mports are left out for now
+Configs are JSON documents in `src/aircraft/`, one per aircraft. They aren't
+code. The client evaluates them with a rules engine, so a config can be edited,
+or written from scratch in the phpVMS admin, without shipping a new build.
 
-export default class FenixA320 extends AircraftConfig {
-    meta: Meta = {
-        id: 'fenix_a320',
-        name: 'Fenix A320',
-        sim: AircraftConfigSimType.MsFs,
-        enabled: true,
-        priority: 2,
-    }
+A complete config, small enough to read in one go:
 
-    features: FeatureAddresses = {
-        // Aircraft feature
-        [AircraftFeature.BeaconLights]: {
-            'lvar name': FeatureType.Int,
-        },
-    }
-
-    flapNames: FlapNames = {
-        0: 'UP',
-        1: 'CONF 1',
-        2: 'CONF 1+F',
-        3: 'CONF 2',
-        4: 'CONF 3',
-        5: 'FULL',
-    }
-
-    match(title: string, icao: string, config_path: string): boolean {
-        // Check the aircraft title and return true/false if this matches
-    }
-
-    beaconLights(lvar_value: number): FeatureState {
-        // Check the lvar_value if the
-    }
+```json
+{
+  "meta": { "id": "example", "name": "example", "sim": "msfs", "priority": 2, "author": "acars" },
+  "match": [
+    [
+      { "scope": "title", "op": "contains", "keyword": "example" },
+      { "scope": "title", "op": "contains", "keyword": "aircraft" }
+    ]
+  ],
+  "mappings": {
+    "flapNames": [
+      { "value": 0, "label": "UP" },
+      { "value": 1, "label": "CONF 1" }
+    ]
+  },
+  "disabled": { "BeaconLights": true },
+  "features": {
+    "BeaconLights": [
+      { "action": { "value": false } }
+    ]
+  }
 }
 ```
 
-The configuration is a class which has a few different components.
+There are five top-level keys. `meta`, `match` and `features` are required.
+`mappings` and `disabled` are optional.
 
-1. `meta`, which gives some general information about the configuration:
-  - `name` - a name for this script
-  - `sim` - The simulator it's for
-    - `AircraftConfigSimType.XPlane`
-    - `AircraftConfigSimType.Fsuipc`
-    - `AircraftConfigSimType.MsFs`
-    - `AircraftConfigSimType.MsFs20`
-    - `AircraftConfigSimType.MsFs24`
-  - `enabled`
-    - `priority` - from 1 (lowest) to 10 (highest).
-      - If there are multiple rules that match this, then which one takes
-        priority.
-      - All the built-in rules are at a priority 1
-      - Aircraft specifics rules are priority 2.
-      - I recommend using a priority of 3 or higher. More on this below
-2. `features` - this is the type `FeatureAddresses` - see `defs.ts` for the
-   definitions
-  - MSFS - the lookups you enter are LVars
-  - X-Plane - the looks ups are via datarefs
-  - FSUIPC - the lookups are offsets
-3. `flapNames` - see below
-4. `match()`
-  - This needs to return a boolean
-  - A method (`match()`) which passes some information about the starting
-    aircraft
-    - For MSFS, it's the aircraft ICAO
-    - For FSX/P3d, the value looked at is the aircraft title field, offset
-      `0x3D00`
-    - For X-Plane, the value looked at is `sim/aircraft/view/acf_descrip`
-    - This method can be used to determine if this rule should match
-5. Methods for the different features (see below)
-  - The maps - a group of datarefs or offsets which constitute that feature
-    being "on" or "enabled"
+### `meta`
 
-In the above example, for the Fenix A320, the landing lights are controlled by
-two datarefs, both of which the values need to be 1 or 2 for the landing lights
-to be considered "on".
+- `id` - unique across all configs. It's also the filename by convention.
+- `name` - what gets shown to the user.
+- `author`
+- `sim` - one of `msfs`, `msfs20`, `msfs24`, `xplane`, `fsuipc`. See
+  [Targeting MSFS versions](#targeting-msfs-versions).
+- `priority` - 1 (lowest) to 10 (highest). It only comes into play when two
+  configs match the same aircraft. See [Priority](#priority).
 
-#### Targeting MSFS
+The per-sim defaults (`_default_msfs`, `_default_xplane`, `_default_fsuipc`)
+are priority 1, and the aircraft-specific configs are priority 2. Write your own
+at 3 or higher if you want them to take precedence.
 
-There are 3 possible values for targetting MSFS in the configs:
+### `match`
 
-- `AircraftConfigSimType.MsFs` - This will apply the configuration to both 2020
-  and 2024
-- `AircraftConfigSimType.MsFs20` - This will be for 2020 ONLY
-- `AircraftConfigSimType.MsFs24` - This will be for 2024 ONLY
+This decides which aircraft the config applies to. The client tests it against
+two values from the simulator, and `either` covers both at once:
 
-### Features
+- `title` - the aircraft title. On MSFS this is the ICAO. On FSX/P3D it's the
+  title field at offset `0x3D00`, and on X-Plane it's
+  `sim/aircraft/view/acf_descrip`.
+- `config_path` - the aircraft's configuration file path.
+- `either` - matches when `title` or `config_path` does.
 
-Features are essentially stored in a dictionary of dictionaries, of type
-`FeatureAddresses`:
+`match` is an array of arrays. Everything inside an inner array has to match,
+and any one inner array matching is enough. The block below reads as "fenix and
+a320, or fenix and a321":
 
-```typescript
-features: FeatureAddresses = {
-    // Aircraft feature
-    [AircraftFeature.BeaconLights]: {
-        'Lookup Address': FeatureType.Int,
-    },
+```json
+"match": [
+  [
+    { "scope": "title", "op": "contains", "keyword": "fenix" },
+    { "scope": "either", "op": "contains", "keyword": "a320" }
+  ],
+  [
+    { "scope": "title", "op": "contains", "keyword": "fenix" },
+    { "scope": "either", "op": "contains", "keyword": "a321" }
+  ]
+]
+```
+
+`op` is either `contains` or `equals`. Both sides are lowercased first, so
+matching ignores case.
+
+### `features`
+
+Each key is a feature name, and its value is a ruleset: an ordered list of
+branches that the client walks top to bottom, stopping at the first one that
+matches. A branch with no `if` always matches, which makes it the final else.
+
+```json
+"BeaconLights": [
+  { "if": { "all": [{ "kind": "lvar", "address": "S_OH_EXT_LT_BEACON", "valueType": "int", "operator": "equal", "value": 1 }] },
+    "action": { "value": true } },
+  { "action": { "value": false } }
+]
+```
+
+So: if the lvar equals 1 the beacon is on, otherwise it's off.
+
+The feature names are fixed. The client knows this set and nothing else:
+
+`BeaconLights`, `LandingLights`, `LogoLights`, `NavigationLights`,
+`StrobeLights`, `TaxiLights`, `WingLights`, `Flaps`, `APU`, `Doors`,
+`Seatbelts`, `EmergencyLights`, `AntiIce`, `Battery`, `Packs`, `ParkingBrakes`,
+`Engines`, `Transponder`, `LandingGear`, `Autopilot`, `ExternalPower`.
+
+A name outside that set gets rejected when the config is imported. An older
+client that doesn't recognize a newer name skips that one feature and logs a
+warning instead of throwing out the whole document.
+
+#### Naming a simulator variable
+
+Conditions, and some actions, point at a variable using three fields:
+
+- `kind` - `lvar`, `simvar`, `dataref` or `offset`.
+- `address` - where to find it. An FSUIPC offset, an X-Plane DRef, or on MSFS
+  either an LVar name or a Simvar. Simvars get an `A:` prefix and carry their
+  type, like `A:LIGHT LOGO,bool`.
+- `valueType` - `bool`, `int`, `number`, `byte`, `intArray` or `numberArray`.
+
+Array-valued variables take an `index` to pick out one element. That still
+reads from the same subscription rather than setting up a second one.
+
+#### Comparing it
+
+A condition is one of those variable references plus an `operator` and a
+`value`. The operators are the json-rules-engine built-ins (`equal`,
+`notEqual`, `lessThan`, `lessThanInclusive`, `greaterThan`,
+`greaterThanInclusive`, `in`, `notIn`, `contains`, `doesNotContain`) plus two
+of our own:
+
+- `bitsSet` - true when every bit set in `value` is also set in the variable.
+- `noneEqual` - true when no element of an array-valued variable equals `value`.
+
+Conditions group under `all` or `any`, and the groups nest:
+
+```json
+"if": { "any": [
+  { "kind": "lvar", "address": "S_OH_EXT_LT_NAV_LOGO", "valueType": "int", "operator": "equal", "value": 1 },
+  { "kind": "lvar", "address": "S_OH_EXT_LT_NAV_LOGO", "valueType": "int", "operator": "equal", "value": 2 }
+] }
+```
+
+If the simulator never reports a variable, it resolves to `undefined`, and no
+operator matches that. The branch just falls through to the next one.
+
+#### What a branch emits
+
+`action.value` takes one of:
+
+- `true` or `false` - the feature is on or off.
+- `"ignore"` - emit nothing and leave the feature to a lower priority config.
+- `{ "fromFact": { ... } }` - emit the variable's own value instead of a
+  boolean. This is how `Flaps` reports its detent.
+
+An action can also name a `mappings` table through `mapping`, which turns the
+emitted value into a label.
+
+### `mappings`
+
+These are named lookup tables, each one a list of `{ value, label }` rows, used
+to turn a raw value into something readable.
+
+```json
+"mappings": {
+  "flapNames": [
+    { "value": 0, "label": "UP" },
+    { "value": 1, "label": "CONF 1" },
+    { "value": 5, "label": "FULL" }
+  ]
 }
 ```
 
-In the above example:
+`flapNames` is the one the client looks up by name, to label flap detents. When
+a config doesn't define it, the client falls back to `_default_flaps.json`,
+which matches the aircraft's ICAO against a pattern and covers whole families
+at once.
 
-- `AircraftFeature.BeaconLights` is an enum value of the feature type. It's put
-  in `[]` because it's a variable name
-- It's set to an object, where the keys are the lookup address or lvar.
-- `Lookup Address` is where to find this data:
-- `FeatureType.Int` - is the type of value that's returned.
+### `disabled`
 
-The different features available are:
+This switches a feature off completely, which is worth doing when an aircraft
+reports one badly enough that no rule can be trusted.
 
-- beaconLights
-- landingLights
-- logoLights
-- navigationLights
-- strobeLights
-- taxiLights
-- wingLights
-- flaps
-
-The different features contain how to look up the value, and the type. You can
-have multiple variables to be
-read and looked at for a feature. Each feature then corresponds to a method
-which is called to return if
-that feature is on or off. That method will have the equivalent number of
-arguments for each data reference
-
-### Lookup Locations
-
-- For FSUIPC, the lookup location is the offset
-- For X-Plane, it's the DRef
-- For MSFS, it's either the LVar name, or a Simvar:
-  - Simvar has to be prefixed with `A:`, e.g, `A:LIGHT LOGO,bool`, and then the
-    type
-
-Example:
-
-```typescript
-export default class Example extends AircraftConfig {
-    features: FeatureAddresses = {
-        // Aircraft feature
-        [AircraftFeature.BeaconLights]: {
-            'sample/dataref/1': FeatureType.Bool,
-            'sample/dataref/2': FeatureType.Bool,
-        },
-    }
-
-    beaconLights(dataref_1: boolean, dataref_2: boolean): FeatureState {
-        if (dataref_1 && dataref_2) {
-            return true;
-        }
-
-        return false;
-    }
-}
+```json
+"disabled": { "BeaconLights": true }
 ```
 
-### Equality Checking
+A disabled feature emits nothing. Unlike `"ignore"`, it doesn't hand the
+feature down to a lower priority config either.
 
-I recommend using `==` instead of `===` for equality comparisons, since the
-types coming from the sim
-may not always match up or be casted properly (e.g, `1` being returned instead
-of `true`)
+### Priority
 
-### Ignoring Features
+When two configs match the same aircraft, both stay loaded, and the winner is
+worked out separately for each feature using `meta.priority`. A config that
+leaves a feature out, or emits `"ignore"` for it, passes that feature to the
+next config down.
 
-To ignore a feature in the rules (for example, if a feature doesn't work
-properly), set the feature to false:
+Partial overrides fall out of that. Say a priority 1 config defines
+`BeaconLights` and `LandingLights`, and a priority 10 config defines only
+`LandingLights`. The client ends up using the priority 10 landing lights and
+the priority 1 beacon lights.
 
-```typescript
-import { AircraftFeature } from './defs'
+A VA's own configs work the same way. They sit alongside the shipped library
+rather than replacing it, so overriding one feature of one aircraft leaves
+everything else alone.
 
-features: FeatureAddresses = {
-    // Aircraft feature
-    [AircraftFeature.BeaconLights]: {
-        'lvar name': FeatureType.Int,
-    },
-    [AircraftFeature.LandingLights]: false,
-}
-```
+### Targeting MSFS versions
 
-### Mixed priorities
+`meta.sim` takes three MSFS values:
 
-If there are two scripts which match a particular aircraft, and a feature is
-omitted, it will use the lower priority
-one in place. For example:
-
-```typescript
-import { FeatureAddresses } from './aircraft'
-
-export default class Example extends AircraftConfig {
-    meta: Meta = {
-        // ...
-        priority: 1
-    }
-
-    features: FeatureAddresses = {
-        [AircraftFeature.BeaconLights]: {
-            'sample/dataref/1': FeatureType.Bool,
-            'sample/dataref/2': FeatureType.Bool,
-        },
-        [AircraftFeature.LandingLights]: {
-            'sample/landing/light/1': FeatureType.Bool,
-            'sample/landing/light/2': FeatureType.Bool,
-        },
-    }
-}
-
-export default class ExampleOverride {
-    meta: Meta = {
-        // ...
-        priority: 10
-    }
-
-    features: FeatureAddresses = {
-        [AircraftFeature.LandingLights]: {
-            'override/landing/light/1': FeatureType.Bool,
-            'override/landing/light/2': FeatureType.Bool,
-        },
-    }
-}
-```
-
-In this case, the lookups used for the rules will be:
-
-- beaconLights - `sample/dataref/1|2`
-- landingLights - `override/landing/light/1|2`
+- `msfs` - both 2020 and 2024
+- `msfs20` - 2020 only
+- `msfs24` - 2024 only
 
 ---
 

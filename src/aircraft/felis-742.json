@@ -1,0 +1,72 @@
+{
+  "meta": {
+    "id": "felis_742",
+    "name": "Felis 742",
+    "sim": "xplane",
+    "priority": 2,
+    "author": "acars"
+  },
+  "match": [
+    [
+      { "scope": "title", "op": "contains", "keyword": "boeing" },
+      { "scope": "title", "op": "contains", "keyword": "747-200" }
+    ]
+  ],
+  "disabled": {
+    "BeaconLights": true,
+    "NavigationLights": true,
+    "StrobeLights": true
+  },
+  "mappings": {
+    "flapNames": [
+      { "value": 0, "label": "UP" },
+      { "value": 1, "label": "CONF 1" },
+      { "value": 2, "label": "CONF 1+F" },
+      { "value": 3, "label": "CONF 2" },
+      { "value": 4, "label": "CONF 3" },
+      { "value": 5, "label": "FULL" }
+    ]
+  },
+  "features": {
+    "LandingLights": [
+      {
+        "if": {
+          "all": [
+            { "kind": "dataref", "address": "B742/ext_light/landing_inbd_L_sw", "valueType": "int", "operator": "equal", "value": 1 },
+            { "kind": "dataref", "address": "B742/ext_light/landing_inbd_R_sw", "valueType": "int", "operator": "equal", "value": 1 },
+            { "kind": "dataref", "address": "B742/ext_light/landing_outbd_L_sw", "valueType": "int", "operator": "equal", "value": 1 },
+            { "kind": "dataref", "address": "B742/ext_light/landing_outbd_R_sw", "valueType": "int", "operator": "equal", "value": 1 }
+          ]
+        },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ],
+    "LogoLights": [
+      {
+        "if": { "all": [{ "kind": "dataref", "address": "B742/ext_light/logo_sw", "valueType": "int", "operator": "equal", "value": 1 }] },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ],
+    "TaxiLights": [
+      {
+        "if": {
+          "all": [
+            { "kind": "dataref", "address": "B742/ext_light/runway_turnoff_L_sw", "valueType": "int", "operator": "equal", "value": 1 },
+            { "kind": "dataref", "address": "B742/ext_light/runway_turnoff_R_sw", "valueType": "int", "operator": "equal", "value": 1 }
+          ]
+        },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ],
+    "WingLights": [
+      {
+        "if": { "all": [{ "kind": "dataref", "address": "B742/ext_light/wing_sw", "valueType": "int", "operator": "equal", "value": 1 }] },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ]
+  }
+}

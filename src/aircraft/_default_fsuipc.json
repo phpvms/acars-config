@@ -1,0 +1,33 @@
+{
+  "meta": { "id": "fsuipc_default", "name": "fsuipc default", "sim": "fsuipc", "priority": 1, "author": "acars" },
+  "match": [[]],
+  "disabled": { "LogoLights": true, "WingLights": true },
+  "features": {
+    "NavigationLights": [
+      { "if": { "all": [{ "kind": "offset", "address": "0x0D0C", "valueType": "byte", "operator": "bitsSet", "value": 1 }] }, "action": { "value": true } },
+      { "action": { "value": false } }
+    ],
+    "BeaconLights": [
+      { "if": { "all": [{ "kind": "offset", "address": "0x0D0C", "valueType": "byte", "operator": "bitsSet", "value": 2 }] }, "action": { "value": true } },
+      { "action": { "value": false } }
+    ],
+    "LandingLights": [
+      { "if": { "all": [{ "kind": "offset", "address": "0x0D0C", "valueType": "byte", "operator": "bitsSet", "value": 4 }] }, "action": { "value": true } },
+      { "action": { "value": false } }
+    ],
+    "TaxiLights": [
+      { "if": { "all": [{ "kind": "offset", "address": "0x0D0C", "valueType": "byte", "operator": "bitsSet", "value": 8 }] }, "action": { "value": true } },
+      { "action": { "value": false } }
+    ],
+    "StrobeLights": [
+      { "if": { "all": [{ "kind": "offset", "address": "0x0D0C", "valueType": "byte", "operator": "bitsSet", "value": 16 }] }, "action": { "value": true } },
+      { "action": { "value": false } }
+    ],
+    "LogoLights": [
+      { "action": { "value": false } }
+    ],
+    "WingLights": [
+      { "action": { "value": false } }
+    ]
+  }
+}

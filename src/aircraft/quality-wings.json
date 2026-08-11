@@ -1,0 +1,18 @@
+{
+  "meta": { "id": "qualitywings", "name": "QualityWings", "sim": "msfs", "priority": 2, "author": "acars" },
+  "match": [
+    [{ "scope": "title", "op": "contains", "keyword": "qualitywings" }],
+    [
+      { "scope": "title", "op": "contains", "keyword": "quality" },
+      { "scope": "title", "op": "contains", "keyword": "wings" }
+    ]
+  ],
+  "disabled": { "BeaconLights": true, "LandingLights": true, "NavigationLights": true, "StrobeLights": true, "TaxiLights": true },
+  "features": {
+    "BeaconLights": [{ "action": { "value": false } }],
+    "LandingLights": [{ "action": { "value": false } }],
+    "NavigationLights": [{ "action": { "value": false } }],
+    "StrobeLights": [{ "action": { "value": false } }],
+    "TaxiLights": [{ "action": { "value": false } }]
+  }
+}

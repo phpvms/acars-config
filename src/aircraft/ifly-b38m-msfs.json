@@ -1,0 +1,51 @@
+{
+  "meta": { "id": "ifly_b38M_msfs", "name": "iFLY B737-MAX8", "sim": "msfs", "priority": 2, "author": "B.Fatih KOZ <https://github.com/FatihKoz>" },
+  "match": [
+    [
+      { "scope": "title", "op": "contains", "keyword": "ifly" },
+      { "scope": "title", "op": "contains", "keyword": "737-max8" }
+    ]
+  ],
+  "disabled": { "LogoLights": true },
+  "features": {
+    "BeaconLights": [
+      { "if": { "all": [{ "kind": "lvar", "address": "VC_Beacon_Light_SW_VAL", "valueType": "int", "operator": "equal", "value": 10 }] }, "action": { "value": true } },
+      { "action": { "value": false } }
+    ],
+    "LandingLights": [
+      {
+        "if": { "all": [
+          { "kind": "lvar", "address": "VC_Landing_Light_1_SW_VAL", "valueType": "int", "operator": "equal", "value": 20 },
+          { "kind": "lvar", "address": "VC_Landing_Light_2_SW_VAL", "valueType": "int", "operator": "equal", "value": 20 }
+        ] },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ],
+    "LogoLights": [
+      { "action": { "value": false } }
+    ],
+    "NavigationLights": [
+      {
+        "if": { "any": [
+          { "kind": "lvar", "address": "VC_Position_Light_SW_VAL", "valueType": "int", "operator": "equal", "value": 0 },
+          { "kind": "lvar", "address": "VC_Position_Light_SW_VAL", "valueType": "int", "operator": "equal", "value": 20 }
+        ] },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ],
+    "StrobeLights": [
+      { "if": { "all": [{ "kind": "lvar", "address": "VC_Position_Light_SW_VAL", "valueType": "int", "operator": "equal", "value": 0 }] }, "action": { "value": true } },
+      { "action": { "value": false } }
+    ],
+    "TaxiLights": [
+      { "if": { "all": [{ "kind": "lvar", "address": "VC_Taxi_Light_SW_VAL", "valueType": "int", "operator": "equal", "value": 10 }] }, "action": { "value": true } },
+      { "action": { "value": false } }
+    ],
+    "WingLights": [
+      { "if": { "all": [{ "kind": "lvar", "address": "VC_Wing_Light_SW_VAL", "valueType": "int", "operator": "equal", "value": 10 }] }, "action": { "value": true } },
+      { "action": { "value": false } }
+    ]
+  }
+}

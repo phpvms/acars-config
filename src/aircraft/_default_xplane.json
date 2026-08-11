@@ -1,0 +1,26 @@
+{
+  "meta": { "id": "xplane_default", "name": "xplane default", "sim": "xplane", "priority": 1, "author": "acars" },
+  "match": [[]],
+  "features": {
+    "BeaconLights": [
+      { "if": { "all": [{ "kind": "dataref", "address": "sim/cockpit2/switches/beacon_on", "valueType": "int", "operator": "equal", "value": 1 }] }, "action": { "value": true } },
+      { "action": { "value": false } }
+    ],
+    "LandingLights": [
+      { "if": { "all": [{ "kind": "dataref", "address": "sim/cockpit2/switches/landing_lights_on", "valueType": "int", "operator": "equal", "value": 1 }] }, "action": { "value": true } },
+      { "action": { "value": false } }
+    ],
+    "NavigationLights": [
+      { "if": { "all": [{ "kind": "dataref", "address": "sim/cockpit2/switches/navigation_lights_on", "valueType": "int", "operator": "equal", "value": 1 }] }, "action": { "value": true } },
+      { "action": { "value": false } }
+    ],
+    "StrobeLights": [
+      { "if": { "all": [{ "kind": "dataref", "address": "sim/cockpit2/switches/strobe_lights_on", "valueType": "int", "operator": "equal", "value": 1 }] }, "action": { "value": true } },
+      { "action": { "value": false } }
+    ],
+    "TaxiLights": [
+      { "if": { "all": [{ "kind": "dataref", "address": "sim/cockpit2/switches/taxi_light_on", "valueType": "int", "operator": "equal", "value": 1 }] }, "action": { "value": true } },
+      { "action": { "value": false } }
+    ]
+  }
+}

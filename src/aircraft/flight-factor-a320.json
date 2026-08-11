@@ -1,0 +1,82 @@
+{
+  "meta": {
+    "id": "flightfactor-a320",
+    "name": "FlightFactor A320",
+    "sim": "xplane",
+    "priority": 2,
+    "author": "B.Fatih KOZ <https://github.com/FatihKoz>"
+  },
+  "match": [
+    [
+      { "scope": "title", "op": "contains", "keyword": "flightfactor" },
+      { "scope": "title", "op": "contains", "keyword": "a320" }
+    ]
+  ],
+  "mappings": {
+    "flapNames": [
+      { "value": 0, "label": "UP" },
+      { "value": 1, "label": "CONF 1" },
+      { "value": 2, "label": "CONF 2" },
+      { "value": 3, "label": "CONF 3" },
+      { "value": 4, "label": "FULL" }
+    ]
+  },
+  "features": {
+    "BeaconLights": [
+      {
+        "if": { "all": [{ "kind": "dataref", "address": "model/controls/light_beacon", "valueType": "int", "operator": "equal", "value": 1 }] },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ],
+    "LandingLights": [
+      {
+        "if": {
+          "all": [
+            { "kind": "dataref", "address": "model/controls/light_land1", "valueType": "number", "operator": "equal", "value": 1 },
+            { "kind": "dataref", "address": "model/controls/light_land2", "valueType": "number", "operator": "equal", "value": 1 }
+          ]
+        },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ],
+    "NavigationLights": [
+      {
+        "if": { "all": [{ "kind": "dataref", "address": "model/controls/light_logo", "valueType": "number", "operator": "greaterThan", "value": 0 }] },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ],
+    "StrobeLights": [
+      {
+        "if": {
+          "all": [
+            { "kind": "dataref", "address": "model/controls/light_strobe", "valueType": "number", "operator": "greaterThan", "value": 0 },
+            { "kind": "dataref", "address": "model/controls/light_strobe", "valueType": "number", "operator": "lessThan", "value": 1 }
+          ]
+        },
+        "action": { "value": "ignore" }
+      },
+      {
+        "if": { "all": [{ "kind": "dataref", "address": "model/controls/light_strobe", "valueType": "number", "operator": "equal", "value": 1 }] },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ],
+    "TaxiLights": [
+      {
+        "if": { "all": [{ "kind": "dataref", "address": "model/controls/light_nose", "valueType": "number", "operator": "greaterThan", "value": 0 }] },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ],
+    "WingLights": [
+      {
+        "if": { "all": [{ "kind": "dataref", "address": "model/controls/light_wing", "valueType": "int", "operator": "equal", "value": 1 }] },
+        "action": { "value": true }
+      },
+      { "action": { "value": false } }
+    ]
+  }
+}

@@ -10,6 +10,10 @@ import {
 /**
  * Synaptic Simulations A220 (MSFS)
  * SimVars: https://docs.synapticsim.com/pilots/simvars
+ *
+ * The docs describe the two-state switches as "Bool", but that describes the
+ * switch, not how the value arrives here - so the lookups are FeatureType.Int,
+ * like every other MSFS config in this repo, and the comparisons are loose.
  */
 export default class SynapticA220 extends AircraftConfig {
   meta: Meta = {
@@ -22,36 +26,40 @@ export default class SynapticA220 extends AircraftConfig {
 
   features: FeatureAddresses = {
     [AircraftFeature.BeaconLights]: {
-      'A22X Beacon Lights': FeatureType.Bool,
+      'A22X Beacon Lights': FeatureType.Int,
     },
     [AircraftFeature.NavigationLights]: {
-      'A22X Nav Lights': FeatureType.Bool,
+      'A22X Nav Lights': FeatureType.Int,
     },
     [AircraftFeature.StrobeLights]: {
-      'A22X Strobe Lights': FeatureType.Bool,
+      'A22X Strobe Lights': FeatureType.Int,
     },
     [AircraftFeature.TaxiLights]: {
       'A22X Taxi Lights': FeatureType.Int,
     },
     [AircraftFeature.LandingLights]: {
-      'A22X L Landing Lights': FeatureType.Bool,
-      'A22X R Landing Lights': FeatureType.Bool,
+      'A22X L Landing Lights': FeatureType.Int,
+      'A22X R Landing Lights': FeatureType.Int,
+      'A22X Nose Landing Lights': FeatureType.Int,
     },
     [AircraftFeature.LogoLights]: {
-      'A22X Logo Lights': FeatureType.Bool,
+      'A22X Logo Lights': FeatureType.Int,
     },
     [AircraftFeature.WingLights]: {
-      'A22X Wing Insp Lights': FeatureType.Bool,
+      'A22X Wing Insp Lights': FeatureType.Int,
+    },
+    [AircraftFeature.EmergencyLights]: {
+      'A22X Emergency Lights': FeatureType.Int,
     },
     [AircraftFeature.Seatbelts]: {
       'A22X Seat Belt Lights': FeatureType.Int,
     },
     [AircraftFeature.ParkingBrakes]: {
-      'A22X Parking Brake': FeatureType.Bool,
+      'A22X Parking Brake': FeatureType.Int,
     },
     [AircraftFeature.Packs]: {
-      'A22X L Pack Off': FeatureType.Bool,
-      'A22X R Pack Off': FeatureType.Bool,
+      'A22X L Pack Off': FeatureType.Int,
+      'A22X R Pack Off': FeatureType.Int,
     },
     [AircraftFeature.AntiIce]: {
       'A22X L Cowl Anti Ice': FeatureType.Int,
@@ -62,7 +70,7 @@ export default class SynapticA220 extends AircraftConfig {
       'A22X APU Switch': FeatureType.Int,
     },
     [AircraftFeature.ExternalPower]: {
-      INI_GPU_AVAIL: FeatureType.Bool,
+      INI_GPU_AVAIL: FeatureType.Int,
     },
   }
 
@@ -81,15 +89,15 @@ export default class SynapticA220 extends AircraftConfig {
   }
 
   beaconLights(value: number): FeatureState {
-    return value === 1
+    return value == 1
   }
 
   navigationLights(value: number): FeatureState {
-    return value === 1
+    return value == 1
   }
 
   strobeLights(value: number): FeatureState {
-    return value === 1
+    return value == 1
   }
 
   // 0 = Off, 1 = Narrow, 2 = Wide
@@ -97,16 +105,22 @@ export default class SynapticA220 extends AircraftConfig {
     return value > 0
   }
 
-  landingLights(left: number, right: number): FeatureState {
-    return left === 1 && right === 1
+  // Three separate switches: left wing, right wing and nose gear
+  landingLights(left: number, right: number, nose: number): FeatureState {
+    return left == 1 || right == 1 || nose == 1
   }
 
   logoLights(value: number): FeatureState {
-    return value === 1
+    return value == 1
   }
 
   wingLights(value: number): FeatureState {
-    return value === 1
+    return value == 1
+  }
+
+  // 0 = Off, 1 = Arm, 2 = On
+  emergencyLights(value: number): FeatureState {
+    return value > 0
   }
 
   // 0 = Off, 1 = Auto, 2 = On
@@ -115,12 +129,12 @@ export default class SynapticA220 extends AircraftConfig {
   }
 
   parkingBrakes(value: number): FeatureState {
-    return value === 1
+    return value == 1
   }
 
   // Vars report the pack switch as *off*, so a pack is on when its flag is 0
   packs(left_off: number, right_off: number): FeatureState {
-    return left_off === 0 || right_off === 0
+    return left_off == 0 || right_off == 0
   }
 
   // Each: 0 = Off, 1 = Auto, 2 = On
@@ -134,6 +148,6 @@ export default class SynapticA220 extends AircraftConfig {
   }
 
   externalPower(value: number): FeatureState {
-    return value === 1
+    return value == 1
   }
 }

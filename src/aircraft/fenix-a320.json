@@ -157,6 +157,10 @@
         "action": { "value": true }
       },
       { "action": { "value": false } }
+    ],
+    "ParkingBrakes": [
+      { "if": { "all": [{ "kind": "lvar", "address": "S_MIP_PARKING_BRAKE", "valueType": "int", "operator": "equal", "value": 1 }] }, "action": { "value": true } },
+      { "action": { "value": false } }
     ]
   }
 }

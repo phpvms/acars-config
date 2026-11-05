@@ -156,6 +156,125 @@ function copyMappingsTask() {
  * That also keeps _default_flaps working — it is a bare array rather than a
  * config document, and a filename-keyed map carries it without a special case.
  */
+/**
+ * The known feature names, read out of this repo's own AircraftFeature enum.
+ *
+ * Parsed from the source rather than imported: gulpfile.mjs runs before any TypeScript is
+ * compiled, and defs.js is a build artifact that can lag the enum it came from. Failing loudly
+ * when nothing parses matters more than the parsing being elegant, because an empty set here
+ * would silently turn every check below into a no-op.
+ */
+function knownFeatureNames() {
+  const source = fs.readFileSync(paths.src + '/defs.ts', 'utf8')
+  const block = source.match(/export enum AircraftFeature \{([^}]*)\}/)
+  if (!block) {
+    throw new Error('Could not find the AircraftFeature enum in src/defs.ts')
+  }
+
+  const names = [...block[1].matchAll(/^\s*([A-Za-z_]\w*)\s*=/gm)].map(
+    (m) => m[1],
+  )
+  if (names.length === 0) {
+    throw new Error('AircraftFeature enum parsed to zero members')
+  }
+
+  return new Set(names)
+}
+
+const KNOWN_SIMS = new Set(['msfs', 'msfs20', 'msfs24', 'xplane', 'fsuipc'])
+
+/**
+ * Check every document before it is published.
+ *
+ * These documents used to be TypeScript, so the compiler caught a typo'd feature name or a
+ * missing field. As JSON they have nothing in front of them, and this repo has no test runner,
+ * so the build is the last place a broken document can be stopped. It ships to every VA from
+ * here, and a bad feature key fails silently at runtime: the client skips the key it does not
+ * recognise and logs a warning nobody reads.
+ *
+ * Returns a list of human-readable problems rather than throwing, so one build reports all of
+ * them instead of one per run.
+ */
+function validateAircraftConfigs(bundle) {
+  const known = knownFeatureNames()
+  const problems = []
+  const seenIds = new Map()
+
+  for (const [name, doc] of Object.entries(bundle)) {
+    // Not a config: the ICAO-pattern flaps fallback table, a bare array.
+    if (name === '_default_flaps') {
+      if (!Array.isArray(doc)) {
+        problems.push(`${name}.json: expected an array of flaps-label entries`)
+      }
+
+      continue
+    }
+
+    if (typeof doc !== 'object' || doc === null || Array.isArray(doc)) {
+      problems.push(`${name}.json: expected an object`)
+
+      continue
+    }
+
+    const meta = doc.meta
+    if (typeof meta !== 'object' || meta === null) {
+      problems.push(`${name}.json: meta is missing`)
+    } else {
+      for (const field of ['id', 'name', 'sim', 'priority', 'author']) {
+        if (meta[field] === undefined || meta[field] === '') {
+          problems.push(`${name}.json: meta.${field} is required`)
+        }
+      }
+
+      if (meta.sim !== undefined && !KNOWN_SIMS.has(meta.sim)) {
+        problems.push(
+          `${name}.json: meta.sim "${meta.sim}" is not one of ${[...KNOWN_SIMS].join(', ')}`,
+        )
+      }
+
+      // Duplicate ids silently shadow each other at match time.
+      if (typeof meta.id === 'string') {
+        if (seenIds.has(meta.id)) {
+          problems.push(
+            `${name}.json: meta.id "${meta.id}" is already used by ${seenIds.get(meta.id)}.json`,
+          )
+        }
+        seenIds.set(meta.id, name)
+      }
+    }
+
+    if (!Array.isArray(doc.match)) {
+      problems.push(`${name}.json: match must be an array`)
+    }
+
+    for (const block of ['features', 'disabled']) {
+      if (doc[block] === undefined) {
+        continue
+      }
+
+      if (
+        typeof doc[block] !== 'object' ||
+        doc[block] === null ||
+        Array.isArray(doc[block])
+      ) {
+        problems.push(`${name}.json: ${block} must be an object`)
+
+        continue
+      }
+
+      for (const feature of Object.keys(doc[block])) {
+        if (!known.has(feature)) {
+          problems.push(
+            `${name}.json: ${block}.${feature} is not a known aircraft feature`,
+          )
+        }
+      }
+    }
+  }
+
+  return problems
+}
+
 function buildAircraftConfigsTask(done) {
   const dir = paths.src + '/aircraft'
   const bundle = {}
@@ -180,6 +299,17 @@ function buildAircraftConfigsTask(done) {
   const count = Object.keys(bundle).length
   if (count === 0) {
     done(new Error(`No aircraft config documents found in ${dir}`))
+
+    return
+  }
+
+  const problems = validateAircraftConfigs(bundle)
+  if (problems.length > 0) {
+    done(
+      new Error(
+        `${problems.length} problem(s) in ${dir}:\n  ` + problems.join('\n  '),
+      ),
+    )
 
     return
   }

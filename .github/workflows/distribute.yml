@@ -133,6 +133,20 @@ jobs:
           aws s3 cp artifacts/aircraft.json s3://acars/configs/aircraft-latest.json \
             --endpoint-url https://ny-s3.storage.bunnycdn.com
 
+        # Same purge the acars release runs (build/release/deploy.mjs postdeploy): the pull zone
+        # keeps serving the previous files until it is told to drop them
+      - name: purge the CDN cache
+        env:
+          BUNNY_API_KEY: ${{ secrets.BUNNY_API_KEY }}
+        run: |
+          if [ -z "$BUNNY_API_KEY" ]; then
+            echo "No Bunny API key, skipping CDN purge."
+            exit 0
+          fi
+          curl --fail --silent --show-error -X POST \
+            "https://api.bunny.net/purge?url=https%3A%2F%2Facars.cdn.vmslabs.net%2F*&async=false" \
+            -H "AccessKey: $BUNNY_API_KEY"
+
   #
   # Manually triggered: bump the version, tag it, and publish a GitHub release
   #
@@ -200,6 +214,20 @@ jobs:
 
           aws s3 cp artifacts/aircraft.json s3://acars/configs/aircraft-latest.json \
             --endpoint-url https://ny-s3.storage.bunnycdn.com
+
+        # Same purge the acars release runs (build/release/deploy.mjs postdeploy): the pull zone
+        # keeps serving the previous files until it is told to drop them
+      - name: purge the CDN cache
+        env:
+          BUNNY_API_KEY: ${{ secrets.BUNNY_API_KEY }}
+        run: |
+          if [ -z "$BUNNY_API_KEY" ]; then
+            echo "No Bunny API key, skipping CDN purge."
+            exit 0
+          fi
+          curl --fail --silent --show-error -X POST \
+            "https://api.bunny.net/purge?url=https%3A%2F%2Facars.cdn.vmslabs.net%2F*&async=false" \
+            -H "AccessKey: $BUNNY_API_KEY"
 
       - name: Create GitHub release
         uses: softprops/action-gh-release@v2

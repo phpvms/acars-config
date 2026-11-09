@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - releases/2.0
     tags:
       - 'v*'
   workflow_dispatch:
@@ -62,7 +63,7 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     needs: [ 'artifacts' ]
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev' || startsWith(github.ref, 'refs/tags/')
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/releases/2.0' || startsWith(github.ref, 'refs/tags/')
     steps:
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
@@ -79,6 +80,21 @@ jobs:
         run: |
           aws s3 cp stable.zip s3://acars/scripts/stable.zip \
             --endpoint-url https://ny-s3.storage.bunnycdn.com
+
+        # The pull zone keeps serving the previous zip until it is purged
+      - name: purge the CDN cache
+        env:
+          BUNNY_API_KEY: ${{ secrets.BUNNY_API_KEY }}
+        run: |
+          if [ -z "$BUNNY_API_KEY" ]; then
+            echo "BUNNY_API_KEY not set, skipping purge - purge scripts/stable.zip by hand"
+            exit 0
+          fi
+          for url in https://acars.cdn.vmslabs.net/scripts/stable.zip https://get.acars.link/scripts/stable.zip; do
+            curl --fail --silent --show-error -X POST \
+              "https://api.bunny.net/purge?url=$url" \
+              -H "AccessKey: $BUNNY_API_KEY"
+          done
 
   #
   # Manually triggered: bump the version, tag it, and publish a GitHub release

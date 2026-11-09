@@ -81,20 +81,19 @@ jobs:
           aws s3 cp stable.zip s3://acars/scripts/stable.zip \
             --endpoint-url https://ny-s3.storage.bunnycdn.com
 
-        # The pull zone keeps serving the previous zip until it is purged
+        # Same purge the acars release runs (build/release/deploy.mjs postdeploy): the pull zone
+        # keeps serving the previous files until it is told to drop them
       - name: purge the CDN cache
         env:
           BUNNY_API_KEY: ${{ secrets.BUNNY_API_KEY }}
         run: |
           if [ -z "$BUNNY_API_KEY" ]; then
-            echo "BUNNY_API_KEY not set, skipping purge - purge scripts/stable.zip by hand"
+            echo "No Bunny API key, skipping CDN purge."
             exit 0
           fi
-          for url in https://acars.cdn.vmslabs.net/scripts/stable.zip https://get.acars.link/scripts/stable.zip; do
-            curl --fail --silent --show-error -X POST \
-              "https://api.bunny.net/purge?url=$url" \
-              -H "AccessKey: $BUNNY_API_KEY"
-          done
+          curl --fail --silent --show-error -X POST \
+            "https://api.bunny.net/purge?url=https%3A%2F%2Facars.cdn.vmslabs.net%2F*&async=false" \
+            -H "AccessKey: $BUNNY_API_KEY"
 
   #
   # Manually triggered: bump the version, tag it, and publish a GitHub release
@@ -155,6 +154,20 @@ jobs:
         run: |
           aws s3 cp stable.zip s3://acars/scripts/stable.zip \
             --endpoint-url https://ny-s3.storage.bunnycdn.com
+
+        # Same purge the acars release runs (build/release/deploy.mjs postdeploy): the pull zone
+        # keeps serving the previous files until it is told to drop them
+      - name: purge the CDN cache
+        env:
+          BUNNY_API_KEY: ${{ secrets.BUNNY_API_KEY }}
+        run: |
+          if [ -z "$BUNNY_API_KEY" ]; then
+            echo "No Bunny API key, skipping CDN purge."
+            exit 0
+          fi
+          curl --fail --silent --show-error -X POST \
+            "https://api.bunny.net/purge?url=https%3A%2F%2Facars.cdn.vmslabs.net%2F*&async=false" \
+            -H "AccessKey: $BUNNY_API_KEY"
 
       - name: Create GitHub release
         uses: softprops/action-gh-release@v2

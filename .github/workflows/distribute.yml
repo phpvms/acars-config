@@ -56,6 +56,7 @@ jobs:
           path: |
             stable.zip
             artifacts/aircraft.json
+            artifacts/settings.json
           overwrite: true
 
   #
@@ -131,6 +132,14 @@ jobs:
             --endpoint-url https://ny-s3.storage.bunnycdn.com
 
           aws s3 cp artifacts/aircraft.json s3://acars/configs/aircraft-latest.json \
+            --endpoint-url https://ny-s3.storage.bunnycdn.com
+
+          # Flight thresholds (acars.settings_url) travel the same way as the
+          # aircraft configs: a versioned copy plus a -latest alias.
+          aws s3 cp artifacts/settings.json "s3://acars/configs/settings-${VERSION}.json" \
+            --endpoint-url https://ny-s3.storage.bunnycdn.com
+
+          aws s3 cp artifacts/settings.json s3://acars/configs/settings-latest.json \
             --endpoint-url https://ny-s3.storage.bunnycdn.com
 
         # Same purge the acars release runs (build/release/deploy.mjs postdeploy): the pull zone
@@ -213,6 +222,13 @@ jobs:
             --endpoint-url https://ny-s3.storage.bunnycdn.com
 
           aws s3 cp artifacts/aircraft.json s3://acars/configs/aircraft-latest.json \
+            --endpoint-url https://ny-s3.storage.bunnycdn.com
+
+          aws s3 cp artifacts/settings.json \
+            "s3://acars/configs/settings-${{ steps.bump.outputs.version }}.json" \
+            --endpoint-url https://ny-s3.storage.bunnycdn.com
+
+          aws s3 cp artifacts/settings.json s3://acars/configs/settings-latest.json \
             --endpoint-url https://ny-s3.storage.bunnycdn.com
 
         # Same purge the acars release runs (build/release/deploy.mjs postdeploy): the pull zone

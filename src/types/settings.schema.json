@@ -1,0 +1,186 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://get.acars.link/configs/settings.schema.json",
+  "title": "vmsacars flight thresholds",
+  "description": "The built artifacts/settings.json: the flight-phase and landing-analysis thresholds the client resolves once per flight. defaults applies to every aircraft; each override layers its values on top when its selector matches (class overrides first, then icao overrides, each in file order). Also used to validate src/settings/defaults.json (against #/definitions/values) and every src/settings/overrides/*.json (against #/definitions/override) at build time.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "defaults", "overrides"],
+  "properties": {
+    "version": {
+      "description": "Document format version. The client rejects anything other than 1.",
+      "type": "integer",
+      "const": 1
+    },
+    "defaults": {
+      "$ref": "#/definitions/values"
+    },
+    "overrides": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/override" }
+    }
+  },
+  "definitions": {
+    "override": {
+      "description": "One override document. Needs at least one selector; values lists only the keys it changes.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["values"],
+      "anyOf": [
+        { "type": "object", "required": ["icao"] },
+        { "type": "object", "required": ["class"] }
+      ],
+      "properties": {
+        "icao": {
+          "description": "ICAO aircraft type designators this override applies to, matched case-insensitively.",
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9]{2,4}$"
+          }
+        },
+        "class": {
+          "description": "Aircraft class this override applies to.",
+          "type": "string",
+          "enum": ["fixed-wing", "helicopter"]
+        },
+        "values": {
+          "$ref": "#/definitions/partialValues"
+        }
+      }
+    },
+    "values": {
+      "description": "The complete threshold set. Every key is required here; this is the shape of defaults.",
+      "type": "object",
+      "allOf": [{ "$ref": "#/definitions/partialValues" }],
+      "required": [
+        "taxiInMaxKt",
+        "takeoffRunwayKt",
+        "takeoffAnywhereKt",
+        "goAroundAglFt",
+        "goAroundClimbGainFt",
+        "goAroundGsKt",
+        "goAroundVsFpm",
+        "arrivalAirborneAglFt",
+        "circuitLiftoffSeconds",
+        "circuitLiftoffAglFt",
+        "circuitStopKt",
+        "circuitRollEnabled",
+        "circuitRollMinKt",
+        "circuitRollAccelKt",
+        "circuitRollWindowSeconds",
+        "circuitRollHeadingToleranceDeg",
+        "departureAfterReverserPenalty"
+      ]
+    },
+    "partialValues": {
+      "description": "Any subset of the threshold keys. Unknown keys are rejected so a typo cannot silently fall through to the default.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "taxiInMaxKt": {
+          "description": "Ground speed (kt) below which the aircraft is considered to be taxiing in after landing.",
+          "type": "number",
+          "minimum": 1,
+          "maximum": 100
+        },
+        "takeoffRunwayKt": {
+          "description": "Ground speed (kt) that starts the takeoff roll when the aircraft is on a known runway.",
+          "type": "number",
+          "minimum": 1,
+          "maximum": 200
+        },
+        "takeoffAnywhereKt": {
+          "description": "Ground speed (kt) that starts the takeoff roll anywhere, runway known or not.",
+          "type": "number",
+          "minimum": 1,
+          "maximum": 300
+        },
+        "goAroundAglFt": {
+          "description": "Absolute AGL (ft) the aircraft must be below on approach before a climb can count as a go-around.",
+          "type": "number",
+          "minimum": 10,
+          "maximum": 5000
+        },
+        "goAroundClimbGainFt": {
+          "description": "Height gained (ft) above the approach low point that declares a go-around.",
+          "type": "number",
+          "minimum": 10,
+          "maximum": 5000
+        },
+        "goAroundGsKt": {
+          "description": "Minimum ground speed (kt) during the climb for it to count as a go-around.",
+          "type": "number",
+          "minimum": 1,
+          "maximum": 300
+        },
+        "goAroundVsFpm": {
+          "description": "Minimum vertical speed (fpm) during the climb for it to count as a go-around.",
+          "type": "number",
+          "minimum": 1,
+          "maximum": 10000
+        },
+        "arrivalAirborneAglFt": {
+          "description": "AGL (ft) below which the arrival segment of a flight begins in landing analysis.",
+          "type": "number",
+          "minimum": 10,
+          "maximum": 10000
+        },
+        "circuitLiftoffSeconds": {
+          "description": "Seconds the aircraft must stay airborne after a touchdown for the lift-off to count as a new circuit.",
+          "type": "number",
+          "minimum": 0,
+          "maximum": 60
+        },
+        "circuitLiftoffAglFt": {
+          "description": "AGL (ft) the aircraft must reach after a touchdown for the lift-off to count as a new circuit.",
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1000
+        },
+        "circuitStopKt": {
+          "description": "Ground speed (kt) below which a landing roll is considered stopped, ending the circuit.",
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "circuitRollEnabled": {
+          "description": "Whether a re-acceleration on the runway (a touch-and-go roll) can start a new circuit. Off for helicopters.",
+          "type": "boolean"
+        },
+        "circuitRollMinKt": {
+          "description": "Ground speed (kt) floor for a roll attempt. Kept above takeoffRunwayKt so an expedited runway exit after over-slowing does not qualify.",
+          "type": "number",
+          "minimum": 1,
+          "maximum": 200
+        },
+        "circuitRollAccelKt": {
+          "description": "Ground speed gain (kt) over circuitRollWindowSeconds that declares a roll attempt.",
+          "type": "number",
+          "minimum": 1,
+          "maximum": 100
+        },
+        "circuitRollWindowSeconds": {
+          "description": "Sim-clock window (s) over which circuitRollAccelKt is measured; needs at least three samples, and a gap over two seconds resets it.",
+          "type": "number",
+          "minimum": 1,
+          "maximum": 60
+        },
+        "circuitRollHeadingToleranceDeg": {
+          "description": "Heading drift (deg) allowed during the roll window for it to still count as a roll on the runway.",
+          "type": "number",
+          "minimum": 0,
+          "maximum": 180
+        },
+        "departureAfterReverserPenalty": {
+          "description": "Points taken off the landing category (0-100) when the aircraft departs again after reversers were used.",
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        }
+      }
+    }
+  }
+}

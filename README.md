@@ -374,6 +374,99 @@ everything else alone.
 
 ---
 
+## Flight Thresholds (`settings.json`)
+
+The client decides when a takeoff roll has started, when a landing roll has
+stopped, when a climb is a go-around, and so on, from a handful of numeric
+thresholds. Those live in `src/settings/` and are published on their own, like
+the aircraft configs, as `configs/settings-latest.json`. The client downloads
+it from `acars.settings_url`, resolves one set of values when a flight starts
+and freezes it for that flight, so a change here takes effect on the next
+flight without a client release. When the file cannot be fetched, the client
+falls back to a bundled copy of `defaults.json`.
+
+### Layout
+
+- `src/settings/defaults.json` - every key, with the value that applies to any
+  aircraft nothing else matches.
+- `src/settings/overrides/*.json` - one override per file: a selector plus
+  only the keys it changes.
+- `src/types/settings.schema.json` - the JSON schema. Every key's meaning and
+  allowed range is documented there, and the build validates the source files
+  against it.
+
+The build (`npm run build`) assembles them into `artifacts/settings.json`:
+
+```json
+{
+  "version": 1,
+  "defaults": { "taxiInMaxKt": 35, "takeoffRunwayKt": 40, "...": 0 },
+  "overrides": [
+    { "class": "helicopter", "values": { "circuitRollEnabled": false } },
+    { "icao": ["C172", "C152", "PA28"], "values": { "circuitLiftoffAglFt": 30 } }
+  ]
+}
+```
+
+### Precedence
+
+Resolution is `defaults` <- `class` overrides <- `icao` overrides, merged
+key-by-key. The client starts from `defaults`, applies every matching `class`
+override in file order, then every matching `icao` override in file order.
+Each layer only replaces the keys it lists, so an override that sets one key
+leaves all the others at the lower layer's value. If two overrides for the same
+layer set the same key, the one whose file sorts later wins.
+
+With the example above, a C172 ends up with `circuitLiftoffAglFt` 30, and a
+PA28 with the same key at 30 but every other key from `defaults`. Any
+helicopter gets `circuitRollEnabled` false and everything else from `defaults`.
+
+### Keys
+
+| Key | Default | What it does |
+|---|---|---|
+| `taxiInMaxKt` | 35 | Ground speed (kt) below which the aircraft is taxiing in after landing |
+| `takeoffRunwayKt` | 40 | Ground speed (kt) that starts the takeoff roll on a known runway |
+| `takeoffAnywhereKt` | 80 | Ground speed (kt) that starts the takeoff roll anywhere |
+| `goAroundAglFt` | 300 | AGL (ft) the approach must be below before a climb can be a go-around |
+| `goAroundClimbGainFt` | 300 | Height gained (ft) above the approach low point that declares a go-around |
+| `goAroundGsKt` | 80 | Minimum ground speed (kt) during the climb for a go-around |
+| `goAroundVsFpm` | 300 | Minimum vertical speed (fpm) during the climb for a go-around |
+| `arrivalAirborneAglFt` | 500 | AGL (ft) below which the arrival segment begins in landing analysis |
+| `circuitLiftoffSeconds` | 3 | Seconds airborne after a touchdown for the lift-off to start a new circuit |
+| `circuitLiftoffAglFt` | 50 | AGL (ft) reached after a touchdown for the lift-off to start a new circuit |
+| `circuitStopKt` | 10 | Ground speed (kt) below which a landing roll is stopped |
+| `circuitRollEnabled` | `true` | Whether a re-acceleration on the runway can start a new circuit (`false` for helicopters) |
+| `circuitRollMinKt` | 50 | Ground speed (kt) floor for a roll attempt; above `takeoffRunwayKt` on purpose so an expedited runway exit does not qualify |
+| `circuitRollAccelKt` | 20 | Ground speed gain (kt) over `circuitRollWindowSeconds` that declares a roll attempt |
+| `circuitRollWindowSeconds` | 5 | Sim-clock window (s) for `circuitRollAccelKt`; at least 3 samples, a gap over 2 s resets it |
+| `circuitRollHeadingToleranceDeg` | 20 | Heading drift (deg) allowed during the roll window |
+| `departureAfterReverserPenalty` | 25 | Points off the landing category (0-100) when the aircraft departs again after using reversers |
+
+### Adding an override
+
+Create one file under `src/settings/overrides/`. It needs `values` and at
+least one selector:
+
+- `class` - `fixed-wing` or `helicopter`.
+- `icao` - a list of ICAO type designators. Matching ignores case.
+
+```json filename="src/settings/overrides/light-singles.json"
+{
+  "icao": ["C172", "C152", "PA28"],
+  "values": {
+    "circuitLiftoffAglFt": 30
+  }
+}
+```
+
+Only list the keys you are changing. The build rejects a key that is not in
+the schema, a value outside its range, and an override with no selector, so
+run `npm run build` before opening a pull request. Files are applied in
+filename order, so name a file so it sorts after the ones it should beat.
+
+---
+
 ## Rules Configuration
 
 A rule looks like this:

@@ -1,4 +1,5 @@
 import dotconfig from '@dotenvx/dotenvx'
+import Ajv from 'ajv'
 import { deleteSync as del } from 'del'
 import fs from 'fs'
 import { dest, series, src, watch } from 'gulp'
@@ -40,6 +41,7 @@ export const build = series(
   copySoundsTask,
   copyMappingsTask,
   buildAircraftConfigsTask,
+  buildSettingsTask,
   copyPackageJsonTask,
 )
 
@@ -192,6 +194,113 @@ function buildAircraftConfigsTask(done) {
   )
 
   console.log(`aircraft.json: bundled ${count} documents`)
+  done()
+}
+
+/**
+ * Builds the flight-thresholds settings document into one JSON artifact.
+ *
+ * Same publishing story as aircraft.json: the client downloads this file on
+ * its own (acars.settings_url), so it is written to artifacts/ and not into
+ * dist/. The source is split so an override is one small file: defaults.json
+ * holds every key, and each overrides/*.json is one selector plus the keys it
+ * changes. Overrides are concatenated in filename order, which is also the
+ * order the client applies them in, so a filename is the only ordering knob.
+ *
+ * Everything is validated against src/types/settings.schema.json before it is
+ * written. A typo here reaches every client within a release cycle, so an
+ * unknown key, an out-of-range value or a selector-less override fails the
+ * build rather than shipping.
+ */
+function buildSettingsTask(done) {
+  const dir = paths.src + '/settings'
+  const overridesDir = dir + '/overrides'
+  const schemaFile = paths.src + '/types/settings.schema.json'
+
+  // strictRequired is the one strict check we drop: the override selector rule
+  // is "icao or class" spelled as an anyOf of bare `required` branches, and that
+  // check wants the properties re-declared inside every branch.
+  const ajv = new Ajv({ allErrors: true, strict: true, strictRequired: false })
+  const schema = JSON.parse(fs.readFileSync(schemaFile, 'utf8'))
+  const validateDocument = ajv.compile(schema)
+
+  // Sub-schemas for the source files, so an error names the file it came from
+  // instead of an index into the assembled artifact.
+  const validateDefaults = ajv.compile({ $ref: `${schema.$id}#/definitions/values` })
+  const validateOverride = ajv.compile({ $ref: `${schema.$id}#/definitions/override` })
+
+  const fail = (file, message) => {
+    done(new Error(`${file}: ${message}`))
+  }
+
+  const read = (file) => JSON.parse(fs.readFileSync(file, 'utf8'))
+  const describe = (errors) => ajv.errorsText(errors, { separator: '; ' })
+
+  let defaults
+  const defaultsFile = dir + '/defaults.json'
+  try {
+    defaults = read(defaultsFile)
+  } catch (err) {
+    fail(defaultsFile, err.message)
+
+    return
+  }
+
+  if (!validateDefaults(defaults)) {
+    fail(defaultsFile, describe(validateDefaults.errors))
+
+    return
+  }
+
+  const overrides = []
+  const overrideFiles = fs.existsSync(overridesDir)
+    ? fs.readdirSync(overridesDir).sort()
+    : []
+
+  for (const file of overrideFiles) {
+    if (!file.endsWith('.json')) {
+      continue
+    }
+
+    const path = `${overridesDir}/${file}`
+    let override
+    try {
+      override = read(path)
+    } catch (err) {
+      fail(path, err.message)
+
+      return
+    }
+
+    if (!validateOverride(override)) {
+      fail(path, describe(validateOverride.errors))
+
+      return
+    }
+
+    overrides.push(override)
+  }
+
+  const document = { version: 1, defaults, overrides }
+
+  // Belt and braces: the pieces were valid, so the whole must be too. If this
+  // ever trips, the schema and this task have drifted apart.
+  if (!validateDocument(document)) {
+    fail(schemaFile, describe(validateDocument.errors))
+
+    return
+  }
+
+  fs.mkdirSync(paths.artifacts, { recursive: true })
+  fs.writeFileSync(
+    paths.artifacts + '/settings.json',
+    JSON.stringify(document),
+    'utf8',
+  )
+
+  console.log(
+    `settings.json: ${Object.keys(defaults).length} defaults, ${overrides.length} overrides`,
+  )
   done()
 }
 

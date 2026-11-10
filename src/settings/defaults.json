@@ -1,0 +1,19 @@
+{
+  "taxiInMaxKt": 35,
+  "takeoffRunwayKt": 40,
+  "takeoffAnywhereKt": 80,
+  "goAroundAglFt": 300,
+  "goAroundClimbGainFt": 300,
+  "goAroundGsKt": 80,
+  "goAroundVsFpm": 300,
+  "arrivalAirborneAglFt": 500,
+  "circuitLiftoffSeconds": 3,
+  "circuitLiftoffAglFt": 50,
+  "circuitStopKt": 10,
+  "circuitRollEnabled": true,
+  "circuitRollMinKt": 50,
+  "circuitRollAccelKt": 20,
+  "circuitRollWindowSeconds": 5,
+  "circuitRollHeadingToleranceDeg": 20,
+  "departureAfterReverserPenalty": 25
+}

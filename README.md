@@ -442,6 +442,8 @@ helicopter gets `circuitRollEnabled` false and everything else from `defaults`.
 | `circuitRollWindowSeconds` | 5 | Sim-clock window (s) for `circuitRollAccelKt`; at least 3 samples, a gap over 2 s resets it |
 | `circuitRollHeadingToleranceDeg` | 20 | Heading drift (deg) allowed during the roll window |
 | `departureAfterReverserPenalty` | 25 | Points off the landing category (0-100) when the aircraft departs again after using reversers |
+| `circuitLiftoffMinVsFpm` | -200 | Mean VS (fpm) over the lift-off window must be at or above this for a circuit lift-off to confirm; a fall off an obstacle is not a departure |
+| `touchdownMaxRadioAltFt` | 100 | On-ground sample with radio altitude above this (ft) and no gear contact is not a touchdown; unknown telemetry stays plausible |
 
 ### Adding an override
 

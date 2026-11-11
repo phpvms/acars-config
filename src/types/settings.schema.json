@@ -72,7 +72,9 @@
         "circuitRollAccelKt",
         "circuitRollWindowSeconds",
         "circuitRollHeadingToleranceDeg",
-        "departureAfterReverserPenalty"
+        "departureAfterReverserPenalty",
+        "circuitLiftoffMinVsFpm",
+        "touchdownMaxRadioAltFt"
       ]
     },
     "partialValues": {
@@ -179,6 +181,18 @@
           "type": "number",
           "minimum": 0,
           "maximum": 100
+        },
+        "circuitLiftoffMinVsFpm": {
+          "description": "Mean vertical speed (fpm) over the circuitLiftoffSeconds window must be at or above this for a lift-off to confirm. Stops a fall off an obstacle (AGL rising while VS is deeply negative) from counting as a departure.",
+          "type": "number",
+          "minimum": -5000,
+          "maximum": 5000
+        },
+        "touchdownMaxRadioAltFt": {
+          "description": "An on-ground sample with a valid radio altitude above this (ft) and no gear contact is not a touchdown. Rejects building or obstacle strikes the sim reports as ground contact. Unknown radio altitude or gear data always counts as plausible.",
+          "type": "number",
+          "minimum": 0,
+          "maximum": 2500
         }
       }
     }

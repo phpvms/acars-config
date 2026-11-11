@@ -15,5 +15,7 @@
   "circuitRollAccelKt": 20,
   "circuitRollWindowSeconds": 5,
   "circuitRollHeadingToleranceDeg": 20,
-  "departureAfterReverserPenalty": 25
+  "departureAfterReverserPenalty": 25,
+  "circuitLiftoffMinVsFpm": -200,
+  "touchdownMaxRadioAltFt": 100
 }

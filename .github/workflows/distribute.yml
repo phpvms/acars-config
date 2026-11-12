@@ -113,7 +113,16 @@ jobs:
           # AWS CLI v2.23+ sends checksum headers many S3-compatible stores reject
           AWS_REQUEST_CHECKSUM_CALCULATION: when_required
         run: |
-          aws s3 cp stable.zip s3://acars/scripts/v8/stable.zip \
+          # A merge to main publishes main.zip, which Replane can point a channel at to
+          # test unreleased scripts. Only a release tag replaces stable.zip, the file
+          # every client gets by default.
+          if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
+            ZIP_NAME="stable.zip"
+          else
+            ZIP_NAME="main.zip"
+          fi
+
+          aws s3 cp stable.zip "s3://acars/scripts/v8/${ZIP_NAME}" \
             --endpoint-url https://ny-s3.storage.bunnycdn.com
 
           # Aircraft configs publish on their own rather than inside the zip: the

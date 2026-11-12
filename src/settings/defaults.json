@@ -17,5 +17,18 @@
   "circuitRollHeadingToleranceDeg": 20,
   "departureAfterReverserPenalty": 25,
   "circuitLiftoffMinVsFpm": -200,
-  "touchdownMaxRadioAltFt": 100
+  "touchdownMaxRadioAltFt": 100,
+  "contactLandedSec": 1.0,
+  "airborneDwellSec": 0.25,
+  "airborneGainFt": 0.8,
+  "airborneGainTimeoutSec": 1.0,
+  "bounceMinGainFt": 2.0,
+  "bounceMinAirborneSec": 1.0,
+  "bounceMaxSec": 20.0,
+  "holdSec": 2.0,
+  "sinkRateWindowSec": 1.0,
+  "oneWheelSec": 0.5,
+  "heliLiftoffSec": 2.0,
+  "heliLiftoffAglFt": 10.0,
+  "lowFullRateMaxSec": 600.0
 }

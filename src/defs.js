@@ -179,6 +179,9 @@ var AircraftFeature
   AircraftFeature[(AircraftFeature['LandingGear'] = 18)] = 'LandingGear'
   AircraftFeature[(AircraftFeature['Autopilot'] = 19)] = 'Autopilot'
   AircraftFeature[(AircraftFeature['ExternalPower'] = 20)] = 'ExternalPower'
+  AircraftFeature[(AircraftFeature['ThrustReversers'] = 21)] = 'ThrustReversers'
+  AircraftFeature[(AircraftFeature['Spoilers'] = 22)] = 'Spoilers'
+  AircraftFeature[(AircraftFeature['SpoilersArmed'] = 23)] = 'SpoilersArmed'
 })(AircraftFeature || (exports.AircraftFeature = AircraftFeature = {}))
 /** The type of the dataref */
 var FeatureType
@@ -191,4 +194,6 @@ var FeatureType
   FeatureType[(FeatureType['IntArray'] = 3)] = 'IntArray'
   /** An array of numbers */
   FeatureType[(FeatureType['NumberArray'] = 4)] = 'NumberArray'
+  FeatureType[(FeatureType['Byte'] = 5)] = 'Byte'
+  FeatureType[(FeatureType['Int16'] = 6)] = 'Int16'
 })(FeatureType || (exports.FeatureType = FeatureType = {}))

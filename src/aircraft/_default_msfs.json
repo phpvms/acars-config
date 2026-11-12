@@ -1,5 +1,5 @@
 {
-  "meta": { "id": "msfs default", "name": "msfs default", "sim": "msfs", "priority": 1, "author": "acars" },
+  "meta": { "id": "msfs default", "name": "msfs default", "sim": "msfs", "priority": 1, "author": "acars", "version": 1 },
   "match": [[]],
   "disabled": { "LogoLights": true },
   "features": {
@@ -61,6 +61,43 @@
     "WingLights": [
       { "if": { "all": [{ "kind": "simvar", "address": "A:LIGHT RECOGNITION,bool", "valueType": "bool", "operator": "equal", "value": true }] }, "action": { "value": true } },
       { "action": { "value": false } }
+    ],
+    "SpoilersArmed": [
+      { "if": { "all": [{ "kind": "simvar", "address": "A:SPOILERS ARMED,bool", "valueType": "bool", "operator": "equal", "value": true }] }, "action": { "value": true } },
+      { "action": { "value": false } }
+    ],
+    "Spoilers": [
+      { "action": { "value": { "fromFact": { "kind": "simvar", "address": "A:SPOILERS HANDLE POSITION,percent over 100", "valueType": "number" } } } }
+    ],
+    "ThrustReversers": [
+      { "if": { "any": [
+        { "kind": "simvar", "address": "A:TURB ENG REVERSE NOZZLE PERCENT:1,percent over 100", "valueType": "number", "operator": "greaterThan", "value": 0.05 },
+        { "kind": "simvar", "address": "A:TURB ENG REVERSE NOZZLE PERCENT:2,percent over 100", "valueType": "number", "operator": "greaterThan", "value": 0.05 },
+        { "kind": "simvar", "address": "A:TURB ENG REVERSE NOZZLE PERCENT:3,percent over 100", "valueType": "number", "operator": "greaterThan", "value": 0.05 },
+        { "kind": "simvar", "address": "A:TURB ENG REVERSE NOZZLE PERCENT:4,percent over 100", "valueType": "number", "operator": "greaterThan", "value": 0.05 }
+      ] }, "action": { "value": { "fromFacts": [
+        { "kind": "simvar", "address": "A:TURB ENG REVERSE NOZZLE PERCENT:1,percent over 100", "valueType": "number" },
+        { "kind": "simvar", "address": "A:TURB ENG REVERSE NOZZLE PERCENT:2,percent over 100", "valueType": "number" },
+        { "kind": "simvar", "address": "A:TURB ENG REVERSE NOZZLE PERCENT:3,percent over 100", "valueType": "number" },
+        { "kind": "simvar", "address": "A:TURB ENG REVERSE NOZZLE PERCENT:4,percent over 100", "valueType": "number" }
+      ] } } },
+      { "if": { "any": [
+        { "kind": "simvar", "address": "A:GENERAL ENG REVERSE THRUST ENGAGED:1,bool", "valueType": "bool", "operator": "equal", "value": true },
+        { "kind": "simvar", "address": "A:GENERAL ENG REVERSE THRUST ENGAGED:2,bool", "valueType": "bool", "operator": "equal", "value": true },
+        { "kind": "simvar", "address": "A:GENERAL ENG REVERSE THRUST ENGAGED:3,bool", "valueType": "bool", "operator": "equal", "value": true },
+        { "kind": "simvar", "address": "A:GENERAL ENG REVERSE THRUST ENGAGED:4,bool", "valueType": "bool", "operator": "equal", "value": true }
+      ] }, "action": { "value": { "fromFacts": [
+        { "kind": "simvar", "address": "A:GENERAL ENG REVERSE THRUST ENGAGED:1,bool", "valueType": "bool" },
+        { "kind": "simvar", "address": "A:GENERAL ENG REVERSE THRUST ENGAGED:2,bool", "valueType": "bool" },
+        { "kind": "simvar", "address": "A:GENERAL ENG REVERSE THRUST ENGAGED:3,bool", "valueType": "bool" },
+        { "kind": "simvar", "address": "A:GENERAL ENG REVERSE THRUST ENGAGED:4,bool", "valueType": "bool" }
+      ] } } },
+      { "action": { "value": { "fromFacts": [
+        { "kind": "simvar", "address": "A:TURB ENG REVERSE NOZZLE PERCENT:1,percent over 100", "valueType": "number" },
+        { "kind": "simvar", "address": "A:TURB ENG REVERSE NOZZLE PERCENT:2,percent over 100", "valueType": "number" },
+        { "kind": "simvar", "address": "A:TURB ENG REVERSE NOZZLE PERCENT:3,percent over 100", "valueType": "number" },
+        { "kind": "simvar", "address": "A:TURB ENG REVERSE NOZZLE PERCENT:4,percent over 100", "valueType": "number" }
+      ] } } }
     ]
   }
 }

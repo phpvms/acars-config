@@ -1,5 +1,5 @@
 {
-  "meta": { "id": "xplane_default", "name": "xplane default", "sim": "xplane", "priority": 1, "author": "acars" },
+  "meta": { "id": "xplane_default", "name": "xplane default", "sim": "xplane", "priority": 1, "author": "acars", "version": 1 },
   "match": [[]],
   "features": {
     "BeaconLights": [
@@ -21,6 +21,17 @@
     "TaxiLights": [
       { "if": { "all": [{ "kind": "dataref", "address": "sim/cockpit2/switches/taxi_light_on", "valueType": "int", "operator": "equal", "value": 1 }] }, "action": { "value": true } },
       { "action": { "value": false } }
+    ],
+    "Spoilers": [
+      { "if": { "all": [{ "kind": "dataref", "address": "sim/cockpit2/controls/speedbrake_ratio", "valueType": "number", "operator": "lessThan", "value": 0 }] }, "action": { "value": 0 } },
+      { "action": { "value": { "fromFact": { "kind": "dataref", "address": "sim/cockpit2/controls/speedbrake_ratio", "valueType": "number" }, "clamp": [0, 1] } } }
+    ],
+    "SpoilersArmed": [
+      { "if": { "all": [{ "kind": "dataref", "address": "sim/cockpit2/controls/speedbrake_ratio", "valueType": "number", "operator": "lessThan", "value": 0 }] }, "action": { "value": true } },
+      { "action": { "value": false } }
+    ],
+    "ThrustReversers": [
+      { "action": { "value": { "fromFact": { "kind": "dataref", "address": "sim/flightmodel2/engines/thrust_reverser_deploy_ratio", "valueType": "numberArray" } } } }
     ]
   }
 }

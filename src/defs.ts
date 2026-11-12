@@ -171,6 +171,11 @@ export enum AircraftFeature {
   LandingGear = 18,
   Autopilot = 19,
   ExternalPower = 20,
+  /** Per-engine reverser deploy ratio (number or array), or a bool when only engaged/not is known */
+  ThrustReversers = 21,
+  /** Speedbrake handle position 0..1 */
+  Spoilers = 22,
+  SpoilersArmed = 23,
 }
 /** The type of the dataref */
 export enum FeatureType {
@@ -184,4 +189,6 @@ export enum FeatureType {
   NumberArray = 4,
   /** A byte */
   Byte = 5,
+  /** A 16-bit signed integer (FSUIPC 2-byte offsets) */
+  Int16 = 6,
 }

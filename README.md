@@ -205,6 +205,10 @@ There are five top-level keys. `meta`, `match` and `features` are required.
   [Targeting MSFS versions](#targeting-msfs-versions).
 - `priority` - 1 (lowest) to 10 (highest). It only comes into play when two
   configs match the same aircraft. See [Priority](#priority).
+- `version` - optional integer, 0 when absent. When two configs share the same
+  `id` (a stale cached copy and the client's bundled copy, say), the higher
+  `version` wins; a tie keeps scan order. Bump it whenever a default changes
+  so an old download cannot shadow it. The per-sim defaults carry `"version": 1`.
 
 The per-sim defaults (`_default_msfs`, `_default_xplane`, `_default_fsuipc`)
 are priority 1, and the aircraft-specific configs are priority 2. Write your own
@@ -262,7 +266,20 @@ The feature names are fixed. The client knows this set and nothing else:
 `BeaconLights`, `LandingLights`, `LogoLights`, `NavigationLights`,
 `StrobeLights`, `TaxiLights`, `WingLights`, `Flaps`, `APU`, `Doors`,
 `Seatbelts`, `EmergencyLights`, `AntiIce`, `Battery`, `Packs`, `ParkingBrakes`,
-`Engines`, `Transponder`, `LandingGear`, `Autopilot`, `ExternalPower`.
+`Engines`, `Transponder`, `LandingGear`, `Autopilot`, `ExternalPower`,
+`ThrustReversers`, `Spoilers`, `SpoilersArmed`.
+
+`ThrustReversers` and `Spoilers` are value-carrying: they emit a number (or an
+array of numbers, one per engine, for the reversers), not just on or off.
+`ThrustReversers` is the deploy ratio 0..1 per engine, or a bool array when the
+sim can only say engaged or not. `Spoilers` is the handle position 0..1.
+`SpoilersArmed` is a plain boolean. The client treats a value above 0.05 as
+deployed.
+
+The three are new. Put the constructs they need (`fromFacts`, `scale`/`clamp`,
+numeric literals, `int16`, `provenance`) only inside these feature keys: an older
+client skips a feature key it does not know, with a warning, and never parses
+what is inside it, so nothing else in the file is affected.
 
 A name outside that set gets rejected when the config is imported. An older
 client that doesn't recognize a newer name skips that one feature and logs a
@@ -276,7 +293,9 @@ Conditions, and some actions, point at a variable using three fields:
 - `address` - where to find it. An FSUIPC offset, an X-Plane DRef, or on MSFS
   either an LVar name or a Simvar. Simvars get an `A:` prefix and carry their
   type, like `A:LIGHT LOGO,bool`.
-- `valueType` - `bool`, `int`, `number`, `byte`, `intArray` or `numberArray`.
+- `valueType` - `bool`, `int`, `int16`, `number`, `byte`, `intArray` or
+  `numberArray`. `int16` is a signed 16-bit value, used for FSUIPC offsets that
+  are two bytes wide (an `int` reads four). X-Plane and MSFS treat it as `int`.
 
 Array-valued variables take an `index` to pick out one element. That still
 reads from the same subscription rather than setting up a second one.
@@ -312,6 +331,24 @@ operator matches that. The branch just falls through to the next one.
 - `"ignore"` - emit nothing and leave the feature to a lower priority config.
 - `{ "fromFact": { ... } }` - emit the variable's own value instead of a
   boolean. This is how `Flaps` reports its detent.
+- a numeric literal, such as `0` - emit that number.
+- `{ "fromFacts": [ ... ] }` - a list of variables, emitted as an array in list
+  order (one per engine). A variable the sim does not report gives `null` at its
+  position, so engine indexes stay aligned. Bool variables pass through as a
+  bool array.
+
+`fromFact` and `fromFacts` take two optional transform fields next to them:
+
+- `scale` - multiply the raw value (each element, for an array).
+- `clamp` - `[min, max]`, applied after `scale`.
+
+```json
+{ "value": { "fromFact": { "kind": "offset", "address": "0x0BD0", "valueType": "int" }, "scale": 0.0000610388, "clamp": [0, 1] } }
+```
+
+An action can also set `provenance`: `deployed` (the default) when the value
+reports the actual surface or reverser position, or `commanded` when it only
+reports the pilot's lever or command, as FSUIPC does for reversers.
 
 An action can also name a `mappings` table through `mapping`, which turns the
 emitted value into a label.

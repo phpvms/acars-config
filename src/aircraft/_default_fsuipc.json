@@ -1,5 +1,5 @@
 {
-  "meta": { "id": "fsuipc_default", "name": "fsuipc default", "sim": "fsuipc", "priority": 1, "author": "acars" },
+  "meta": { "id": "fsuipc_default", "name": "fsuipc default", "sim": "fsuipc", "priority": 1, "author": "acars", "version": 1 },
   "match": [[]],
   "disabled": { "LogoLights": true, "WingLights": true },
   "features": {
@@ -28,6 +28,25 @@
     ],
     "WingLights": [
       { "action": { "value": false } }
+    ],
+    "Spoilers": [
+      { "if": { "all": [{ "kind": "offset", "address": "0x0BD0", "valueType": "int", "operator": "equal", "value": 4800 }] }, "action": { "value": 0 } },
+      { "action": { "value": { "fromFact": { "kind": "offset", "address": "0x0BD0", "valueType": "int" }, "scale": 0.0000610388, "clamp": [0, 1] } } }
+    ],
+    "SpoilersArmed": [
+      { "if": { "any": [
+        { "kind": "offset", "address": "0x0BCC", "valueType": "int", "operator": "notEqual", "value": 0 },
+        { "kind": "offset", "address": "0x0BD0", "valueType": "int", "operator": "equal", "value": 4800 }
+      ] }, "action": { "value": true } },
+      { "action": { "value": false } }
+    ],
+    "ThrustReversers": [
+      { "action": { "value": { "fromFacts": [
+        { "kind": "offset", "address": "0x088C", "valueType": "int16" },
+        { "kind": "offset", "address": "0x0924", "valueType": "int16" },
+        { "kind": "offset", "address": "0x09BC", "valueType": "int16" },
+        { "kind": "offset", "address": "0x0A54", "valueType": "int16" }
+      ], "scale": -0.000244140625, "clamp": [0, 1] }, "provenance": "commanded" } }
     ]
   }
 }

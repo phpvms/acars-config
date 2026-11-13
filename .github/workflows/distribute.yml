@@ -129,12 +129,13 @@ jobs:
           # client fetches them from acars.aircraft_config_url. Versioned so a URL
           # can be pinned to an exact build, plus an alias to point at without
           # editing Replane every release. A tag publishes under its version
-          # (v1.1.0 -> aircraft-1.1.0.json) and moves the -latest alias; anything
+          # (v1.1.0 -> aircraft-1.1.0.json) and moves the -stable alias; anything
           # else publishes under the last five of the commit sha and moves the
           # -main alias, so released clients never pick up unreleased configs.
+          # Same stable/main split as the scripts zip above.
           if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
             VERSION="${GITHUB_REF#refs/tags/v}"
-            ALIAS="latest"
+            ALIAS="stable"
           else
             VERSION="${GITHUB_SHA: -5}"
             ALIAS="main"
@@ -153,6 +154,16 @@ jobs:
 
           aws s3 cp artifacts/settings.json "s3://acars/configs/settings-${ALIAS}.json" \
             --endpoint-url https://ny-s3.storage.bunnycdn.com
+
+          # Legacy: shipped clients fall back to the -latest files when Replane is
+          # unreachable, so a release keeps them current too. Drop once no client
+          # carries the -latest default.
+          if [[ "$ALIAS" == "stable" ]]; then
+            aws s3 cp artifacts/aircraft.json s3://acars/configs/aircraft-latest.json \
+              --endpoint-url https://ny-s3.storage.bunnycdn.com
+            aws s3 cp artifacts/settings.json s3://acars/configs/settings-latest.json \
+              --endpoint-url https://ny-s3.storage.bunnycdn.com
+          fi
 
         # Same purge the acars release runs (build/release/deploy.mjs postdeploy): the pull zone
         # keeps serving the previous files until it is told to drop them
@@ -233,13 +244,19 @@ jobs:
             "s3://acars/configs/aircraft-${{ steps.bump.outputs.version }}.json" \
             --endpoint-url https://ny-s3.storage.bunnycdn.com
 
-          aws s3 cp artifacts/aircraft.json s3://acars/configs/aircraft-latest.json \
+          aws s3 cp artifacts/aircraft.json s3://acars/configs/aircraft-stable.json \
             --endpoint-url https://ny-s3.storage.bunnycdn.com
 
           aws s3 cp artifacts/settings.json \
             "s3://acars/configs/settings-${{ steps.bump.outputs.version }}.json" \
             --endpoint-url https://ny-s3.storage.bunnycdn.com
 
+          aws s3 cp artifacts/settings.json s3://acars/configs/settings-stable.json \
+            --endpoint-url https://ny-s3.storage.bunnycdn.com
+
+          # Legacy -latest copies, as in the publish job.
+          aws s3 cp artifacts/aircraft.json s3://acars/configs/aircraft-latest.json \
+            --endpoint-url https://ny-s3.storage.bunnycdn.com
           aws s3 cp artifacts/settings.json s3://acars/configs/settings-latest.json \
             --endpoint-url https://ny-s3.storage.bunnycdn.com
 

@@ -416,7 +416,8 @@ everything else alone.
 The client decides when a takeoff roll has started, when a landing roll has
 stopped, when a climb is a go-around, and so on, from a handful of numeric
 thresholds. Those live in `src/settings/` and are published on their own, like
-the aircraft configs, as `configs/settings-latest.json`. The client downloads
+the aircraft configs, as `configs/settings-stable.json` (release tags) and
+`configs/settings-main.json` (merges to `main`). The client downloads
 it from `acars.settings_url`, resolves one set of values when a flight starts
 and freezes it for that flight, so a change here takes effect on the next
 flight without a client release. When the file cannot be fetched, the client

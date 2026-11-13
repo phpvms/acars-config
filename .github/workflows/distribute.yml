@@ -127,28 +127,31 @@ jobs:
 
           # Aircraft configs publish on their own rather than inside the zip: the
           # client fetches them from acars.aircraft_config_url. Versioned so a URL
-          # can be pinned to an exact build, plus a -latest alias to point at
-          # without editing Replane every release. A tag publishes under its
-          # version (v1.1.0 -> aircraft-1.1.0.json), anything else under the last
-          # five of the commit sha.
+          # can be pinned to an exact build, plus an alias to point at without
+          # editing Replane every release. A tag publishes under its version
+          # (v1.1.0 -> aircraft-1.1.0.json) and moves the -latest alias; anything
+          # else publishes under the last five of the commit sha and moves the
+          # -main alias, so released clients never pick up unreleased configs.
           if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
             VERSION="${GITHUB_REF#refs/tags/v}"
+            ALIAS="latest"
           else
             VERSION="${GITHUB_SHA: -5}"
+            ALIAS="main"
           fi
 
           aws s3 cp artifacts/aircraft.json "s3://acars/configs/aircraft-${VERSION}.json" \
             --endpoint-url https://ny-s3.storage.bunnycdn.com
 
-          aws s3 cp artifacts/aircraft.json s3://acars/configs/aircraft-latest.json \
+          aws s3 cp artifacts/aircraft.json "s3://acars/configs/aircraft-${ALIAS}.json" \
             --endpoint-url https://ny-s3.storage.bunnycdn.com
 
           # Flight thresholds (acars.settings_url) travel the same way as the
-          # aircraft configs: a versioned copy plus a -latest alias.
+          # aircraft configs: a versioned copy plus the same alias.
           aws s3 cp artifacts/settings.json "s3://acars/configs/settings-${VERSION}.json" \
             --endpoint-url https://ny-s3.storage.bunnycdn.com
 
-          aws s3 cp artifacts/settings.json s3://acars/configs/settings-latest.json \
+          aws s3 cp artifacts/settings.json "s3://acars/configs/settings-${ALIAS}.json" \
             --endpoint-url https://ny-s3.storage.bunnycdn.com
 
         # Same purge the acars release runs (build/release/deploy.mjs postdeploy): the pull zone

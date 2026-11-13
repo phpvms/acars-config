@@ -74,7 +74,20 @@
         "circuitRollHeadingToleranceDeg",
         "departureAfterReverserPenalty",
         "circuitLiftoffMinVsFpm",
-        "touchdownMaxRadioAltFt"
+        "touchdownMaxRadioAltFt",
+        "contactLandedSec",
+        "airborneDwellSec",
+        "airborneGainFt",
+        "airborneGainTimeoutSec",
+        "bounceMinGainFt",
+        "bounceMinAirborneSec",
+        "bounceMaxSec",
+        "holdSec",
+        "sinkRateWindowSec",
+        "oneWheelSec",
+        "heliLiftoffSec",
+        "heliLiftoffAglFt",
+        "lowFullRateMaxSec"
       ]
     },
     "partialValues": {
@@ -193,6 +206,84 @@
           "type": "number",
           "minimum": 0,
           "maximum": 2500
+        },
+        "contactLandedSec": {
+          "description": "Empirical. Contact held this long (s) means the aircraft is on the ground.",
+          "type": "number",
+          "minimum": 0.1,
+          "maximum": 10
+        },
+        "airborneDwellSec": {
+          "description": "Empirical. On-ground false this long (s), with the gain, enters Airborne. Measured from the lift-off edge to the re-contact edge.",
+          "type": "number",
+          "minimum": 0.05,
+          "maximum": 5
+        },
+        "airborneGainFt": {
+          "description": "Empirical. Radio-altitude gain (ft) over the ground baseline needed together with the dwell.",
+          "type": "number",
+          "minimum": 0,
+          "maximum": 50
+        },
+        "airborneGainTimeoutSec": {
+          "description": "On-ground false this long (s) enters Airborne whatever the gain (sloped runway, unusable radio altitude).",
+          "type": "number",
+          "minimum": 0.1,
+          "maximum": 10
+        },
+        "bounceMinGainFt": {
+          "description": "Empirical. A span after touchdown that rises at least this much (ft) is a bounce, not a rollout hop.",
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "bounceMinAirborneSec": {
+          "description": "Empirical. A span after touchdown airborne at least this long (s) is a bounce, not a rollout hop.",
+          "type": "number",
+          "minimum": 0.1,
+          "maximum": 30
+        },
+        "bounceMaxSec": {
+          "description": "Empirical. A span this long (s) without a departure is an extended float; the ground held this long closes bounce attribution.",
+          "type": "number",
+          "minimum": 1,
+          "maximum": 300
+        },
+        "holdSec": {
+          "description": "Touchdown values (rate, g, wheels) become final this long (s) after the contact. Equals the touchdown-g window.",
+          "type": "number",
+          "minimum": 0.5,
+          "maximum": 10
+        },
+        "sinkRateWindowSec": {
+          "description": "Empirical. Touchdown sink rate is the mean vertical speed over this window (s) ending at the last airborne sample before contact.",
+          "type": "number",
+          "minimum": 0.1,
+          "maximum": 10
+        },
+        "oneWheelSec": {
+          "description": "Empirical. One main wheel stable-down this long (s) before the other marks a one-wheel touchdown.",
+          "type": "number",
+          "minimum": 0.05,
+          "maximum": 10
+        },
+        "heliLiftoffSec": {
+          "description": "Helicopter departure: airborne at least this long (s).",
+          "type": "number",
+          "minimum": 0.1,
+          "maximum": 60
+        },
+        "heliLiftoffAglFt": {
+          "description": "Helicopter departure: at least this much gain (ft) over the ground baseline.",
+          "type": "number",
+          "minimum": 0,
+          "maximum": 500
+        },
+        "lowFullRateMaxSec": {
+          "description": "Capture policy: full-rate recording below 2,000 ft AGL lasts at most this long (s) per low leg, then drops to 4 Hz.",
+          "type": "number",
+          "minimum": 0,
+          "maximum": 7200
         }
       }
     }

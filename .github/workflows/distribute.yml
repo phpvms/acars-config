@@ -4,23 +4,15 @@ on:
   push:
     branches:
       - main
+    # A release is created in the GitHub UI; the tag it makes is the release trigger.
+    # Tags are bare versions (3.0.0-beta.1), the older ones carry a v (v1.0.1). Both publish.
     tags:
       - 'v*'
-  workflow_dispatch:
-    inputs:
-      bump:
-        description: 'Version bump type'
-        type: choice
-        options:
-          - patch
-          - minor
-          - major
-        default: patch
+      - '[0-9]*'
 jobs:
   artifacts:
-    name: 'Create release'
+    name: 'Build scripts'
     runs-on: ubuntu-latest
-    if: github.event_name != 'workflow_dispatch'
     steps:
       - uses: actions/checkout@v4
 
@@ -99,6 +91,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: [ 'artifacts' ]
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev' || startsWith(github.ref, 'refs/tags/')
+    permissions:
+      contents: write
     steps:
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
@@ -116,7 +110,7 @@ jobs:
           # A merge to main publishes main.zip, which Replane can point a channel at to
           # test unreleased scripts. Only a release tag replaces stable.zip, the file
           # every client gets by default.
-          if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
+          if [[ "$GITHUB_REF" == refs/tags/* ]]; then
             ZIP_NAME="stable.zip"
           else
             ZIP_NAME="main.zip"
@@ -129,11 +123,12 @@ jobs:
           # client fetches them from acars.aircraft_config_url. Versioned so a URL
           # can be pinned to an exact build, plus an alias to point at without
           # editing Replane every release. A tag publishes under its version
-          # (v1.1.0 -> aircraft-1.1.0.json) and moves the -latest alias; anything
-          # else publishes under the last five of the commit sha and moves the
-          # -main alias, so released clients never pick up unreleased configs.
-          if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
-            VERSION="${GITHUB_REF#refs/tags/v}"
+          # (3.0.0-beta.1 or v1.1.0 -> aircraft-3.0.0-beta.1.json / aircraft-1.1.0.json)
+          # and moves the -latest alias; anything else publishes under the last five
+          # of the commit sha and moves the -main alias, so released clients never
+          # pick up unreleased configs.
+          if [[ "$GITHUB_REF" == refs/tags/* ]]; then
+            VERSION="${GITHUB_REF_NAME#v}"
             ALIAS="latest"
           else
             VERSION="${GITHUB_SHA: -5}"
@@ -168,100 +163,15 @@ jobs:
             "https://api.bunny.net/purge?url=https%3A%2F%2Facars.cdn.vmslabs.net%2F*&async=false" \
             -H "AccessKey: $BUNNY_API_KEY"
 
-  #
-  # Manually triggered: bump the version, tag it, and publish a GitHub release
-  #
-  release:
-    name: 'Create GitHub release'
-    runs-on: ubuntu-latest
-    if: github.event_name == 'workflow_dispatch'
-    permissions:
-      contents: write
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: install node
-        uses: actions/setup-node@v3
-        with:
-          cache: 'npm'
-
-      - name: bump version
-        id: bump
-        run: |
-          cd src
-          npm version ${{ inputs.bump }} --no-git-tag-version
-          echo "version=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
-
-      - name: commit and tag
-        run: |
-          git config user.name 'github-actions[bot]'
-          git config user.email 'github-actions[bot]@users.noreply.github.com'
-          git checkout -B "${{ github.ref_name }}"
-          git add src/package.json
-          git commit -m "chore: bump version to v${{ steps.bump.outputs.version }}"
-          git tag "v${{ steps.bump.outputs.version }}"
-          git push origin "${{ github.ref_name }}"
-          git push origin "v${{ steps.bump.outputs.version }}"
-
-      - name: build
-        run: |
-          npm install
-          npm run build
-
-      - name: Archive Release
-        uses: thedoctor0/zip-release@0.7.5
-        with:
-          type: 'zip'
-          directory: './dist'
-          path: '.'
-          filename: '../stable.zip'
-          exclusions: ''
-
-      - name: upload to Bunny storage
-        env:
-          AWS_ACCESS_KEY_ID: acars
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.BUNNY_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: us-east-1
-          # AWS CLI v2.23+ sends checksum headers many S3-compatible stores reject
-          AWS_REQUEST_CHECKSUM_CALCULATION: when_required
-        run: |
-          aws s3 cp stable.zip s3://acars/scripts/v8/stable.zip \
-            --endpoint-url https://ny-s3.storage.bunnycdn.com
-
-          # Same split as the publish job, but the version is already known here.
-          aws s3 cp artifacts/aircraft.json \
-            "s3://acars/configs/aircraft-${{ steps.bump.outputs.version }}.json" \
-            --endpoint-url https://ny-s3.storage.bunnycdn.com
-
-          aws s3 cp artifacts/aircraft.json s3://acars/configs/aircraft-latest.json \
-            --endpoint-url https://ny-s3.storage.bunnycdn.com
-
-          aws s3 cp artifacts/settings.json \
-            "s3://acars/configs/settings-${{ steps.bump.outputs.version }}.json" \
-            --endpoint-url https://ny-s3.storage.bunnycdn.com
-
-          aws s3 cp artifacts/settings.json s3://acars/configs/settings-latest.json \
-            --endpoint-url https://ny-s3.storage.bunnycdn.com
-
-        # Same purge the acars release runs (build/release/deploy.mjs postdeploy): the pull zone
-        # keeps serving the previous files until it is told to drop them
-      - name: purge the CDN cache
-        env:
-          BUNNY_API_KEY: ${{ secrets.BUNNY_API_KEY }}
-        run: |
-          if [ -z "$BUNNY_API_KEY" ]; then
-            echo "No Bunny API key, skipping CDN purge."
-            exit 0
-          fi
-          curl --fail --silent --show-error -X POST \
-            "https://api.bunny.net/purge?url=https%3A%2F%2Facars.cdn.vmslabs.net%2F*&async=false" \
-            -H "AccessKey: $BUNNY_API_KEY"
-
-      - name: Create GitHub release
+        # Attach what went to the CDN to the GitHub release the tag belongs to, so the
+        # release page holds exactly what shipped.
+      - name: attach artifacts to the GitHub release
+        if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: 'v${{ steps.bump.outputs.version }}'
-          generate_release_notes: true
-          files: stable.zip
+          files: |
+            stable.zip
+            artifacts/aircraft.json
+            artifacts/settings.json
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -78,7 +78,17 @@ jobs:
           # AWS CLI v2.23+ sends checksum headers many S3-compatible stores reject
           AWS_REQUEST_CHECKSUM_CALCULATION: when_required
         run: |
-          aws s3 cp stable.zip s3://acars/scripts/stable.zip \
+          # A merge to releases/2.0 publishes releases-2.0.zip, which Replane can point a
+          # 2.x channel at to test unreleased scripts. Only a release tag replaces
+          # stable.zip, the file every 2.x client downloads by default
+          # (https://acars.cdn.vmslabs.net/scripts/stable.zip).
+          if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
+            ZIP_NAME="stable.zip"
+          else
+            ZIP_NAME="releases-2.0.zip"
+          fi
+
+          aws s3 cp stable.zip "s3://acars/scripts/${ZIP_NAME}" \
             --endpoint-url https://ny-s3.storage.bunnycdn.com
 
         # Same purge the acars release runs (build/release/deploy.mjs postdeploy): the pull zone
@@ -96,7 +106,9 @@ jobs:
             -H "AccessKey: $BUNNY_API_KEY"
 
   #
-  # Manually triggered: bump the version, tag it, and publish a GitHub release
+  # Manually triggered: bump the version, tag it, publish scripts/stable.zip (what every
+  # 2.x client downloads) and create a GitHub release. This is the only path that
+  # writes stable.zip; branch pushes above only write releases-2.0.zip.
   #
   release:
     name: 'Create GitHub release'

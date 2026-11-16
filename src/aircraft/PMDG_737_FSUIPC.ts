@@ -21,9 +21,15 @@ export default class PMDG_737_FSUIPC extends AircraftConfig {
       '0x6501': FeatureType.Byte,
     },
     [AircraftFeature.LandingLights]: {
-      '0x64F6': FeatureType.Byte,
+      // One 4-byte read covers the four 1-byte landing switches that sit back to back:
+      // 0x64F4/0x64F5 LTS_LandingLtRetractableSw[2] (0 retract, 1 extend, 2 on),
+      // 0x64F6/0x64F7 LTS_LandingLtFixedSw[2] (boolean). The previous config only
+      // read the left fixed switch.
+      '0x64F4': FeatureType.Int,
     },
-    [AircraftFeature.LogoLights]: false,
+    [AircraftFeature.LogoLights]: {
+      '0x64FF': FeatureType.Byte,
+    },
     [AircraftFeature.NavigationLights]: {
       '0x6500': FeatureType.Byte,
     },
@@ -33,7 +39,9 @@ export default class PMDG_737_FSUIPC extends AircraftConfig {
     [AircraftFeature.TaxiLights]: {
       '0x64FA': FeatureType.Byte,
     },
-    [AircraftFeature.WingLights]: false,
+    [AircraftFeature.WingLights]: {
+      '0x6502': FeatureType.Byte,
+    },
   }
 
   /**
@@ -54,6 +62,19 @@ export default class PMDG_737_FSUIPC extends AircraftConfig {
   }
 
   landingLights(value: number): FeatureState {
+    const retractableLeft = value & 0xff
+    const retractableRight = (value >> 8) & 0xff
+    const fixedLeft = (value >> 16) & 0xff
+    const fixedRight = (value >>> 24) & 0xff
+    return (
+      retractableLeft == 2 ||
+      retractableRight == 2 ||
+      fixedLeft != 0 ||
+      fixedRight != 0
+    )
+  }
+
+  logoLights(value: number): FeatureState {
     return value == 1
   }
 
@@ -66,6 +87,10 @@ export default class PMDG_737_FSUIPC extends AircraftConfig {
   }
 
   taxiLights(value: number): FeatureState {
+    return value == 1
+  }
+
+  wingLights(value: number): FeatureState {
     return value == 1
   }
 }

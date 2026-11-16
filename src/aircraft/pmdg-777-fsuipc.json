@@ -9,26 +9,33 @@
   "disabled": { "LogoLights": true, "WingLights": true },
   "features": {
     "BeaconLights": [
-      { "if": { "all": [{ "kind": "offset", "address": "0x6488", "valueType": "int", "operator": "equal", "value": 1 }] }, "action": { "value": true } },
+      { "if": { "all": [{ "kind": "offset", "address": "0x6488", "valueType": "byte", "operator": "equal", "value": 1 }] }, "action": { "value": true } },
       { "action": { "value": false } }
     ],
     "LandingLights": [
-      { "if": { "all": [{ "kind": "offset", "address": "0x6485", "valueType": "int", "operator": "equal", "value": 1 }] }, "action": { "value": true } },
+      {
+        "if": { "any": [
+          { "kind": "offset", "address": "0x6485", "valueType": "byte", "operator": "equal", "value": 1 },
+          { "kind": "offset", "address": "0x6486", "valueType": "byte", "operator": "equal", "value": 1 },
+          { "kind": "offset", "address": "0x6487", "valueType": "byte", "operator": "equal", "value": 1 }
+        ] },
+        "action": { "value": true }
+      },
       { "action": { "value": false } }
     ],
     "LogoLights": [
       { "action": { "value": false } }
     ],
     "NavigationLights": [
-      { "if": { "all": [{ "kind": "offset", "address": "0x650B", "valueType": "int", "operator": "equal", "value": 1 }] }, "action": { "value": true } },
+      { "if": { "all": [{ "kind": "offset", "address": "0x6489", "valueType": "byte", "operator": "equal", "value": 1 }] }, "action": { "value": true } },
       { "action": { "value": false } }
     ],
     "StrobeLights": [
-      { "if": { "all": [{ "kind": "offset", "address": "0x648F", "valueType": "int", "operator": "equal", "value": 1 }] }, "action": { "value": true } },
+      { "if": { "all": [{ "kind": "offset", "address": "0x648F", "valueType": "byte", "operator": "equal", "value": 1 }] }, "action": { "value": true } },
       { "action": { "value": false } }
     ],
     "TaxiLights": [
-      { "if": { "all": [{ "kind": "offset", "address": "0x648E", "valueType": "int", "operator": "equal", "value": 1 }] }, "action": { "value": true } },
+      { "if": { "all": [{ "kind": "offset", "address": "0x648E", "valueType": "byte", "operator": "equal", "value": 1 }] }, "action": { "value": true } },
       { "action": { "value": false } }
     ],
     "WingLights": [

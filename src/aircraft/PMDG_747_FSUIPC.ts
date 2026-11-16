@@ -17,21 +17,26 @@ export default class PMDG_747_FSUIPC extends AircraftConfig {
   }
 
   features: FeatureAddresses = {
+    // PMDG SDK switch fields are single bytes packed back to back. An Int read
+    // is four bytes, so it swallows the neighbouring switches and `== 1` fails as
+    // soon as any of them is on. Read them as bytes.
     [AircraftFeature.BeaconLights]: {
-      '0x650A': FeatureType.Int,
+      '0x650A': FeatureType.Byte,
     },
+    // LTS_LandingLights_Sw_ON[4]: four bytes at 0x6506-0x6509, so one Int read
+    // covers exactly the four switches.
     [AircraftFeature.LandingLights]: {
       '0x6506': FeatureType.Int,
     },
     [AircraftFeature.LogoLights]: false,
     [AircraftFeature.NavigationLights]: {
-      '0x650B': FeatureType.Int,
+      '0x650B': FeatureType.Byte,
     },
     [AircraftFeature.StrobeLights]: {
-      '0x6511': FeatureType.Int,
+      '0x6511': FeatureType.Byte,
     },
     [AircraftFeature.TaxiLights]: {
-      '0x6510': FeatureType.Int,
+      '0x6510': FeatureType.Byte,
     },
     [AircraftFeature.WingLights]: false,
   }
@@ -54,7 +59,8 @@ export default class PMDG_747_FSUIPC extends AircraftConfig {
   }
 
   landingLights(value: number): FeatureState {
-    return value == 1
+    // Any of the four landing-light switches on.
+    return value != 0
   }
 
   navigationLights(value: number): FeatureState {

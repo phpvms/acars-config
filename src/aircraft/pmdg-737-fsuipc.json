@@ -6,17 +6,25 @@
       { "scope": "title", "op": "contains", "keyword": "737" }
     ]
   ],
-  "disabled": { "LogoLights": true, "WingLights": true },
   "features": {
     "BeaconLights": [
       { "if": { "all": [{ "kind": "offset", "address": "0x6501", "valueType": "byte", "operator": "equal", "value": 1 }] }, "action": { "value": true } },
       { "action": { "value": false } }
     ],
     "LandingLights": [
-      { "if": { "all": [{ "kind": "offset", "address": "0x64F6", "valueType": "byte", "operator": "equal", "value": 1 }] }, "action": { "value": true } },
+      {
+        "if": { "any": [
+          { "kind": "offset", "address": "0x64F4", "valueType": "byte", "operator": "equal", "value": 2 },
+          { "kind": "offset", "address": "0x64F5", "valueType": "byte", "operator": "equal", "value": 2 },
+          { "kind": "offset", "address": "0x64F6", "valueType": "byte", "operator": "equal", "value": 1 },
+          { "kind": "offset", "address": "0x64F7", "valueType": "byte", "operator": "equal", "value": 1 }
+        ] },
+        "action": { "value": true }
+      },
       { "action": { "value": false } }
     ],
     "LogoLights": [
+      { "if": { "all": [{ "kind": "offset", "address": "0x64FF", "valueType": "byte", "operator": "equal", "value": 1 }] }, "action": { "value": true } },
       { "action": { "value": false } }
     ],
     "NavigationLights": [
@@ -38,6 +46,7 @@
       { "action": { "value": false } }
     ],
     "WingLights": [
+      { "if": { "all": [{ "kind": "offset", "address": "0x6502", "valueType": "byte", "operator": "equal", "value": 1 }] }, "action": { "value": true } },
       { "action": { "value": false } }
     ]
   }

@@ -5,23 +5,15 @@ on:
     branches:
       - main
       - releases/2.0
+    # A release is created in the GitHub UI; the tag it makes is the release trigger.
+    # Tags are bare versions (2.1.0), the older ones carry a v (v1.0.1). Both publish.
     tags:
       - 'v*'
-  workflow_dispatch:
-    inputs:
-      bump:
-        description: 'Version bump type'
-        type: choice
-        options:
-          - patch
-          - minor
-          - major
-        default: patch
+      - '[0-9]*'
 jobs:
   artifacts:
-    name: 'Create release'
+    name: 'Build scripts'
     runs-on: ubuntu-latest
-    if: github.event_name != 'workflow_dispatch'
     steps:
       - uses: actions/checkout@v4
 
@@ -64,6 +56,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: [ 'artifacts' ]
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/releases/2.0' || startsWith(github.ref, 'refs/tags/')
+    permissions:
+      contents: write
     steps:
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
@@ -82,7 +76,7 @@ jobs:
           # 2.x channel at to test unreleased scripts. Only a release tag replaces
           # stable.zip, the file every 2.x client downloads by default
           # (https://acars.cdn.vmslabs.net/scripts/stable.zip).
-          if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
+          if [[ "$GITHUB_REF" == refs/tags/* ]]; then
             ZIP_NAME="stable.zip"
           else
             ZIP_NAME="releases-2.0.zip"
@@ -105,87 +99,12 @@ jobs:
             "https://api.bunny.net/purge?url=https%3A%2F%2Facars.cdn.vmslabs.net%2F*&async=false" \
             -H "AccessKey: $BUNNY_API_KEY"
 
-  #
-  # Manually triggered: bump the version, tag it, publish scripts/stable.zip (what every
-  # 2.x client downloads) and create a GitHub release. This is the only path that
-  # writes stable.zip; branch pushes above only write releases-2.0.zip.
-  #
-  release:
-    name: 'Create GitHub release'
-    runs-on: ubuntu-latest
-    if: github.event_name == 'workflow_dispatch'
-    permissions:
-      contents: write
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: install node
-        uses: actions/setup-node@v3
-        with:
-          cache: 'npm'
-
-      - name: bump version
-        id: bump
-        run: |
-          cd src
-          npm version ${{ inputs.bump }} --no-git-tag-version
-          echo "version=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
-
-      - name: commit and tag
-        run: |
-          git config user.name 'github-actions[bot]'
-          git config user.email 'github-actions[bot]@users.noreply.github.com'
-          git checkout -B "${{ github.ref_name }}"
-          git add src/package.json
-          git commit -m "chore: bump version to v${{ steps.bump.outputs.version }}"
-          git tag "v${{ steps.bump.outputs.version }}"
-          git push origin "${{ github.ref_name }}"
-          git push origin "v${{ steps.bump.outputs.version }}"
-
-      - name: build
-        run: |
-          npm install
-          npm run build
-
-      - name: Archive Release
-        uses: thedoctor0/zip-release@0.7.5
-        with:
-          type: 'zip'
-          directory: './dist'
-          path: '.'
-          filename: '../stable.zip'
-          exclusions: ''
-
-      - name: upload to Bunny storage
-        env:
-          AWS_ACCESS_KEY_ID: acars
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.BUNNY_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: us-east-1
-          # AWS CLI v2.23+ sends checksum headers many S3-compatible stores reject
-          AWS_REQUEST_CHECKSUM_CALCULATION: when_required
-        run: |
-          aws s3 cp stable.zip s3://acars/scripts/stable.zip \
-            --endpoint-url https://ny-s3.storage.bunnycdn.com
-
-        # Same purge the acars release runs (build/release/deploy.mjs postdeploy): the pull zone
-        # keeps serving the previous files until it is told to drop them
-      - name: purge the CDN cache
-        env:
-          BUNNY_API_KEY: ${{ secrets.BUNNY_API_KEY }}
-        run: |
-          if [ -z "$BUNNY_API_KEY" ]; then
-            echo "No Bunny API key, skipping CDN purge."
-            exit 0
-          fi
-          curl --fail --silent --show-error -X POST \
-            "https://api.bunny.net/purge?url=https%3A%2F%2Facars.cdn.vmslabs.net%2F*&async=false" \
-            -H "AccessKey: $BUNNY_API_KEY"
-
-      - name: Create GitHub release
+        # Attach the zip that went to the CDN to the GitHub release the tag belongs to,
+        # so the release page holds exactly what shipped.
+      - name: attach stable.zip to the GitHub release
+        if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: 'v${{ steps.bump.outputs.version }}'
-          generate_release_notes: true
           files: stable.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

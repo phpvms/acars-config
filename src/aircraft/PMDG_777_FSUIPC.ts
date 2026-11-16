@@ -17,21 +17,28 @@ export default class PMDG_777_FSUIPC extends AircraftConfig {
   }
 
   features: FeatureAddresses = {
+    // PMDG SDK switch fields are single bytes packed back to back. An Int read
+    // is four bytes, so it swallows the neighbouring switches and `== 1` fails as
+    // soon as any of them is on (landing: the other two landing lights + beacon;
+    // beacon: nav/logo/wing; taxi: strobe). Read them as bytes.
     [AircraftFeature.BeaconLights]: {
-      '0x6488': FeatureType.Int,
+      '0x6488': FeatureType.Byte,
     },
+    // LTS_LandingLights_Sw_ON[3]: left/right/nose, three bytes at 0x6485-0x6487.
+    // Read all three (plus the beacon byte at 0x6488) in one Int and mask it.
     [AircraftFeature.LandingLights]: {
       '0x6485': FeatureType.Int,
     },
     [AircraftFeature.LogoLights]: false,
+    // 0x650B is the 747 nav switch; on the 777 that address is the chronograph.
     [AircraftFeature.NavigationLights]: {
-      '0x650B': FeatureType.Int,
+      '0x6489': FeatureType.Byte,
     },
     [AircraftFeature.StrobeLights]: {
-      '0x648F': FeatureType.Int,
+      '0x648F': FeatureType.Byte,
     },
     [AircraftFeature.TaxiLights]: {
-      '0x648E': FeatureType.Int,
+      '0x648E': FeatureType.Byte,
     },
     [AircraftFeature.WingLights]: false,
   }
@@ -54,7 +61,8 @@ export default class PMDG_777_FSUIPC extends AircraftConfig {
   }
 
   landingLights(value: number): FeatureState {
-    return value == 1
+    // Any of the three landing-light bytes on; the top byte is the beacon.
+    return (value & 0xffffff) != 0
   }
 
   navigationLights(value: number): FeatureState {

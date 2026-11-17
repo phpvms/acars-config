@@ -42,9 +42,9 @@
           }
         },
         "class": {
-          "description": "Aircraft class this override applies to.",
+          "description": "Aircraft class this override applies to. A general-aviation aircraft is also fixed-wing: general-aviation overrides apply after the fixed-wing ones.",
           "type": "string",
-          "enum": ["fixed-wing", "helicopter"]
+          "enum": ["fixed-wing", "helicopter", "general-aviation"]
         },
         "values": {
           "$ref": "#/definitions/partialValues"
@@ -284,6 +284,66 @@
           "type": "number",
           "minimum": 0,
           "maximum": 7200
+        },
+        "goAroundClimbSeconds": {
+          "description": "Go-around consensus: the window (s) the climbing vote's mean vertical speed is averaged over.",
+          "type": "number",
+          "minimum": 1,
+          "maximum": 30
+        },
+        "goAroundSustainSec": {
+          "description": "Go-around consensus: how long (s) each counted vote must hold true.",
+          "type": "number",
+          "minimum": 0,
+          "maximum": 30
+        },
+        "goAroundFieldCeilingFt": {
+          "description": "Go-around consensus: the episode's low point must be at most this far (ft) above the approach target's elevation, or this high by AGL when no elevation is known.",
+          "type": "number",
+          "minimum": 100,
+          "maximum": 10000
+        },
+        "goAroundMinGainFt": {
+          "description": "Go-around consensus: the barometric gain (ft) from the low point that is always required.",
+          "type": "number",
+          "minimum": 0,
+          "maximum": 2000
+        },
+        "goAroundN1RisePct": {
+          "description": "Go-around consensus: N1 points above the trailing baseline (the lowest N1 over goAroundThrustBaselineSeconds) that cast the thrust vote.",
+          "type": "number",
+          "minimum": 1,
+          "maximum": 100
+        },
+        "goAroundThrottleRisePct": {
+          "description": "Go-around consensus: throttle points above the trailing baseline (the lowest throttle over goAroundThrustBaselineSeconds) that cast the thrust vote.",
+          "type": "number",
+          "minimum": 1,
+          "maximum": 100
+        },
+        "goAroundThrustBaselineSeconds": {
+          "description": "Go-around consensus: the trailing window (s, pause-adjusted) whose lowest N1 and throttle are the thrust vote's baseline, so only a fresh advance counts.",
+          "type": "number",
+          "minimum": 1,
+          "maximum": 60
+        },
+        "approachDescentFpm": {
+          "description": "Approach consensus: the sustained descent rate (fpm, positive) that moves InitialClimb or Enroute to Approach (mean VS over 5 s at or below minus this). Set per class: light aircraft and helicopters descend slower than jets.",
+          "type": "number",
+          "minimum": 50,
+          "maximum": 3000
+        },
+        "nearbyLookupCeilingAglFt": {
+          "description": "Approach candidates: at or below this AGL (ft) a background nearby-airport lookup may start. Above it a lookup starts only on gear-down or a sustained descent below nearbyLookupDescentCeilingAglFt.",
+          "type": "number",
+          "minimum": 0,
+          "maximum": 10000
+        },
+        "nearbyLookupDescentCeilingAglFt": {
+          "description": "Approach candidates: a sustained descent starts a nearby-airport lookup only below this AGL (ft).",
+          "type": "number",
+          "minimum": 0,
+          "maximum": 50000
         }
       }
     }

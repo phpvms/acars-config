@@ -392,6 +392,13 @@
           "default": 10,
           "minimum": 1,
           "maximum": 50
+        },
+        "nearbyLookupApproachRangeNm": {
+          "description": "Approach candidates: once in the Approach phase, the airborne lookup widens to the 10 nearest airports with runways within this range (NM).",
+          "type": "number",
+          "default": 20,
+          "minimum": 1,
+          "maximum": 50
         }
       }
     }

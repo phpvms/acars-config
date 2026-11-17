@@ -344,6 +344,12 @@
           "type": "number",
           "minimum": 0,
           "maximum": 50000
+        },
+        "nearbyLookupRangeNm": {
+          "description": "Approach candidates: the airborne lookup takes the nearest airport with runways within this range (NM).",
+          "type": "number",
+          "minimum": 1,
+          "maximum": 50
         }
       }
     }

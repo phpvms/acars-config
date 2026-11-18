@@ -361,7 +361,7 @@
         "goAroundThrustBaselineSeconds": {
           "description": "Go-around consensus: the trailing window (s, pause-adjusted) whose lowest N1 and throttle are the thrust vote's baseline, so only a fresh advance counts.",
           "type": "number",
-          "default": 15,
+          "default": 30,
           "minimum": 1,
           "maximum": 60
         },

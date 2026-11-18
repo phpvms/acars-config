@@ -414,95 +414,171 @@ everything else alone.
 ## Flight Thresholds (`settings.json`)
 
 The client decides when a takeoff roll has started, when a landing roll has
-stopped, when a climb is a go-around, and so on, from a handful of numeric
-thresholds. Those live in `src/settings/` and are published on their own, like
-the aircraft configs, as `configs/settings-latest.json`. The client downloads
-it from `acars.settings_url`, resolves one set of values when a flight starts
-and freezes it for that flight, so a change here takes effect on the next
-flight without a client release. When the file cannot be fetched, the client
-falls back to a bundled copy of `defaults.json`.
+stopped, when a climb is a go-around, and so on, from a set of numeric
+thresholds. The full set of values is compiled into the client. Everything
+else is a sparse layer that lists only the keys it changes. When a flight
+starts, the client resolves one set of values and freezes it for that flight,
+so a change takes effect on the next flight without a client release.
+
+### Layers
+
+Last one wins, key by key:
+
+1. **Client built-in values** - every key (the Keys table below).
+2. **Replane `thresholds` namespace** - global tuning, `{}` until something is
+   tuned.
+3. **This repo's `settings.json`** - the aircraft-class overrides, published on
+   their own like the aircraft configs, as `configs/settings-latest.json`, and
+   downloaded from `acars.settings_url`. When it cannot be fetched, the client
+   uses its own copy of the class overrides.
+4. **The airline's `settings/thresholds.jsonc` (or `.json`)** in its config
+   zip, found through `config.settings.path` in the zip's `package.json`.
+   Airlines tune thresholds here.
 
 ### Layout
 
-- `src/settings/defaults.json` - every key, with the value that applies to any
-  aircraft nothing else matches.
-- `src/settings/overrides/*.json` - one override per file: a selector plus
-  only the keys it changes.
-- `src/types/settings.schema.json` - the JSON schema. Every key's meaning and
-  allowed range is documented there, and the build validates the source files
-  against it.
+- `src/settings/overrides/*.json` or `*.jsonc` - one class override per file:
+  a selector plus only the keys it changes.
+- `src/settings/thresholds.jsonc` - the airline template. It ships in the zip
+  as `settings/thresholds.jsonc` and changes nothing until an airline adds
+  values to it.
+- `src/types/settings.schema.json` - the JSON schema. Every key's meaning,
+  built-in value and allowed range is documented there, and the build
+  validates every source file against it.
 
-The build (`npm run build`) assembles them into `artifacts/settings.json`:
+Comments and trailing commas are allowed in the sources, so give each file a
+short comment. The build (`npm run build`) parses them, validates them and
+writes plain JSON (version 2) to `artifacts/settings.json`:
 
-```json
+```jsonc
 {
-  "version": 1,
-  "defaults": { "taxiInMaxKt": 35, "takeoffRunwayKt": 40, "...": 0 },
+  "version": 2,
   "overrides": [
-    { "class": "helicopter", "values": { "circuitRollEnabled": false } },
-    { "icao": ["C172", "C152", "PA28"], "values": { "circuitLiftoffAglFt": 30 } }
+    { "class": "general-aviation", "values": { "phases": { "approach": { "descentFpm": 150 } } } },
+    { "class": "helicopter", "values": { "phases": { "approach": { "descentFpm": 150 }, "circuit": { "rollEnabled": false } } } }
   ]
 }
 ```
 
-### Precedence
+Every layer document has the same shape. `version` is required and must be 2;
+`values` (applies to every aircraft) and `overrides` are both optional.
 
-Resolution is `defaults` <- `class` overrides <- `icao` overrides, merged
-key-by-key. The client starts from `defaults`, applies every matching `class`
-override in file order, then every matching `icao` override in file order.
-Each layer only replaces the keys it lists, so an override that sets one key
-leaves all the others at the lower layer's value. If two overrides for the same
-layer set the same key, the one whose file sorts later wins.
+### Groups
 
-With the example above, a C172 ends up with `circuitLiftoffAglFt` 30, and a
-PA28 with the same key at 30 but every other key from `defaults`. Any
-helicopter gets `circuitRollEnabled` false and everything else from `defaults`.
+| Group | What it covers |
+|---|---|
+| `phases.taxiIn` | When the aircraft counts as taxiing in after landing |
+| `phases.takeoff` | Takeoff roll start, and the helicopter lift-off confirmation |
+| `phases.approach` | The sustained descent that starts the Approach phase |
+| `phases.landed` | Touchdown plausibility and ground-contact detection |
+| `phases.landed.bounce` | When a hop after touchdown counts as a bounce |
+| `phases.goAround` | The go-around consensus votes |
+| `phases.circuit` | Multiple landings: lift-off, roll and stop detection for touch-and-go circuits |
+| `airportLookup` | When and how far the nearby-airport lookup searches for an approach field |
+| `recording` | Raw-telemetry capture policy |
+
+The `phases` groups are named after the client's flight phases (`PirepState`),
+`goAround` after its go-around event.
+
+### Precedence inside one document
+
+`values` <- `class` overrides <- `icao` overrides, merged key-by-key: every
+matching `class` override in file order, then every matching `icao` override in
+file order. Each layer only replaces the keys it lists. If two overrides for the
+same layer set the same key, the one later in the file (or whose file sorts
+later) wins.
 
 ### Keys
 
-| Key | Default | What it does |
+The built-in value is the one compiled into the client; every layer only
+changes it.
+
+| Key | Built-in | What it does |
 |---|---|---|
-| `taxiInMaxKt` | 35 | Ground speed (kt) below which the aircraft is taxiing in after landing |
-| `takeoffRunwayKt` | 40 | Ground speed (kt) that starts the takeoff roll on a known runway |
-| `takeoffAnywhereKt` | 80 | Ground speed (kt) that starts the takeoff roll anywhere |
-| `goAroundAglFt` | 300 | AGL (ft) the approach must be below before a climb can be a go-around |
-| `goAroundClimbGainFt` | 300 | Height gained (ft) above the approach low point that declares a go-around |
-| `goAroundGsKt` | 80 | Minimum ground speed (kt) during the climb for a go-around |
-| `goAroundVsFpm` | 300 | Minimum vertical speed (fpm) during the climb for a go-around |
-| `arrivalAirborneAglFt` | 500 | AGL (ft) below which the arrival segment begins in landing analysis |
-| `circuitLiftoffSeconds` | 3 | Seconds airborne after a touchdown for the lift-off to start a new circuit |
-| `circuitLiftoffAglFt` | 50 | AGL (ft) reached after a touchdown for the lift-off to start a new circuit |
-| `circuitStopKt` | 10 | Ground speed (kt) below which a landing roll is stopped |
-| `circuitRollEnabled` | `true` | Whether a re-acceleration on the runway can start a new circuit (`false` for helicopters) |
-| `circuitRollMinKt` | 50 | Ground speed (kt) floor for a roll attempt; above `takeoffRunwayKt` on purpose so an expedited runway exit does not qualify |
-| `circuitRollAccelKt` | 20 | Ground speed gain (kt) over `circuitRollWindowSeconds` that declares a roll attempt |
-| `circuitRollWindowSeconds` | 5 | Sim-clock window (s) for `circuitRollAccelKt`; at least 3 samples, a gap over 2 s resets it |
-| `circuitRollHeadingToleranceDeg` | 20 | Heading drift (deg) allowed during the roll window |
-| `departureAfterReverserPenalty` | 25 | Points off the landing category (0-100) when the aircraft departs again after using reversers |
-| `circuitLiftoffMinVsFpm` | -200 | Mean VS (fpm) over the lift-off window must be at or above this for a circuit lift-off to confirm; a fall off an obstacle is not a departure |
-| `touchdownMaxRadioAltFt` | 100 | On-ground sample with radio altitude above this (ft) and no gear contact is not a touchdown; unknown telemetry stays plausible |
+| `phases.taxiIn.maxKt` | 35 | Ground speed (kt) below which the aircraft is taxiing in after landing |
+| `phases.takeoff.runwayKt` | 40 | Ground speed (kt) that starts the takeoff roll on a known runway |
+| `phases.takeoff.anywhereKt` | 80 | Ground speed (kt) that starts the takeoff roll anywhere |
+| `phases.takeoff.heliLiftoffSec` | 2 | Helicopter departure: airborne at least this long (s) |
+| `phases.takeoff.heliLiftoffAglFt` | 10 | Helicopter departure: gain (ft) over the ground baseline |
+| `phases.approach.descentFpm` | 300 | Sustained descent rate (fpm, positive) that starts the Approach phase |
+| `phases.landed.touchdownMaxRadioAltFt` | 100 | On-ground sample with radio altitude above this (ft) and no gear contact is not a touchdown; unknown telemetry stays plausible |
+| `phases.landed.contactLandedSec` | 1 | Contact held this long (s) means the aircraft is on the ground |
+| `phases.landed.holdSec` | 2 | Touchdown values become final this long (s) after the contact |
+| `phases.landed.airborneDwellSec` | 0.25 | On-ground false this long (s), with the gain, means airborne |
+| `phases.landed.airborneGainFt` | 0.8 | Radio-altitude gain (ft) needed together with the dwell |
+| `phases.landed.airborneGainTimeoutSec` | 1 | On-ground false this long (s) means airborne whatever the gain |
+| `phases.landed.sinkRateWindowSec` | 1 | Touchdown sink rate is the mean vertical speed over this window (s) |
+| `phases.landed.oneWheelSec` | 0.5 | One main wheel down this long (s) before the other marks a one-wheel touchdown |
+| `phases.landed.bounce.minGainFt` | 2 | A hop after touchdown that rises at least this much (ft) is a bounce |
+| `phases.landed.bounce.minAirborneSec` | 1 | A hop after touchdown airborne at least this long (s) is a bounce |
+| `phases.landed.bounce.maxSec` | 20 | A span this long (s) is an extended float; ground held this long closes bounce attribution |
+| `phases.goAround.climbGainFt` | 300 | Barometric climb (ft) above the approach low point that casts the gain vote |
+| `phases.goAround.vsFpm` | 300 | Mean vertical speed (fpm) that casts the climbing vote |
+| `phases.goAround.climbSeconds` | 3 | Window (s) the climbing vote is averaged over |
+| `phases.goAround.sustainSec` | 1 | How long (s) each counted vote must hold |
+| `phases.goAround.fieldCeilingFt` | 1000 | The low point must be at most this far (ft) above the field |
+| `phases.goAround.minGainFt` | 100 | Barometric gain (ft) from the low point that is always required |
+| `phases.goAround.n1RisePct` | 10 | N1 points above the trailing baseline that cast the thrust vote |
+| `phases.goAround.throttleRisePct` | 20 | Throttle points above the trailing baseline that cast the thrust vote |
+| `phases.goAround.thrustBaselineSeconds` | 30 | Trailing window (s) whose lowest N1 and throttle are the thrust baseline |
+| `phases.circuit.liftoffSeconds` | 3 | Seconds airborne after a touchdown for the lift-off to start a new circuit |
+| `phases.circuit.liftoffAglFt` | 50 | AGL (ft) reached after a touchdown for the lift-off to start a new circuit |
+| `phases.circuit.liftoffMinVsFpm` | -200 | Mean VS (fpm) over the lift-off window must be at or above this; a fall off an obstacle is not a departure |
+| `phases.circuit.stopKt` | 10 | Ground speed (kt) below which a landing roll is stopped |
+| `phases.circuit.rollEnabled` | `true` | Whether a re-acceleration on the runway can start a new circuit (`false` for helicopters) |
+| `phases.circuit.rollMinKt` | 50 | Ground speed (kt) floor for a roll attempt; above `phases.takeoff.runwayKt` on purpose so an expedited runway exit does not qualify |
+| `phases.circuit.rollAccelKt` | 20 | Ground speed gain (kt) over `phases.circuit.rollWindowSeconds` that declares a roll attempt |
+| `phases.circuit.rollWindowSeconds` | 5 | Sim-clock window (s) for `phases.circuit.rollAccelKt`; at least 3 samples, a gap over 2 s resets it |
+| `phases.circuit.rollHeadingToleranceDeg` | 20 | Heading drift (deg) allowed during the roll window |
+| `phases.circuit.departureAfterReverserPenalty` | 25 | Points off the landing category (0-100) when the aircraft departs again after using reversers |
+| `airportLookup.ceilingAglFt` | 3000 | At or below this AGL (ft) a nearby-airport lookup may start |
+| `airportLookup.descentCeilingAglFt` | 10000 | A sustained descent starts a lookup only below this AGL (ft) |
+| `airportLookup.rangeNm` | 10 | The lookup takes the nearest airport with runways within this range (NM) |
+| `airportLookup.approachRangeNm` | 20 | Range (NM) once the Approach phase has started |
+| `recording.lowFullRateMaxSec` | 600 | Full-rate recording below 2,000 ft AGL lasts at most this long (s) per low leg |
 
 ### Adding an override
 
 Create one file under `src/settings/overrides/`. It needs `values` and at
 least one selector:
 
-- `class` - `fixed-wing` or `helicopter`.
+- `class` - `fixed-wing`, `helicopter` or `general-aviation`.
 - `icao` - a list of ICAO type designators. Matching ignores case.
 
-```json filename="src/settings/overrides/light-singles.json"
+```jsonc filename="src/settings/overrides/light-singles.jsonc"
+// Light singles fly a tighter, lower circuit.
 {
   "icao": ["C172", "C152", "PA28"],
   "values": {
-    "circuitLiftoffAglFt": 30
+    "phases": { "circuit": { "liftoffAglFt": 30 } }
   }
 }
 ```
 
-Only list the keys you are changing. The build rejects a key that is not in
-the schema, a value outside its range, and an override with no selector, so
-run `npm run build` before opening a pull request. Files are applied in
-filename order, so name a file so it sorts after the ones it should beat.
+Only list the keys you are changing, nested in their groups. The build rejects
+a group or key that is not in the schema, a value outside its range and an
+override with no selector, so run `npm run build` before opening a pull
+request. Files are applied in filename order, so name a file so it sorts after
+the ones it should beat.
+
+### Airline tuning
+
+An airline edits `settings/thresholds.jsonc` in its own config zip, with the
+same shape:
+
+```jsonc filename="settings/thresholds.jsonc"
+{
+  "version": 2,
+  "values": { "phases": { "taxiIn": { "maxKt": 30 } } },
+  "overrides": [
+    { "icao": ["C172"], "values": { "phases": { "approach": { "descentFpm": 200 } } } }
+  ]
+}
+```
+
+A file that does not parse is skipped whole and logged. An unknown key is
+logged and ignored; a value outside its range is logged and reverts to the
+built-in value.
 
 ---
 

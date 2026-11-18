@@ -1,0 +1,7 @@
+// Light aircraft descend in the pattern at 150-500 fpm; the jet value would hold their Approach back.
+{
+  "class": "general-aviation",
+  "values": {
+    "phases": { "approach": { "descentFpm": 150 } }
+  }
+}

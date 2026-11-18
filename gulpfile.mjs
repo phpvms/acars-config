@@ -1,5 +1,6 @@
 import dotconfig from '@dotenvx/dotenvx'
 import Ajv from 'ajv'
+import { parse as parseJsonc, printParseErrorCode } from 'jsonc-parser'
 import { deleteSync as del } from 'del'
 import fs from 'fs'
 import { dest, series, src, watch } from 'gulp'
@@ -198,59 +199,72 @@ function buildAircraftConfigsTask(done) {
 }
 
 /**
- * Builds the flight-thresholds settings document into one JSON artifact.
+ * Builds the flight-thresholds artifact and the airline thresholds template.
  *
- * Same publishing story as aircraft.json: the client downloads this file on
- * its own (acars.settings_url), so it is written to artifacts/ and not into
- * dist/. The source is split so an override is one small file: defaults.json
- * holds every key, and each overrides/*.json is one selector plus the keys it
- * changes. Overrides are concatenated in filename order, which is also the
- * order the client applies them in, so a filename is the only ordering knob.
+ * The full set of threshold values lives in the client; everything here is a
+ * sparse layer that lists only what it changes. The client applies, last one
+ * winning: its compiled-in defaults, the Replane `flight` namespace, this
+ * artifact, then the airline's own settings/flight.json[c] from its config
+ * zip.
  *
- * Everything is validated against src/types/settings.schema.json before it is
- * written. A typo here reaches every client within a release cycle, so an
- * unknown key, an out-of-range value or a selector-less override fails the
- * build rather than shipping.
+ * artifacts/settings.json carries the aircraft-class overrides. Same publishing
+ * story as aircraft.json: the client downloads it on its own
+ * (acars.settings_url), so it is written to artifacts/ and not into dist/. Each
+ * src/settings/overrides/*.json or *.jsonc is one selector plus the keys it
+ * changes; they are concatenated in filename order, which is also the order the
+ * client applies them in, so a filename is the only ordering knob. The sources
+ * may carry comments (parsed with jsonc-parser); the artifact is written as
+ * plain JSON (version 2), so the published file never depends on a
+ * comment-tolerant reader.
+ *
+ * src/settings/flight.jsonc is the airline template: it is copied into
+ * dist/settings/ for the zip (package.json points config.settings.path at it),
+ * where an airline adds its own tuning.
+ *
+ * Everything is validated against src/types/settings.schema.json first. A typo
+ * here reaches every client within a release cycle, so an unknown group or key,
+ * an out-of-range value or a selector-less override fails the build rather than
+ * shipping.
  */
 function buildSettingsTask(done) {
   const dir = paths.src + '/settings'
   const overridesDir = dir + '/overrides'
+  const templateFile = dir + '/flight.jsonc'
   const schemaFile = paths.src + '/types/settings.schema.json'
 
   // strictRequired is the one strict check we drop: the override selector rule
-  // is "icao or class" spelled as an anyOf of bare `required` branches, and that
-  // check wants the properties re-declared inside every branch.
+  // is "icao or class" spelled as an anyOf of bare `required` branches, and
+  // that check wants the properties re-declared inside every such schema.
   const ajv = new Ajv({ allErrors: true, strict: true, strictRequired: false })
   const schema = JSON.parse(fs.readFileSync(schemaFile, 'utf8'))
   const validateDocument = ajv.compile(schema)
 
-  // Sub-schemas for the source files, so an error names the file it came from
-  // instead of an index into the assembled artifact.
-  const validateDefaults = ajv.compile({ $ref: `${schema.$id}#/definitions/values` })
+  // Sub-schema for one override source, so an error names the file it came
+  // from instead of an index into the assembled artifact.
   const validateOverride = ajv.compile({ $ref: `${schema.$id}#/definitions/override` })
 
   const fail = (file, message) => {
     done(new Error(`${file}: ${message}`))
   }
 
-  const read = (file) => JSON.parse(fs.readFileSync(file, 'utf8'))
+  // jsonc-parser is fault tolerant: it returns a best-effort value and reports
+  // problems through `errors`, so any error at all is treated as a broken file.
+  const read = (file) => {
+    const errors = []
+    const value = parseJsonc(fs.readFileSync(file, 'utf8'), errors, {
+      allowTrailingComma: true,
+      disallowComments: false,
+    })
+
+    if (errors.length > 0) {
+      const { error, offset } = errors[0]
+      throw new Error(`${printParseErrorCode(error)} at offset ${offset}`)
+    }
+
+    return value
+  }
+
   const describe = (errors) => ajv.errorsText(errors, { separator: '; ' })
-
-  let defaults
-  const defaultsFile = dir + '/defaults.json'
-  try {
-    defaults = read(defaultsFile)
-  } catch (err) {
-    fail(defaultsFile, err.message)
-
-    return
-  }
-
-  if (!validateDefaults(defaults)) {
-    fail(defaultsFile, describe(validateDefaults.errors))
-
-    return
-  }
 
   const overrides = []
   const overrideFiles = fs.existsSync(overridesDir)
@@ -258,7 +272,7 @@ function buildSettingsTask(done) {
     : []
 
   for (const file of overrideFiles) {
-    if (!file.endsWith('.json')) {
+    if (!file.endsWith('.json') && !file.endsWith('.jsonc')) {
       continue
     }
 
@@ -281,12 +295,29 @@ function buildSettingsTask(done) {
     overrides.push(override)
   }
 
-  const document = { version: 1, defaults, overrides }
+  const document = { version: 2, overrides }
 
   // Belt and braces: the pieces were valid, so the whole must be too. If this
   // ever trips, the schema and this task have drifted apart.
   if (!validateDocument(document)) {
     fail(schemaFile, describe(validateDocument.errors))
+
+    return
+  }
+
+  // The airline template ships in the zip as-is, comments included: the
+  // client's reader accepts JSONC for the airline file.
+  let template
+  try {
+    template = read(templateFile)
+  } catch (err) {
+    fail(templateFile, err.message)
+
+    return
+  }
+
+  if (!validateDocument(template)) {
+    fail(templateFile, describe(validateDocument.errors))
 
     return
   }
@@ -298,9 +329,10 @@ function buildSettingsTask(done) {
     'utf8',
   )
 
-  console.log(
-    `settings.json: ${Object.keys(defaults).length} defaults, ${overrides.length} overrides`,
-  )
+  fs.mkdirSync(paths.out + '/settings', { recursive: true })
+  fs.copyFileSync(templateFile, paths.out + '/settings/flight.jsonc')
+
+  console.log(`settings.json: version 2, ${overrides.length} overrides`)
   done()
 }
 

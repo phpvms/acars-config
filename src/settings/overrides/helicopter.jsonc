@@ -1,0 +1,11 @@
+// Helicopters do not roll for takeoff, so a re-acceleration on the ground never starts a new circuit,
+// and they descend in the pattern slower than the jet approach threshold.
+{
+  "class": "helicopter",
+  "values": {
+    "phases": {
+      "approach": { "descentFpm": 150 },
+      "circuit": { "rollEnabled": false }
+    }
+  }
+}

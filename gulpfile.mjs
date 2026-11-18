@@ -203,8 +203,8 @@ function buildAircraftConfigsTask(done) {
  *
  * The full set of threshold values lives in the client; everything here is a
  * sparse layer that lists only what it changes. The client applies, last one
- * winning: its compiled-in defaults, the Replane `thresholds` namespace, this
- * artifact, then the airline's own settings/thresholds.json[c] from its config
+ * winning: its compiled-in defaults, the Replane `flight` namespace, this
+ * artifact, then the airline's own settings/flight.json[c] from its config
  * zip.
  *
  * artifacts/settings.json carries the aircraft-class overrides. Same publishing
@@ -217,7 +217,7 @@ function buildAircraftConfigsTask(done) {
  * plain JSON (version 2), so the published file never depends on a
  * comment-tolerant reader.
  *
- * src/settings/thresholds.jsonc is the airline template: it is copied into
+ * src/settings/flight.jsonc is the airline template: it is copied into
  * dist/settings/ for the zip (package.json points config.settings.path at it),
  * where an airline adds its own tuning.
  *
@@ -229,7 +229,7 @@ function buildAircraftConfigsTask(done) {
 function buildSettingsTask(done) {
   const dir = paths.src + '/settings'
   const overridesDir = dir + '/overrides'
-  const templateFile = dir + '/thresholds.jsonc'
+  const templateFile = dir + '/flight.jsonc'
   const schemaFile = paths.src + '/types/settings.schema.json'
 
   // strictRequired is the one strict check we drop: the override selector rule
@@ -330,7 +330,7 @@ function buildSettingsTask(done) {
   )
 
   fs.mkdirSync(paths.out + '/settings', { recursive: true })
-  fs.copyFileSync(templateFile, paths.out + '/settings/thresholds.jsonc')
+  fs.copyFileSync(templateFile, paths.out + '/settings/flight.jsonc')
 
   console.log(`settings.json: version 2, ${overrides.length} overrides`)
   done()

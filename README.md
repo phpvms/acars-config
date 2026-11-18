@@ -425,13 +425,13 @@ so a change takes effect on the next flight without a client release.
 Last one wins, key by key:
 
 1. **Client built-in values** - every key (the Keys table below).
-2. **Replane `thresholds` namespace** - global tuning, `{}` until something is
+2. **Replane `flight` namespace** - global tuning, `{}` until something is
    tuned.
 3. **This repo's `settings.json`** - the aircraft-class overrides, published on
    their own like the aircraft configs, as `configs/settings-latest.json`, and
    downloaded from `acars.settings_url`. When it cannot be fetched, the client
    uses its own copy of the class overrides.
-4. **The airline's `settings/thresholds.jsonc` (or `.json`)** in its config
+4. **The airline's `settings/flight.jsonc` (or `.json`)** in its config
    zip, found through `config.settings.path` in the zip's `package.json`.
    Airlines tune thresholds here.
 
@@ -439,8 +439,8 @@ Last one wins, key by key:
 
 - `src/settings/overrides/*.json` or `*.jsonc` - one class override per file:
   a selector plus only the keys it changes.
-- `src/settings/thresholds.jsonc` - the airline template. It ships in the zip
-  as `settings/thresholds.jsonc` and changes nothing until an airline adds
+- `src/settings/flight.jsonc` - the airline template. It ships in the zip
+  as `settings/flight.jsonc` and changes nothing until an airline adds
   values to it.
 - `src/types/settings.schema.json` - the JSON schema. Every key's meaning,
   built-in value and allowed range is documented there, and the build
@@ -563,10 +563,10 @@ the ones it should beat.
 
 ### Airline tuning
 
-An airline edits `settings/thresholds.jsonc` in its own config zip, with the
+An airline edits `settings/flight.jsonc` in its own config zip, with the
 same shape:
 
-```jsonc filename="settings/thresholds.jsonc"
+```jsonc filename="settings/flight.jsonc"
 {
   "version": 2,
   "values": { "phases": { "taxiIn": { "maxKt": 30 } } },

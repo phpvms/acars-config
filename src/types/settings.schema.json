@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://get.acars.link/configs/settings.schema.json",
   "title": "vmsacars flight thresholds",
-  "description": "A sparse flight-thresholds layer document (version 2). The full set of values lives in the client; every document lists only what it changes, grouped by flight phase (PirepState names, with goAround and circuit under phases) and feature. Used for the published artifacts/settings.json (the aircraft-class overrides, built from src/settings/overrides/*.json[c]) and for an airline's settings/thresholds.json[c] in its config zip. values applies to every aircraft; each override layers its values on top when its selector matches (class overrides first, then icao overrides, each in file order). The client applies, last one winning: its compiled-in defaults, the Replane thresholds namespace, this artifact, then the airline file.",
+  "description": "A sparse flight-thresholds layer document (version 2). The full set of values lives in the client; every document lists only what it changes, grouped by flight phase (PirepState names, with goAround and circuit under phases) and feature. Used for the published artifacts/settings.json (the aircraft-class overrides, built from src/settings/overrides/*.json[c]) and for an airline's settings/flight.json[c] in its config zip. values applies to every aircraft; each override layers its values on top when its selector matches (class overrides first, then icao overrides, each in file order). The client applies, last one winning: its compiled-in defaults, the Replane flight namespace, this artifact, then the airline file.",
   "type": "object",
   "additionalProperties": false,
   "required": [

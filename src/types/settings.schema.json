@@ -2,33 +2,52 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://get.acars.link/configs/settings.schema.json",
   "title": "vmsacars flight thresholds",
-  "description": "The built artifacts/settings.json: the flight-phase and landing-analysis thresholds the client resolves once per flight. defaults applies to every aircraft; each override layers its values on top when its selector matches (class overrides first, then icao overrides, each in file order). Also used to validate src/settings/defaults.json (against #/definitions/values) and every src/settings/overrides/*.json (against #/definitions/override) at build time.",
+  "description": "A sparse flight-thresholds layer document (version 2). The full set of values lives in the client; every document lists only what it changes, grouped by flight phase (PirepState names, with goAround and circuit under phases) and feature. Used for the published artifacts/settings.json (the aircraft-class overrides, built from src/settings/overrides/*.json[c]) and for an airline's settings/flight.json[c] in its config zip. values applies to every aircraft; each override layers its values on top when its selector matches (class overrides first, then icao overrides, each in file order). The client applies, last one winning: its compiled-in defaults, the Replane flight namespace, this artifact, then the airline file.",
   "type": "object",
   "additionalProperties": false,
-  "required": ["version", "defaults", "overrides"],
+  "required": [
+    "version"
+  ],
   "properties": {
     "version": {
-      "description": "Document format version. The client rejects anything other than 1.",
+      "description": "Document format version. The client accepts only 2 (grouped keys); version 1 (flat keys) never shipped.",
       "type": "integer",
-      "const": 1
+      "const": 2
     },
-    "defaults": {
+    "values": {
       "$ref": "#/definitions/values"
     },
     "overrides": {
       "type": "array",
-      "items": { "$ref": "#/definitions/override" }
+      "items": {
+        "$ref": "#/definitions/override"
+      }
+    },
+    "$schema": {
+      "type": "string"
     }
   },
   "definitions": {
     "override": {
-      "description": "One override document. Needs at least one selector; values lists only the keys it changes.",
+      "description": "One override document. Needs at least one selector; values uses the same groups as defaults and lists only the keys it changes.",
       "type": "object",
       "additionalProperties": false,
-      "required": ["values"],
+      "required": [
+        "values"
+      ],
       "anyOf": [
-        { "type": "object", "required": ["icao"] },
-        { "type": "object", "required": ["class"] }
+        {
+          "type": "object",
+          "required": [
+            "icao"
+          ]
+        },
+        {
+          "type": "object",
+          "required": [
+            "class"
+          ]
+        }
       ],
       "properties": {
         "icao": {
@@ -42,248 +61,408 @@
           }
         },
         "class": {
-          "description": "Aircraft class this override applies to.",
+          "description": "Aircraft class this override applies to. A general-aviation aircraft is also fixed-wing: general-aviation overrides apply after the fixed-wing ones.",
           "type": "string",
-          "enum": ["fixed-wing", "helicopter"]
+          "enum": [
+            "fixed-wing",
+            "helicopter",
+            "general-aviation"
+          ]
         },
         "values": {
-          "$ref": "#/definitions/partialValues"
+          "$ref": "#/definitions/values"
         }
       }
     },
-    "values": {
-      "description": "The complete threshold set. Every key is required here; this is the shape of defaults.",
-      "type": "object",
-      "allOf": [{ "$ref": "#/definitions/partialValues" }],
-      "required": [
-        "taxiInMaxKt",
-        "takeoffRunwayKt",
-        "takeoffAnywhereKt",
-        "goAroundAglFt",
-        "goAroundClimbGainFt",
-        "goAroundGsKt",
-        "goAroundVsFpm",
-        "arrivalAirborneAglFt",
-        "circuitLiftoffSeconds",
-        "circuitLiftoffAglFt",
-        "circuitStopKt",
-        "circuitRollEnabled",
-        "circuitRollMinKt",
-        "circuitRollAccelKt",
-        "circuitRollWindowSeconds",
-        "circuitRollHeadingToleranceDeg",
-        "departureAfterReverserPenalty",
-        "circuitLiftoffMinVsFpm",
-        "touchdownMaxRadioAltFt",
-        "contactLandedSec",
-        "airborneDwellSec",
-        "airborneGainFt",
-        "airborneGainTimeoutSec",
-        "bounceMinGainFt",
-        "bounceMinAirborneSec",
-        "bounceMaxSec",
-        "holdSec",
-        "sinkRateWindowSec",
-        "oneWheelSec",
-        "heliLiftoffSec",
-        "heliLiftoffAglFt",
-        "lowFullRateMaxSec"
-      ]
-    },
-    "partialValues": {
-      "description": "Any subset of the threshold keys. Unknown keys are rejected so a typo cannot silently fall through to the default.",
+    "phases": {
+      "description": "Flight phases, one group per PirepState (camelCase).",
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "taxiInMaxKt": {
+        "taxiIn": {
+          "$ref": "#/definitions/taxiIn"
+        },
+        "takeoff": {
+          "$ref": "#/definitions/takeoff"
+        },
+        "approach": {
+          "$ref": "#/definitions/approach"
+        },
+        "landed": {
+          "$ref": "#/definitions/landed"
+        },
+        "goAround": {
+          "$ref": "#/definitions/goAround"
+        },
+        "circuit": {
+          "$ref": "#/definitions/circuit"
+        }
+      }
+    },
+    "taxiIn": {
+      "description": "Taxi-in (PirepState.TaxiIn): when the aircraft counts as taxiing in after landing.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "maxKt": {
           "description": "Ground speed (kt) below which the aircraft is considered to be taxiing in after landing.",
           "type": "number",
+          "default": 35,
           "minimum": 1,
           "maximum": 100
-        },
-        "takeoffRunwayKt": {
+        }
+      }
+    },
+    "takeoff": {
+      "description": "Takeoff (PirepState.Takeoff): the takeoff roll start, and the helicopter lift-off confirmation.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "runwayKt": {
           "description": "Ground speed (kt) that starts the takeoff roll when the aircraft is on a known runway.",
           "type": "number",
+          "default": 40,
           "minimum": 1,
           "maximum": 200
         },
-        "takeoffAnywhereKt": {
+        "anywhereKt": {
           "description": "Ground speed (kt) that starts the takeoff roll anywhere, runway known or not.",
           "type": "number",
+          "default": 80,
           "minimum": 1,
           "maximum": 300
-        },
-        "goAroundAglFt": {
-          "description": "Absolute AGL (ft) the aircraft must be below on approach before a climb can count as a go-around.",
-          "type": "number",
-          "minimum": 10,
-          "maximum": 5000
-        },
-        "goAroundClimbGainFt": {
-          "description": "Height gained (ft) above the approach low point that declares a go-around.",
-          "type": "number",
-          "minimum": 10,
-          "maximum": 5000
-        },
-        "goAroundGsKt": {
-          "description": "Minimum ground speed (kt) during the climb for it to count as a go-around.",
-          "type": "number",
-          "minimum": 1,
-          "maximum": 300
-        },
-        "goAroundVsFpm": {
-          "description": "Minimum vertical speed (fpm) during the climb for it to count as a go-around.",
-          "type": "number",
-          "minimum": 1,
-          "maximum": 10000
-        },
-        "arrivalAirborneAglFt": {
-          "description": "AGL (ft) below which the arrival segment of a flight begins in landing analysis.",
-          "type": "number",
-          "minimum": 10,
-          "maximum": 10000
-        },
-        "circuitLiftoffSeconds": {
-          "description": "Seconds the aircraft must stay airborne after a touchdown for the lift-off to count as a new circuit.",
-          "type": "number",
-          "minimum": 0,
-          "maximum": 60
-        },
-        "circuitLiftoffAglFt": {
-          "description": "AGL (ft) the aircraft must reach after a touchdown for the lift-off to count as a new circuit.",
-          "type": "number",
-          "minimum": 0,
-          "maximum": 1000
-        },
-        "circuitStopKt": {
-          "description": "Ground speed (kt) below which a landing roll is considered stopped, ending the circuit.",
-          "type": "number",
-          "minimum": 0,
-          "maximum": 100
-        },
-        "circuitRollEnabled": {
-          "description": "Whether a re-acceleration on the runway (a touch-and-go roll) can start a new circuit. Off for helicopters.",
-          "type": "boolean"
-        },
-        "circuitRollMinKt": {
-          "description": "Ground speed (kt) floor for a roll attempt. Kept above takeoffRunwayKt so an expedited runway exit after over-slowing does not qualify.",
-          "type": "number",
-          "minimum": 1,
-          "maximum": 200
-        },
-        "circuitRollAccelKt": {
-          "description": "Ground speed gain (kt) over circuitRollWindowSeconds that declares a roll attempt.",
-          "type": "number",
-          "minimum": 1,
-          "maximum": 100
-        },
-        "circuitRollWindowSeconds": {
-          "description": "Sim-clock window (s) over which circuitRollAccelKt is measured; needs at least three samples, and a gap over two seconds resets it.",
-          "type": "number",
-          "minimum": 1,
-          "maximum": 60
-        },
-        "circuitRollHeadingToleranceDeg": {
-          "description": "Heading drift (deg) allowed during the roll window for it to still count as a roll on the runway.",
-          "type": "number",
-          "minimum": 0,
-          "maximum": 180
-        },
-        "departureAfterReverserPenalty": {
-          "description": "Points taken off the landing category (0-100) when the aircraft departs again after reversers were used.",
-          "type": "number",
-          "minimum": 0,
-          "maximum": 100
-        },
-        "circuitLiftoffMinVsFpm": {
-          "description": "Mean vertical speed (fpm) over the circuitLiftoffSeconds window must be at or above this for a lift-off to confirm. Stops a fall off an obstacle (AGL rising while VS is deeply negative) from counting as a departure.",
-          "type": "number",
-          "minimum": -5000,
-          "maximum": 5000
-        },
-        "touchdownMaxRadioAltFt": {
-          "description": "An on-ground sample with a valid radio altitude above this (ft) and no gear contact is not a touchdown. Rejects building or obstacle strikes the sim reports as ground contact. Unknown radio altitude or gear data always counts as plausible.",
-          "type": "number",
-          "minimum": 0,
-          "maximum": 2500
-        },
-        "contactLandedSec": {
-          "description": "Empirical. Contact held this long (s) means the aircraft is on the ground.",
-          "type": "number",
-          "minimum": 0.1,
-          "maximum": 10
-        },
-        "airborneDwellSec": {
-          "description": "Empirical. On-ground false this long (s), with the gain, enters Airborne. Measured from the lift-off edge to the re-contact edge.",
-          "type": "number",
-          "minimum": 0.05,
-          "maximum": 5
-        },
-        "airborneGainFt": {
-          "description": "Empirical. Radio-altitude gain (ft) over the ground baseline needed together with the dwell.",
-          "type": "number",
-          "minimum": 0,
-          "maximum": 50
-        },
-        "airborneGainTimeoutSec": {
-          "description": "On-ground false this long (s) enters Airborne whatever the gain (sloped runway, unusable radio altitude).",
-          "type": "number",
-          "minimum": 0.1,
-          "maximum": 10
-        },
-        "bounceMinGainFt": {
-          "description": "Empirical. A span after touchdown that rises at least this much (ft) is a bounce, not a rollout hop.",
-          "type": "number",
-          "minimum": 0,
-          "maximum": 100
-        },
-        "bounceMinAirborneSec": {
-          "description": "Empirical. A span after touchdown airborne at least this long (s) is a bounce, not a rollout hop.",
-          "type": "number",
-          "minimum": 0.1,
-          "maximum": 30
-        },
-        "bounceMaxSec": {
-          "description": "Empirical. A span this long (s) without a departure is an extended float; the ground held this long closes bounce attribution.",
-          "type": "number",
-          "minimum": 1,
-          "maximum": 300
-        },
-        "holdSec": {
-          "description": "Touchdown values (rate, g, wheels) become final this long (s) after the contact. Equals the touchdown-g window.",
-          "type": "number",
-          "minimum": 0.5,
-          "maximum": 10
-        },
-        "sinkRateWindowSec": {
-          "description": "Empirical. Touchdown sink rate is the mean vertical speed over this window (s) ending at the last airborne sample before contact.",
-          "type": "number",
-          "minimum": 0.1,
-          "maximum": 10
-        },
-        "oneWheelSec": {
-          "description": "Empirical. One main wheel stable-down this long (s) before the other marks a one-wheel touchdown.",
-          "type": "number",
-          "minimum": 0.05,
-          "maximum": 10
         },
         "heliLiftoffSec": {
           "description": "Helicopter departure: airborne at least this long (s).",
           "type": "number",
+          "default": 2,
           "minimum": 0.1,
           "maximum": 60
         },
         "heliLiftoffAglFt": {
           "description": "Helicopter departure: at least this much gain (ft) over the ground baseline.",
           "type": "number",
+          "default": 10,
           "minimum": 0,
           "maximum": 500
+        }
+      }
+    },
+    "approach": {
+      "description": "Approach (PirepState.Approach): the sustained descent that moves InitialClimb or Enroute to Approach.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "descentFpm": {
+          "description": "Approach consensus: the sustained descent rate (fpm, positive) that moves InitialClimb or Enroute to Approach (mean VS over 5 s at or below minus this). Set per class: light aircraft and helicopters descend slower than jets.",
+          "type": "number",
+          "default": 300,
+          "minimum": 50,
+          "maximum": 3000
+        }
+      }
+    },
+    "landed": {
+      "description": "Landed (PirepState.Landed): touchdown plausibility and the ground-contact tracker.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "touchdownMaxRadioAltFt": {
+          "description": "An on-ground sample with a valid radio altitude above this (ft) and no gear contact is not a touchdown. Rejects building or obstacle strikes the sim reports as ground contact. Unknown radio altitude or gear data always counts as plausible.",
+          "type": "number",
+          "default": 100,
+          "minimum": 0,
+          "maximum": 2500
         },
+        "contactLandedSec": {
+          "description": "Empirical. Contact held this long (s) means the aircraft is on the ground.",
+          "type": "number",
+          "default": 1,
+          "minimum": 0.1,
+          "maximum": 10
+        },
+        "holdSec": {
+          "description": "Touchdown values (rate, g, wheels) become final this long (s) after the contact. Equals the touchdown-g window.",
+          "type": "number",
+          "default": 2,
+          "minimum": 0.5,
+          "maximum": 10
+        },
+        "airborneDwellSec": {
+          "description": "Empirical. On-ground false this long (s), with the gain, enters Airborne. Measured from the lift-off edge to the re-contact edge.",
+          "type": "number",
+          "default": 0.25,
+          "minimum": 0.05,
+          "maximum": 5
+        },
+        "airborneGainFt": {
+          "description": "Empirical. Radio-altitude gain (ft) over the ground baseline needed together with the dwell.",
+          "type": "number",
+          "default": 0.8,
+          "minimum": 0,
+          "maximum": 50
+        },
+        "airborneGainTimeoutSec": {
+          "description": "On-ground false this long (s) enters Airborne whatever the gain (sloped runway, unusable radio altitude).",
+          "type": "number",
+          "default": 1,
+          "minimum": 0.1,
+          "maximum": 10
+        },
+        "sinkRateWindowSec": {
+          "description": "Empirical. Touchdown sink rate is the mean vertical speed over this window (s) ending at the last airborne sample before contact.",
+          "type": "number",
+          "default": 1,
+          "minimum": 0.1,
+          "maximum": 10
+        },
+        "oneWheelSec": {
+          "description": "Empirical. One main wheel stable-down this long (s) before the other marks a one-wheel touchdown.",
+          "type": "number",
+          "default": 0.5,
+          "minimum": 0.05,
+          "maximum": 10
+        },
+        "bounce": {
+          "$ref": "#/definitions/bounce"
+        }
+      }
+    },
+    "bounce": {
+      "description": "Bounce attribution after a touchdown.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "minGainFt": {
+          "description": "Empirical. A span after touchdown that rises at least this much (ft) is a bounce, not a rollout hop.",
+          "type": "number",
+          "default": 2,
+          "minimum": 0,
+          "maximum": 100
+        },
+        "minAirborneSec": {
+          "description": "Empirical. A span after touchdown airborne at least this long (s) is a bounce, not a rollout hop.",
+          "type": "number",
+          "default": 1,
+          "minimum": 0.1,
+          "maximum": 30
+        },
+        "maxSec": {
+          "description": "Empirical. A span this long (s) without a departure is an extended float; the ground held this long closes bounce attribution.",
+          "type": "number",
+          "default": 20,
+          "minimum": 1,
+          "maximum": 300
+        }
+      }
+    },
+    "goAround": {
+      "description": "Go-around consensus (EventType.GoAround): the votes that declare a go-around.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "climbGainFt": {
+          "description": "Height gained (ft) above the approach low point that declares a go-around.",
+          "type": "number",
+          "default": 300,
+          "minimum": 10,
+          "maximum": 5000
+        },
+        "vsFpm": {
+          "description": "Minimum vertical speed (fpm) during the climb for it to count as a go-around.",
+          "type": "number",
+          "default": 300,
+          "minimum": 1,
+          "maximum": 10000
+        },
+        "climbSeconds": {
+          "description": "Go-around consensus: the window (s) the climbing vote's mean vertical speed is averaged over.",
+          "type": "number",
+          "default": 3,
+          "minimum": 1,
+          "maximum": 30
+        },
+        "sustainSec": {
+          "description": "Go-around consensus: how long (s) each counted vote must hold true.",
+          "type": "number",
+          "default": 1,
+          "minimum": 0,
+          "maximum": 30
+        },
+        "fieldCeilingFt": {
+          "description": "Go-around consensus: the episode's low point must be at most this far (ft) above the approach target's elevation, or this high by AGL when no elevation is known.",
+          "type": "number",
+          "default": 1000,
+          "minimum": 100,
+          "maximum": 10000
+        },
+        "minGainFt": {
+          "description": "Go-around consensus: the barometric gain (ft) from the low point that is always required.",
+          "type": "number",
+          "default": 100,
+          "minimum": 0,
+          "maximum": 2000
+        },
+        "n1RisePct": {
+          "description": "Go-around consensus: N1 points above the trailing baseline (the lowest N1 over goAround.thrustBaselineSeconds) that cast the thrust vote.",
+          "type": "number",
+          "default": 10,
+          "minimum": 1,
+          "maximum": 100
+        },
+        "throttleRisePct": {
+          "description": "Go-around consensus: throttle points above the trailing baseline (the lowest throttle over goAround.thrustBaselineSeconds) that cast the thrust vote.",
+          "type": "number",
+          "default": 20,
+          "minimum": 1,
+          "maximum": 100
+        },
+        "thrustBaselineSeconds": {
+          "description": "Go-around consensus: the trailing window (s, pause-adjusted) whose lowest N1 and throttle are the thrust vote's baseline, so only a fresh advance counts.",
+          "type": "number",
+          "default": 30,
+          "minimum": 1,
+          "maximum": 60
+        }
+      }
+    },
+    "circuit": {
+      "description": "Multiple landings: lift-off, roll and stop detection for touch-and-go circuits.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "liftoffSeconds": {
+          "description": "Seconds the aircraft must stay airborne after a touchdown for the lift-off to count as a new circuit.",
+          "type": "number",
+          "default": 3,
+          "minimum": 0,
+          "maximum": 60
+        },
+        "liftoffAglFt": {
+          "description": "AGL (ft) the aircraft must reach after a touchdown for the lift-off to count as a new circuit.",
+          "type": "number",
+          "default": 50,
+          "minimum": 0,
+          "maximum": 1000
+        },
+        "liftoffMinVsFpm": {
+          "description": "Mean vertical speed (fpm) over the circuit.liftoffSeconds window must be at or above this for a lift-off to confirm. Stops a fall off an obstacle (AGL rising while VS is deeply negative) from counting as a departure.",
+          "type": "number",
+          "default": -200,
+          "minimum": -5000,
+          "maximum": 5000
+        },
+        "stopKt": {
+          "description": "Ground speed (kt) below which a landing roll is considered stopped, ending the circuit.",
+          "type": "number",
+          "default": 10,
+          "minimum": 0,
+          "maximum": 100
+        },
+        "rollEnabled": {
+          "description": "Whether a re-acceleration on the runway (a touch-and-go roll) can start a new circuit. Off for helicopters.",
+          "type": "boolean",
+          "default": true
+        },
+        "rollMinKt": {
+          "description": "Ground speed (kt) floor for a roll attempt. Kept above phases.takeoff.runwayKt so an expedited runway exit after over-slowing does not qualify.",
+          "type": "number",
+          "default": 50,
+          "minimum": 1,
+          "maximum": 200
+        },
+        "rollAccelKt": {
+          "description": "Ground speed gain (kt) over circuit.rollWindowSeconds that declares a roll attempt.",
+          "type": "number",
+          "default": 20,
+          "minimum": 1,
+          "maximum": 100
+        },
+        "rollWindowSeconds": {
+          "description": "Sim-clock window (s) over which circuit.rollAccelKt is measured; needs at least three samples, and a gap over two seconds resets it.",
+          "type": "number",
+          "default": 5,
+          "minimum": 1,
+          "maximum": 60
+        },
+        "rollHeadingToleranceDeg": {
+          "description": "Heading drift (deg) allowed during the roll window for it to still count as a roll on the runway.",
+          "type": "number",
+          "default": 20,
+          "minimum": 0,
+          "maximum": 180
+        },
+        "departureAfterReverserPenalty": {
+          "description": "Points taken off the landing category (0-100) when the aircraft departs again after reversers were used.",
+          "type": "number",
+          "default": 25,
+          "minimum": 0,
+          "maximum": 100
+        }
+      }
+    },
+    "airportLookup": {
+      "description": "Approach candidates: when and how far the background nearby-airport lookup searches.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "ceilingAglFt": {
+          "description": "Approach candidates: at or below this AGL (ft) a background nearby-airport lookup may start. Above it a lookup starts only on gear-down or a sustained descent below airportLookup.descentCeilingAglFt.",
+          "type": "number",
+          "default": 3000,
+          "minimum": 0,
+          "maximum": 10000
+        },
+        "descentCeilingAglFt": {
+          "description": "Approach candidates: a sustained descent starts a nearby-airport lookup only below this AGL (ft).",
+          "type": "number",
+          "default": 10000,
+          "minimum": 0,
+          "maximum": 50000
+        },
+        "rangeNm": {
+          "description": "Approach candidates: the airborne lookup takes the nearest airport with runways within this range (NM).",
+          "type": "number",
+          "default": 10,
+          "minimum": 1,
+          "maximum": 50
+        },
+        "approachRangeNm": {
+          "description": "Approach candidates: once in the Approach phase, the airborne lookup widens to the 10 nearest airports with runways within this range (NM).",
+          "type": "number",
+          "default": 20,
+          "minimum": 1,
+          "maximum": 50
+        }
+      }
+    },
+    "recording": {
+      "description": "Raw-telemetry capture policy.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
         "lowFullRateMaxSec": {
           "description": "Capture policy: full-rate recording below 2,000 ft AGL lasts at most this long (s) per low leg, then drops to 4 Hz.",
           "type": "number",
+          "default": 600,
           "minimum": 0,
           "maximum": 7200
+        }
+      }
+    },
+    "values": {
+      "description": "A sparse layer of thresholds: any subset of the groups and keys. The full set of values lives in the client; each key's \"default\" here is that compiled-in value, for reference.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "phases": {
+          "$ref": "#/definitions/phases"
+        },
+        "airportLookup": {
+          "$ref": "#/definitions/airportLookup"
+        },
+        "recording": {
+          "$ref": "#/definitions/recording"
         }
       }
     }

@@ -1,0 +1,18 @@
+// Airline flight-thresholds layer (version 2). Optional, and applied last, over the client's
+// built-in defaults and the vmsacars class overrides, so anything set here wins.
+//
+// List only what you change; every key you leave out keeps its built-in value. The keys, their
+// ranges and their built-in values are in types/settings.schema.json of the acars-config repo.
+//
+//   "values"     applies to every aircraft.
+//   "overrides"  applies to the aircraft a selector matches: "class" (fixed-wing, helicopter,
+//                general-aviation) and/or "icao" (a list of type designators).
+//
+// Example:
+//   "values": { "phases": { "taxiIn": { "maxKt": 30 } } },
+//   "overrides": [
+//     { "icao": ["C172"], "values": { "phases": { "approach": { "descentFpm": 200 } } } }
+//   ]
+{
+  "version": 2
+}
